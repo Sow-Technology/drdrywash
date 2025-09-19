@@ -1,4 +1,4 @@
-import { Shirt, Sparkles, CheckSquare, BedDouble, Truck, Package, WashingMachine, CheckCircle, Award, Clock, Rocket, Store, UserCheck, PackageCheck, MonitorSmartphone, Bike, HandPlatter } from 'lucide-react';
+import { Leaf, BadgePercent, Headset, ShoppingBag, CheckCircle, Flower, MonitorSmartphone, Bike, HandPlatter, Store } from 'lucide-react';
 import type { Order, OrderStatus } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import { mensPricing } from './mens-pricing';
@@ -112,19 +112,34 @@ export const mockOrders: Order[] = [
 
 export const whyChooseUsItems = [
     {
-        icon: Award,
-        title: "Expert Quality",
-        description: "Our team uses state-of-the-art equipment and premium detergents to ensure your clothes are immaculate.",
+        icon: Leaf,
+        title: "Eco Friendly",
+        description: "We give importance to the environment. We recycle 100% of water we use.",
     },
     {
-        icon: Clock,
-        title: "Ultimate Convenience",
-        description: "Schedule pickup and delivery at your convenience. Laundry day has never been easier.",
+        icon: BadgePercent,
+        title: "Price Promise",
+        description: "Automatically rewarded with special pricing, offers & discounts based on your usage pattern.",
     },
     {
-        icon: Rocket,
-        title: "Speedy Delivery",
-        description: "Get your fresh, clean clothes back in as little as 24 hours. We value your time.",
+        icon: Headset,
+        title: "Responsive",
+        description: "We are not perfect. So we listen to your feedback and act on it.",
+    },
+    {
+        icon: ShoppingBag,
+        title: "Mixed Bag",
+        description: "With a multitude of services, we make laundry a 1 minute chore!",
+    },
+    {
+        icon: CheckCircle,
+        title: "Health Promise",
+        description: "Our cleaning chemicals are non-toxic, skin-friendly agents that are safe for your family.",
+    },
+    {
+        icon: Flower,
+        title: "Convenient",
+        description: "With stores, on-demand pickup & delivery, express services - we work at your convenience.",
     },
 ];
 

@@ -35,6 +35,12 @@
       "description": "A friendly customer service representative on the phone.",
       "imageUrl": "https://picsum.photos/seed/contact/600/400",
       "imageHint": "customer service"
+    },
+    {
+      "id": "why-choose-us",
+      "description": "A young girl playing with two puppies on a clean carpet.",
+      "imageUrl": "https://picsum.photos/seed/puppies/400/400",
+      "imageHint": "girl puppies"
     }
   ]
 }
