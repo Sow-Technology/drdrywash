@@ -41,12 +41,13 @@ export default function TrackingTimeline({ currentStatus, history }: TrackingTim
                     <div className="flex items-center">
                         <div
                             className={cn(
-                            'flex h-12 w-12 items-center justify-center rounded-full border-2',
+                            'relative flex h-12 w-12 items-center justify-center rounded-full border-2',
                             isCompleted || isCurrent ? 'border-primary' : 'border-muted',
                             isCompleted ? 'bg-primary text-primary-foreground' : isCurrent ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
                             )}
                         >
-                            {isCurrent ? <Loader className="h-6 w-6 animate-spin" /> : <Icon className="h-6 w-6" />}
+                            <Icon className="h-6 w-6" />
+                            {isCurrent && <span className="absolute h-full w-full rounded-full bg-primary/20 animate-ping"></span>}
                         </div>
                          {index < orderStatuses.length - 1 && (
                             <div className="h-16 w-0.5 md:h-0.5 md:w-full bg-muted flex-1 md:ml-2" >
