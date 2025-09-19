@@ -22,6 +22,7 @@ const scheduleSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   address: z.string().min(10, 'Please enter a valid address.'),
   phoneNumber: z.string().min(10, 'Please enter a valid phone number.'),
+  location: z.string({ required_error: 'A location is required.' }),
   pickupDate: z.date({
     required_error: 'A pickup date is required.',
   }),
@@ -43,6 +44,7 @@ export default function SchedulePickupForm() {
       name: '',
       address: '',
       phoneNumber: '',
+      location: '',
       specialInstructions: '',
     },
   });
@@ -60,11 +62,24 @@ export default function SchedulePickupForm() {
     }, 1500);
   }
   
-  const timeSlots = Array.from({ length: 10 }, (_, i) => {
-    const hour = 9 + i;
+  const timeSlots = Array.from({ length: 7 }, (_, i) => {
+    const hour = 11 + i;
     return [`${hour}:00`, `${hour}:30`];
   }).flat();
-  timeSlots.pop(); // Remove 18:30
+  timeSlots.push("18:00");
+
+  const locations = [
+    "Adajan",
+    "Athwa",
+    "Katargam",
+    "Limbayat",
+    "Majura",
+    "Palanpur",
+    "Rander",
+    "Udhna",
+    "Varachha",
+    "Vesu",
+  ]
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -114,6 +129,28 @@ export default function SchedulePickupForm() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                          <SelectTrigger>
+                              <SelectValue placeholder="Select your location" />
+                          </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                          {locations.map(loc => (
+                              <SelectItem key={loc} value={loc.toLowerCase()}>{loc}</SelectItem>
+                          ))}
+                      </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -146,7 +183,7 @@ export default function SchedulePickupForm() {
                           selected={field.value}
                           onSelect={field.onChange}
                           disabled={(date) =>
-                            date < new Date() || date > new Date(new Date().setDate(new Date().getDate() + 30))
+                            date < new Date(new Date().setHours(0, 0, 0, 0)) || date > new Date(new Date().setDate(new Date().getDate() + 30))
                           }
                           initialFocus
                         />
@@ -169,9 +206,14 @@ export default function SchedulePickupForm() {
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            {timeSlots.map(time => (
-                                <SelectItem key={time} value={time}>{`${time} - ${parseInt(time.split(':')[0]) + 1}:${time.split(':')[1]}`}</SelectItem>
-                            ))}
+                            {timeSlots.map(time => {
+                              const [hour, minute] = time.split(':');
+                              const nextHour = (parseInt(hour) + 1).toString().padStart(2,'0');
+
+                              return (
+                                <SelectItem key={time} value={time}>{`${time} - ${minute === '00' ? `${hour}:30` : `${nextHour}:00`}`}</SelectItem>
+                              )
+                            })}
                         </SelectContent>
                     </Select>
                     <FormMessage />
