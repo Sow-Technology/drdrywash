@@ -13,11 +13,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-import { services } from '@/lib/data';
 import { cn } from '@/lib/utils';
-import { CalendarIcon, Check, Circle, CreditCard, Minus, Plus, ShoppingCart, Truck, User } from 'lucide-react';
+import { CalendarIcon, Check, CreditCard, Minus, Plus, ShoppingCart, Truck, User } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import { mensPricing, womensPricing, sareePricing } from '@/lib/data';
 
 const serviceSchema = z.object({
   serviceId: z.string(),
@@ -41,6 +41,12 @@ const steps = [
   { id: 'payment', title: 'Payment', icon: CreditCard },
   { id: 'confirmation', title: 'Confirmation', icon: Check },
 ];
+
+const allServices = [
+    ...mensPricing.map(p => ({id: p.product, name: p.product, description: `Men's clothing`, price: ''})),
+    ...womensPricing.map(p => ({id: p.product, name: p.product, description: `Women's clothing`, price: ''})),
+    ...sareePricing.map(p => ({id: p.product, name: p.product, description: 'Saree', price: ''}))
+]
 
 export default function OrderForm() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -149,7 +155,7 @@ export default function OrderForm() {
               >
                 {currentStep === 0 && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {services.map((service) => {
+                    {allServices.map((service) => {
                       const serviceIndex = fields.findIndex((field) => field.serviceId === service.id);
                       const isSelected = serviceIndex > -1;
                       return (
@@ -162,7 +168,7 @@ export default function OrderForm() {
                               />
                             </FormControl>
                             <div className="space-y-1 leading-none w-full">
-                              <FormLabel>{service.name} ({service.price})</FormLabel>
+                              <FormLabel>{service.name}</FormLabel>
                               <p className="text-sm text-muted-foreground">{service.description}</p>
                               {isSelected && (
                                 <div className="flex items-center pt-2">

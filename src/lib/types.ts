@@ -1,11 +1,6 @@
-export type Service = {
-  id: string;
-  name: string;
-  description: string;
-  price: string;
-  icon: React.ComponentType<{ className?: string }>;
-  image: string;
-  imageHint: string;
+export type PricingCategory = {
+    product: string;
+    prices: { [key: string]: string };
 };
 
 export type OrderStatus =

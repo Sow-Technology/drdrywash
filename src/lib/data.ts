@@ -1,6 +1,10 @@
 import { Shirt, Sparkles, CheckSquare, BedDouble, Truck, Package, WashingMachine, CheckCircle, Award, Clock, Rocket } from 'lucide-react';
-import type { Service, Order, OrderStatus } from './types';
+import type { Order, OrderStatus } from './types';
 import { PlaceHolderImages } from './placeholder-images';
+import { mensPricing } from './mens-pricing';
+import { womensPricing } from './womens-pricing';
+import { sareePricing } from './saree-pricing';
+
 
 const getImage = (id: string) => {
   const image = PlaceHolderImages.find(img => img.id === id);
@@ -10,45 +14,6 @@ const getImage = (id: string) => {
   }
   return { imageUrl: image.imageUrl, imageHint: image.imageHint };
 };
-
-export const services: Service[] = [
-  {
-    id: 'wash-fold',
-    name: 'Wash & Fold',
-    description: 'Perfect for your everyday laundry. We wash, dry, and fold your clothes with care.',
-    price: '$1.50 / lb',
-    icon: Shirt,
-    image: getImage('wash-fold').imageUrl,
-    imageHint: getImage('wash-fold').imageHint,
-  },
-  {
-    id: 'dry-cleaning',
-    name: 'Dry Cleaning',
-    description: 'For your delicate and special garments. Our expert process keeps them looking like new.',
-    price: 'Starting at $5.00 / item',
-    icon: Sparkles,
-    image: getImage('dry-cleaning').imageUrl,
-    imageHint: getImage('dry-cleaning').imageHint,
-  },
-  {
-    id: 'ironing',
-    name: 'Pressing & Ironing',
-    description: 'Crisp, clean, and wrinkle-free. We press your clothes to perfection.',
-    price: '$2.00 / item',
-    icon: CheckSquare,
-    image: getImage('ironing').imageUrl,
-    imageHint: getImage('ironing').imageHint,
-  },
-  {
-    id: 'bedding',
-    name: 'Bedding & Comforters',
-    description: 'From sheets to duvets, we handle your large bedding items with ease.',
-    price: '$20.00 / set',
-    icon: BedDouble,
-    image: getImage('bedding').imageUrl,
-    imageHint: getImage('bedding').imageHint,
-  },
-];
 
 export const howItWorksSteps = [
     {
@@ -159,3 +124,5 @@ export const faqItems = [
         answer: "Yes! Once your order is placed, you will receive an order ID. You can use this ID on our 'Track Order' page to see real-time updates on your laundry's progress."
     }
 ];
+
+export { mensPricing, womensPricing, sareePricing };
