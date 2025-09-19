@@ -1,7 +1,10 @@
+'use client';
+
 import { mensPricing, womensPricing, sareePricing, accessoriesPricing, carpetAndCurtainPricing, washAndFoldPricing } from '@/lib/data';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { motion } from 'framer-motion';
 
 const PricingTable = ({ title, data, headers }: { title: string, data: any[], headers: string[] }) => (
     <Card>
@@ -56,6 +59,13 @@ const SimplePricingTable = ({ title, data }: { title: string, data: { product: s
     </Card>
 );
 
+const motionProps = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+    transition: { duration: 0.3 }
+};
+
 
 export default function Pricing() {
   return (
@@ -79,23 +89,35 @@ export default function Pricing() {
                 <TabsTrigger value="carpet-curtain">Carpet &amp; Curtain</TabsTrigger>
                 <TabsTrigger value="wash-fold">Wash &amp; Fold/Iron</TabsTrigger>
             </TabsList>
-            <TabsContent value="men">
-                 <PricingTable title="Men's Pricing" data={mensPricing} headers={["Product", "Premium Laundry", "Dry Clean", "Premium Steam Press", "Luxe Service"]} />
+            <TabsContent value="men" asChild>
+                <motion.div {...motionProps}>
+                    <PricingTable title="Men's Pricing" data={mensPricing} headers={["Product", "Premium Laundry", "Dry Clean", "Premium Steam Press", "Luxe Service"]} />
+                </motion.div>
             </TabsContent>
-            <TabsContent value="women">
-                <PricingTable title="Women's Pricing" data={womensPricing} headers={["Product", "Premium Laundry", "Dry Clean", "Premium Steam Press", "Luxe Service"]} />
+            <TabsContent value="women" asChild>
+                <motion.div {...motionProps}>
+                    <PricingTable title="Women's Pricing" data={womensPricing} headers={["Product", "Premium Laundry", "Dry Clean", "Premium Steam Press", "Luxe Service"]} />
+                </motion.div>
             </TabsContent>
-            <TabsContent value="saree">
-                <PricingTable title="Saree Pricing" data={sareePricing} headers={["Product", "Roll press", "Polish - Extra", "Dry Clean", "Starch - Extra"]} />
+            <TabsContent value="saree" asChild>
+                <motion.div {...motionProps}>
+                    <PricingTable title="Saree Pricing" data={sareePricing} headers={["Product", "Roll press", "Polish - Extra", "Dry Clean", "Starch - Extra"]} />
+                </motion.div>
             </TabsContent>
-            <TabsContent value="accessories">
-                <SimplePricingTable title="Accessories Pricing" data={accessoriesPricing} />
+            <TabsContent value="accessories" asChild>
+                <motion.div {...motionProps}>
+                    <SimplePricingTable title="Accessories Pricing" data={accessoriesPricing} />
+                </motion.div>
             </TabsContent>
-            <TabsContent value="carpet-curtain">
-                <PricingTable title="Carpet &amp; Curtain Pricing" data={carpetAndCurtainPricing} headers={["Product", "Premium Laundry", "Dry Clean", "Luxe Service", "Wash &amp; Fold", "Wash &amp; Iron"]} />
+            <TabsContent value="carpet-curtain" asChild>
+                <motion.div {...motionProps}>
+                    <PricingTable title="Carpet &amp; Curtain Pricing" data={carpetAndCurtainPricing} headers={["Product", "Premium Laundry", "Dry Clean", "Luxe Service", "Wash &amp; Fold", "Wash &amp; Iron"]} />
+                </motion.div>
             </TabsContent>
-            <TabsContent value="wash-fold">
-                <PricingTable title="Wash &amp; Fold/Iron Pricing" data={washAndFoldPricing} headers={["Product", "Regular Wash &amp; Iron", "Regular Wash &amp; Fold"]} />
+            <TabsContent value="wash-fold" asChild>
+                <motion.div {...motionProps}>
+                    <PricingTable title="Wash &amp; Fold/Iron Pricing" data={washAndFoldPricing} headers={["Product", "Regular Wash &amp; Iron", "Regular Wash &amp; Fold"]} />
+                </motion.div>
             </TabsContent>
         </Tabs>
 
