@@ -1,26 +1,66 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { motion } from 'framer-motion';
 
 export default function Hero() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-image');
   
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+  };
+
   return (
     <section className="relative w-full py-20 md:py-32 lg:py-40 bg-card overflow-hidden">
-        <div className="container relative z-10">
+        <motion.div 
+          className="container relative z-10"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
             <div className="max-w-3xl text-center mx-auto">
-                <h1 className="text-4xl font-extrabold tracking-tight font-headline sm:text-5xl md:text-6xl text-primary">
+                <motion.h1 
+                    className="text-4xl font-extrabold tracking-tight font-headline sm:text-5xl md:text-6xl text-primary"
+                    variants={itemVariants}
+                >
                     Impeccable Laundry Service,
-                </h1>
-                <h2 className="mt-2 text-4xl font-extrabold tracking-tight font-headline sm:text-5xl md:text-6xl text-foreground">
+                </motion.h1>
+                <motion.h2 
+                    className="mt-2 text-4xl font-extrabold tracking-tight font-headline sm:text-5xl md:text-6xl text-foreground"
+                    variants={itemVariants}
+                >
                     Delivered to Your Door.
-                </h2>
-                <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
+                </motion.h2>
+                <motion.p 
+                    className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground"
+                    variants={itemVariants}
+                >
                     Tired of laundry day? Let Dr. Dry Wash handle it. We offer premium washing, dry cleaning, and ironing services with convenient pickup and delivery.
-                </p>
-                <div className="mt-8 flex justify-center gap-4">
+                </motion.p>
+                <motion.div className="mt-8 flex justify-center gap-4" variants={itemVariants}>
                     <Button size="lg" asChild>
                         <Link href="/schedule-pickup">
                             Schedule a Pickup
@@ -32,9 +72,9 @@ export default function Hero() {
                             View Services
                         </Link>
                     </Button>
-                </div>
+                </motion.div>
             </div>
-        </div>
+        </motion.div>
         {heroImage && (
             <Image
                 src={heroImage.imageUrl}
