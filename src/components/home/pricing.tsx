@@ -70,15 +70,6 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="my-16 max-w-3xl mx-auto text-center">
-          <h3 className="text-2xl font-bold mb-4">- Delivery Options -</h3>
-          <div className="space-y-2 text-lg text-muted-foreground">
-            <p><span className="font-semibold text-foreground">STANDARD DELIVERY (72 HOURS)</span> – NO EXTRA CHARGE</p>
-            <p><span className="font-semibold text-foreground">SEMI-EXPRESS (48 HOURS)</span> – 1.5X PRICE (50% EXTRA)</p>
-            <p><span className="font-semibold text-foreground">EXPRESS DELIVERY (24 HOURS)</span> – 2X PRICE (100% EXTRA)</p>
-          </div>
-        </div>
-
         <Tabs defaultValue="men" className="mt-16 max-w-6xl mx-auto">
             <TabsList className="grid w-full grid-cols-3 md:grid-cols-6">
                 <TabsTrigger value="men">Men</TabsTrigger>
@@ -107,6 +98,15 @@ export default function Pricing() {
                 <PricingTable title="Wash &amp; Fold/Iron Pricing" data={washAndFoldPricing} headers={["Product", "Regular Wash &amp; Iron", "Regular Wash &amp; Fold"]} />
             </TabsContent>
         </Tabs>
+
+        <div className="my-16 max-w-3xl mx-auto text-center">
+          <h3 className="text-2xl font-bold mb-4">- Delivery Options -</h3>
+          <div className="space-y-2 text-lg text-muted-foreground">
+            <p><span className="font-semibold text-foreground">STANDARD DELIVERY (72 HOURS)</span> – NO EXTRA CHARGE</p>
+            <p><span className="font-semibold text-foreground">SEMI-EXPRESS (48 HOURS)</span> – 1.5X PRICE (50% EXTRA)</p>
+            <p><span className="font-semibold text-foreground">EXPRESS DELIVERY (24 HOURS)</span> – 2X PRICE (100% EXTRA)</p>
+          </div>
+        </div>
       </div>
     </section>
   );
