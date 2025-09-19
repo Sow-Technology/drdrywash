@@ -1,7 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import PricingTables from '@/components/pricing/pricing-tables';
 import { motion } from 'framer-motion';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 50 },
@@ -22,6 +25,8 @@ const itemVariants = {
 };
 
 export default function PricingPage() {
+  const [searchQuery, setSearchQuery] = useState('');
+
   return (
     <motion.div
       className="container py-12 md:py-20"
@@ -29,7 +34,7 @@ export default function PricingPage() {
       initial="hidden"
       animate="visible"
     >
-      <div className="text-center max-w-2xl mx-auto mb-16">
+      <div className="text-center max-w-2xl mx-auto mb-12">
         <motion.h1
           className="text-4xl font-bold tracking-tight font-headline sm:text-5xl"
           variants={itemVariants}
@@ -48,12 +53,25 @@ export default function PricingPage() {
         </motion.p>
       </div>
 
+      <motion.div className="mb-12 max-w-lg mx-auto" variants={itemVariants}>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search for a product... (e.g., Shirt, Saree, Carpet)"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 text-base"
+          />
+        </div>
+      </motion.div>
+
       <motion.div variants={itemVariants}>
-        <PricingTables />
+        <PricingTables searchQuery={searchQuery} />
       </motion.div>
 
       <motion.div
-        className="my-16 max-w-3xl mx-auto text-center"
+        className="mt-16 max-w-3xl mx-auto text-center"
         variants={itemVariants}
       >
         <h3 className="text-2xl font-bold mb-4">- Delivery Options -</h3>
