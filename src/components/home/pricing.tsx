@@ -69,6 +69,22 @@ export default function Pricing() {
             <span className='text-sm'>*Please note that the prices above are exclusive of GST</span>
           </p>
         </div>
+
+        <div className="my-16 max-w-3xl mx-auto">
+          <h3 className="text-2xl font-bold text-center mb-8">- Delivery Options -</h3>
+          <div className="space-y-4">
+            <div className="bg-primary text-primary-foreground p-4 rounded-full text-center font-semibold text-lg">
+              STANDARD DELIVERY (72 HOURS) – NO EXTRA CHARGE
+            </div>
+            <div className="bg-primary text-primary-foreground p-4 rounded-full text-center font-semibold text-lg">
+              SEMI-EXPRESS (48 HOURS) – 1.5X PRICE (50% EXTRA)
+            </div>
+            <div className="bg-primary text-primary-foreground p-4 rounded-full text-center font-semibold text-lg">
+              EXPRESS DELIVERY (24 HOURS) – 2X PRICE (100% EXTRA)
+            </div>
+          </div>
+        </div>
+
         <Tabs defaultValue="men" className="mt-16 max-w-6xl mx-auto">
             <TabsList className="grid w-full grid-cols-3 md:grid-cols-6">
                 <TabsTrigger value="men">Men</TabsTrigger>
