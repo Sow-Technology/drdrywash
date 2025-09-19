@@ -4,6 +4,9 @@ import { PlaceHolderImages } from './placeholder-images';
 import { mensPricing } from './mens-pricing';
 import { womensPricing } from './womens-pricing';
 import { sareePricing } from './saree-pricing';
+import { accessoriesPricing } from './accessories-pricing';
+import { carpetAndCurtainPricing } from './carpet-and-curtain-pricing';
+import { washAndFoldPricing } from './wash-and-fold-pricing';
 
 
 const getImage = (id: string) => {
@@ -125,4 +128,4 @@ export const faqItems = [
     }
 ];
 
-export { mensPricing, womensPricing, sareePricing };
+export { mensPricing, womensPricing, sareePricing, accessoriesPricing, carpetAndCurtainPricing, washAndFoldPricing };

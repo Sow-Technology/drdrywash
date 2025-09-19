@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon, Check, CreditCard, Minus, Plus, ShoppingCart, Truck, User } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
-import { mensPricing, womensPricing, sareePricing } from '@/lib/data';
+import { mensPricing, womensPricing, sareePricing, accessoriesPricing, carpetAndCurtainPricing, washAndFoldPricing } from '@/lib/data';
 
 const serviceSchema = z.object({
   serviceId: z.string(),
@@ -45,7 +45,10 @@ const steps = [
 const allServices = [
     ...mensPricing.map(p => ({id: p.product, name: p.product, description: `Men's clothing`, price: ''})),
     ...womensPricing.map(p => ({id: p.product, name: p.product, description: `Women's clothing`, price: ''})),
-    ...sareePricing.map(p => ({id: p.product, name: p.product, description: 'Saree', price: ''}))
+    ...sareePricing.map(p => ({id: p.product, name: p.product, description: 'Saree', price: ''})),
+    ...accessoriesPricing.map(p => ({id: p.product, name: p.product, description: 'Accessory', price: ''})),
+    ...carpetAndCurtainPricing.map(p => ({id: p.product, name: p.product, description: 'Home Textile', price: ''})),
+    ...washAndFoldPricing.map(p => ({id: p.product, name: p.product, description: 'Wash &amp; Fold/Iron', price: ''}))
 ]
 
 export default function OrderForm() {
