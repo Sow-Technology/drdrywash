@@ -21,7 +21,7 @@ const itemVariants = {
 };
 
 const TermItem = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <motion.div className="mb-6" variants={itemVariants}>
+    <motion.div className="mb-4" variants={itemVariants}>
         <h2 className="text-2xl font-bold font-headline mb-2">{title}</h2>
         <div className="text-muted-foreground space-y-2">
             {children}
