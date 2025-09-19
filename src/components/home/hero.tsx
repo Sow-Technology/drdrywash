@@ -21,12 +21,6 @@ export default function Hero() {
                     Tired of laundry day? Let Dr. Dry Wash handle it. We offer premium washing, dry cleaning, and ironing services with convenient pickup and delivery.
                 </p>
                 <div className="mt-8 flex justify-center gap-4">
-                    <Button size="lg" asChild>
-                        <Link href="/order">
-                            Schedule a Pickup
-                            <ArrowRight className="ml-2 h-5 w-5" />
-                        </Link>
-                    </Button>
                     <Button size="lg" variant="outline" asChild>
                         <Link href="/#services">
                             View Services

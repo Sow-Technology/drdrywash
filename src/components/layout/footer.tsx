@@ -21,7 +21,6 @@ export default function Footer() {
               <li><Link href="/#services" className="text-sm text-muted-foreground hover:text-primary">Services</Link></li>
               <li><Link href="/#pricing" className="text-sm text-muted-foreground hover:text-primary">Pricing</Link></li>
               <li><Link href="/#faq" className="text-sm text-muted-foreground hover:text-primary">FAQ</Link></li>
-              <li><Link href="/order" className="text-sm text-muted-foreground hover:text-primary">Place Order</Link></li>
               <li><Link href="/track-order" className="text-sm text-muted-foreground hover:text-primary">Track Order</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-primary">Contact Us</Link></li>
             </ul>

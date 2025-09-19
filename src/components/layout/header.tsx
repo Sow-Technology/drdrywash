@@ -13,7 +13,6 @@ const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/#services', label: 'Services' },
   { href: '/#pricing', label: 'Pricing' },
-  { href: '/order', label: 'Place Order' },
   { href: '/track-order', label: 'Track Order' },
   { href: '/contact', label: 'Contact' },
 ];
@@ -52,9 +51,6 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <Button asChild className="hidden sm:flex">
-            <Link href="/order">Schedule a Pickup</Link>
-          </Button>
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">
@@ -82,11 +78,6 @@ export default function Header() {
                     </Link>
                   ))}
                 </nav>
-                <div className="mt-auto">
-                   <Button asChild className="w-full">
-                      <Link href="/order" onClick={handleLinkClick}>Schedule a Pickup</Link>
-                   </Button>
-                </div>
               </div>
             </SheetContent>
           </Sheet>

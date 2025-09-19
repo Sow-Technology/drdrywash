@@ -108,7 +108,7 @@ export const whyChooseUsItems = [
 export const faqItems = [
     {
         question: "How do I schedule a pickup?",
-        answer: "You can easily schedule a pickup through our website by clicking the 'Schedule a Pickup' button. Just select your services, choose a pickup and delivery time, and we'll handle the rest."
+        answer: "You can easily schedule a pickup through our website. Just select your services, choose a pickup and delivery time, and we'll handle the rest."
     },
     {
         question: "What are your service areas?",
