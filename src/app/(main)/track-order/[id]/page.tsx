@@ -3,8 +3,10 @@ import TrackingTimeline from '@/components/tracking/tracking-timeline';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Download, FileText } from 'lucide-react';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function TrackedOrderPage({ params }: { params: { id: string } }) {
   const order = mockOrders.find((o) => o.id.toUpperCase() === params.id.toUpperCase());
@@ -22,6 +24,8 @@ export default function TrackedOrderPage({ params }: { params: { id: string } })
         </div>
     );
   }
+  
+  const customerOrders = mockOrders.filter(o => o.customerName === order.customerName && o.id !== order.id && o.status === 'Delivered');
 
   return (
     <div className="container py-12 md:py-20 space-y-8">
@@ -30,8 +34,12 @@ export default function TrackedOrderPage({ params }: { params: { id: string } })
             <p className="mt-4 text-lg text-muted-foreground">
                 Hello, {order.customerName}! Here's the latest on your order.
             </p>
-            <div className='mt-4'>
+            <div className='mt-4 flex items-center justify-center gap-4'>
                 <Badge variant={order.status === 'Delivered' ? 'default' : 'secondary'} className="text-lg py-1 px-4">{order.status}</Badge>
+                <Button variant="outline" size="sm">
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Invoice
+                </Button>
             </div>
         </div>
 
@@ -72,7 +80,37 @@ export default function TrackedOrderPage({ params }: { params: { id: string } })
                 </CardContent>
             </Card>
         </div>
-
+        
+        {customerOrders.length > 0 && (
+            <div className="max-w-3xl mx-auto">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Previous Order History</CardTitle>
+                        <CardDescription>Here are your past completed orders.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="space-y-4">
+                            {customerOrders.map(prevOrder => (
+                                <li key={prevOrder.id}>
+                                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50">
+                                        <div className='flex items-center gap-4'>
+                                            <FileText className="h-6 w-6 text-primary" />
+                                            <div>
+                                                <p className="font-semibold">Order #{prevOrder.id}</p>
+                                                <p className="text-sm text-muted-foreground">Delivered on: {format(prevOrder.deliveryTime, 'PPP')}</p>
+                                            </div>
+                                        </div>
+                                        <Button variant="outline" size="sm" asChild>
+                                            <Link href={`/track-order/${prevOrder.id}`}>View Details</Link>
+                                        </Button>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </CardContent>
+                </Card>
+            </div>
+        )}
     </div>
   );
 }
