@@ -13,8 +13,6 @@ import {
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -202,14 +200,23 @@ export default function PricingCategories({ searchQuery }: { searchQuery: string
   ], [searchQuery]);
 
   const hasResults = pricingSections.some(section => section.id === 'shoes' || section.id === 'repairs' || section.props.data.length > 0);
+  const topRowCategories = pricingSections.slice(0, 5);
+  const bottomRowCategories = pricingSections.slice(5);
 
   return (
     <Tabs defaultValue="men" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 h-auto">
-        {pricingSections.map(section => (
-          <TabsTrigger key={section.id} value={section.id}>{section.title}</TabsTrigger>
-        ))}
-      </TabsList>
+        <div className="flex flex-col items-center">
+            <TabsList className="h-auto">
+                {topRowCategories.map(section => (
+                <TabsTrigger key={section.id} value={section.id}>{section.title}</TabsTrigger>
+                ))}
+            </TabsList>
+            <TabsList className="h-auto mt-2">
+                {bottomRowCategories.map(section => (
+                <TabsTrigger key={section.id} value={section.id}>{section.title}</TabsTrigger>
+                ))}
+            </TabsList>
+        </div>
       <AnimatePresence mode="wait">
         {pricingSections.map(section => {
           const Comp = section.component;
