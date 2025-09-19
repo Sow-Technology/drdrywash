@@ -1,15 +1,16 @@
 import { orderStatuses } from '@/lib/data';
 import type { OrderStatus } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Check, Circle, Loader, Truck, WashingMachine, Package, PackageCheck } from 'lucide-react';
+import { Check, Circle, Loader, Truck, WashingMachine, Package, PackageCheck, UserCheck, Store } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 
 const statusIcons = {
-  'Order Placed': Package,
-  'In Transit': Truck,
-  'Cleaning': WashingMachine,
-  'Ready for Delivery': PackageCheck,
-  'Delivered': Check,
+  'Pick up Booked': Package,
+  'Agent Picked': UserCheck,
+  'Reached the Store': Store,
+  'Getting Cleaned': WashingMachine,
+  'Out for Delivery': Truck,
+  'Delivered': PackageCheck,
 };
 
 type TrackingTimelineProps = {
@@ -21,7 +22,7 @@ export default function TrackingTimeline({ currentStatus, history }: TrackingTim
   const currentStatusIndex = orderStatuses.indexOf(currentStatus);
 
   return (
-    <Card className="w-full max-w-3xl mx-auto">
+    <Card className="w-full max-w-5xl mx-auto">
       <CardHeader>
         <CardTitle>Your Order Progress</CardTitle>
         <CardDescription>Follow your laundry's journey from pickup to delivery.</CardDescription>

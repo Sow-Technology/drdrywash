@@ -4,10 +4,11 @@ export type PricingCategory = {
 };
 
 export type OrderStatus =
-  | 'Order Placed'
-  | 'In Transit'
-  | 'Cleaning'
-  | 'Ready for Delivery'
+  | 'Pick up Booked'
+  | 'Agent Picked'
+  | 'Reached the Store'
+  | 'Getting Cleaned'
+  | 'Out for Delivery'
   | 'Delivered';
 
 export type Order = {

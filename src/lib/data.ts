@@ -1,4 +1,4 @@
-import { Shirt, Sparkles, CheckSquare, BedDouble, Truck, Package, WashingMachine, CheckCircle, Award, Clock, Rocket } from 'lucide-react';
+import { Shirt, Sparkles, CheckSquare, BedDouble, Truck, Package, WashingMachine, CheckCircle, Award, Clock, Rocket, Store } from 'lucide-react';
 import type { Order, OrderStatus } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import { mensPricing } from './mens-pricing';
@@ -42,10 +42,11 @@ export const howItWorksSteps = [
 ];
 
 export const orderStatuses: OrderStatus[] = [
-  'Order Placed',
-  'In Transit',
-  'Cleaning',
-  'Ready for Delivery',
+  'Pick up Booked',
+  'Agent Picked',
+  'Reached the Store',
+  'Getting Cleaned',
+  'Out for Delivery',
   'Delivered',
 ];
 
@@ -55,18 +56,19 @@ export const mockOrders: Order[] = [
   {
     id: 'DDW123',
     customerName: 'Alice Johnson',
-    status: 'Cleaning',
+    status: 'Getting Cleaned',
     items: [
       { serviceId: 'wash-fold', quantity: 15, name: 'Wash & Fold' },
       { serviceId: 'dry-cleaning', quantity: 2, name: 'Dry Cleaning' },
     ],
-    pickupTime: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000),
+    pickupTime: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000),
     deliveryTime: new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000),
     address: '123 Maple St, Springfield, IL',
     history: [
-      { status: 'Order Placed', date: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000 - 600000) },
-      { status: 'In Transit', date: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000) },
-      { status: 'Cleaning', date: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000) },
+      { status: 'Pick up Booked', date: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000 - 600000) },
+      { status: 'Agent Picked', date: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000) },
+      { status: 'Reached the Store', date: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000) },
+      { status: 'Getting Cleaned', date: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000) },
     ],
   },
   {
@@ -75,14 +77,15 @@ export const mockOrders: Order[] = [
     status: 'Delivered',
     items: [{ serviceId: 'bedding', quantity: 1, name: 'Bedding' }],
     pickupTime: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000),
-    deliveryTime: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000),
+    deliveryTime: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000),
     address: '456 Oak Ave, Springfield, IL',
     history: [
-      { status: 'Order Placed', date: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000 - 600000) },
-      { status: 'In Transit', date: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000) },
-      { status: 'Cleaning', date: new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000) },
-      { status: 'Ready for Delivery', date: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000 - 600000) },
-      { status: 'Delivered', date: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000) },
+      { status: 'Pick up Booked', date: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000 - 600000) },
+      { status: 'Agent Picked', date: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000) },
+      { status: 'Reached the Store', date: new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000) },
+      { status: 'Getting Cleaned', date: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000) },
+      { status: 'Out for Delivery', date: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000) },
+      { status: 'Delivered', date: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000) },
     ],
   },
 ];
