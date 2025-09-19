@@ -204,7 +204,7 @@ export default function PricingTables({ searchQuery }: { searchQuery: string }) 
       props: {
         title: 'Wash & Fold/Iron Pricing',
         data: filterData(washAndFoldPricing),
-        headers: ['Product', 'Regular Wash & Iron', 'Regular Wash & Fold'],
+        headers: ['Product', 'Regular Wash & Iron', 'Regular Wash & Fold', 'Only Iron'],
       },
     },
   ], [searchQuery]);
