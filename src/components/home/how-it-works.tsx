@@ -1,19 +1,54 @@
+'use client';
+
 import { Card, CardContent } from "@/components/ui/card";
 import { howItWorksOnline, howItWorksStore } from "@/lib/data";
 import { Separator } from "../ui/separator";
+import { motion } from "framer-motion";
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+      staggerChildren: 0.2
+    }
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
 
 export default function HowItWorks() {
   const { icon: StoreIcon } = howItWorksStore;
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <motion.section 
+      className="py-20 md:py-28 bg-background"
+      variants={sectionVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+    >
       <div className="container">
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold tracking-tight font-headline sm:text-4xl">Best Laundry & Dry Cleaning Service</h2>
-          <div className="mt-4 inline-block">
+          <motion.h2 
+            className="text-3xl font-bold tracking-tight font-headline sm:text-4xl"
+            variants={itemVariants}
+          >
+            Best Laundry & Dry Cleaning Service
+          </motion.h2>
+          <motion.div 
+            className="mt-4 inline-block"
+            variants={itemVariants}
+          >
             <div className="bg-primary h-1 w-20 mx-auto" />
-          </div>
+          </motion.div>
         </div>
-        <div className="mt-16 max-w-4xl mx-auto">
+        <motion.div className="mt-16 max-w-4xl mx-auto" variants={itemVariants}>
           <Card className="p-8 border-2 border-primary/20 shadow-xl">
             <CardContent className="p-0">
               <div className="bg-primary text-primary-foreground font-bold py-2 px-4 rounded-md inline-block mb-8">
@@ -56,8 +91,8 @@ export default function HowItWorks() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }
