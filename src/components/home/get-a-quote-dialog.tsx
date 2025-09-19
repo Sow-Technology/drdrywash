@@ -155,6 +155,7 @@ export default function GetAQuoteDialog() {
                       <SelectItem value="hospitals">Hospitals</SelectItem>
                       <SelectItem value="hotels">Hotels</SelectItem>
                       <SelectItem value="government-offices">Government Offices</SelectItem>
+                      <SelectItem value="hostels-pg">Hostels and PG</SelectItem>
                       <SelectItem value="others">Others</SelectItem>
                     </SelectContent>
                   </Select>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Building, Building2, Hotel, Landmark } from "lucide-react";
+import { Building, Building2, Hotel, Landmark, Hospital, Home } from "lucide-react";
 import GetAQuoteDialog from "./get-a-quote-dialog";
 import { motion } from "framer-motion";
 
@@ -20,6 +20,14 @@ const services = [
     {
         icon: Hotel,
         name: "Hotels"
+    },
+    {
+        icon: Hospital,
+        name: "Hospitals"
+    },
+    {
+        icon: Home,
+        name: "Hostels and PG"
     }
 ]
 
@@ -65,7 +73,7 @@ export default function WeAlsoServe() {
                 </motion.div>
 
                 <motion.div 
-                    className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto"
+                    className="mt-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 max-w-6xl mx-auto"
                     variants={sectionVariants}
                 >
                     {services.map((service) => (
