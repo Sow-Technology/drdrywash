@@ -21,7 +21,7 @@ const getImage = (id: string) => {
 export const howItWorksOnline = [
     {
         icon: MonitorSmartphone,
-        title: "Place Order",
+        title: "Schedule a Pickup",
     },
     {
         icon: Bike,
