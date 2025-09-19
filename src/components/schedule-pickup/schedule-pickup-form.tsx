@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, MapPin } from 'lucide-react';
+import { CalendarIcon, Loader2, MapPin, LocateFixed } from 'lucide-react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
 import { Button } from '@/components/ui/button';
@@ -57,6 +57,8 @@ export default function SchedulePickupForm() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [markerPosition, setMarkerPosition] = useState(defaultCenter);
+  const [mapCenter, setMapCenter] = useState(defaultCenter);
+  const mapRef = useRef<google.maps.Map | null>(null);
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -73,12 +75,46 @@ export default function SchedulePickupForm() {
       specialInstructions: '',
     },
   });
+  
+  const handleMapLoad = (map: google.maps.Map) => {
+    mapRef.current = map;
+  };
 
   const handleMarkerDrag = (e: google.maps.MapMouseEvent) => {
     if (e.latLng) {
       const newPos = { lat: e.latLng.lat(), lng: e.latLng.lng() };
       setMarkerPosition(newPos);
       form.setValue('location', newPos);
+    }
+  };
+
+  const handleCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const newPos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setMarkerPosition(newPos);
+          setMapCenter(newPos);
+          form.setValue('location', newPos);
+          mapRef.current?.panTo(newPos);
+        },
+        () => {
+          toast({
+            variant: 'destructive',
+            title: 'Location Error',
+            description: 'Could not get your current location. Please enable location services.',
+          });
+        }
+      );
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Location Error',
+        description: 'Geolocation is not supported by this browser.',
+      });
     }
   };
   
@@ -93,6 +129,7 @@ export default function SchedulePickupForm() {
         });
         form.reset();
         setMarkerPosition(defaultCenter);
+        setMapCenter(defaultCenter);
     }, 1500);
   }
   
@@ -155,14 +192,23 @@ export default function SchedulePickupForm() {
               name="location"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Pickup Location</FormLabel>
-                  <FormDescription>Drag the pin to your exact pickup location.</FormDescription>
+                  <div className="flex justify-between items-center mb-2">
+                    <div>
+                      <FormLabel>Pickup Location</FormLabel>
+                      <FormDescription>Drag the pin to your exact pickup location.</FormDescription>
+                    </div>
+                     <Button type="button" variant="outline" size="sm" onClick={handleCurrentLocation}>
+                      <LocateFixed className="mr-2 h-4 w-4" />
+                      Use Current Location
+                    </Button>
+                  </div>
                   <FormControl>
                     {isLoaded ? (
                       <GoogleMap
                         mapContainerStyle={{ width: '100%', height: '300px', borderRadius: 'var(--radius)' }}
-                        center={defaultCenter}
+                        center={mapCenter}
                         zoom={12}
+                        onLoad={handleMapLoad}
                       >
                         <Marker
                           position={markerPosition}
