@@ -1,4 +1,4 @@
-import { Shirt, Sparkles, CheckSquare, BedDouble, Truck, Package, WashingMachine, CheckCircle, Award, Clock, Rocket, Store, UserCheck, PackageCheck } from 'lucide-react';
+import { Shirt, Sparkles, CheckSquare, BedDouble, Truck, Package, WashingMachine, CheckCircle, Award, Clock, Rocket, Store, UserCheck, PackageCheck, MonitorSmartphone, Bike, HandPlatter } from 'lucide-react';
 import type { Order, OrderStatus } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import { mensPricing } from './mens-pricing';
@@ -18,28 +18,25 @@ const getImage = (id: string) => {
   return { imageUrl: image.imageUrl, imageHint: image.imageHint };
 };
 
-export const howItWorksSteps = [
+export const howItWorksOnline = [
     {
-        icon: Package,
-        title: "Place Your Order",
-        description: "Select your services and schedule a pickup time that works for you.",
+        icon: MonitorSmartphone,
+        title: "Place Order",
     },
     {
-        icon: Truck,
-        title: "We Pick Up",
-        description: "Our friendly driver will collect your laundry right from your doorstep.",
+        icon: Bike,
+        title: "Pickup",
     },
     {
-        icon: WashingMachine,
-        title: "We Clean",
-        description: "Our experts clean your items with the utmost care and attention to detail.",
-    },
-    {
-        icon: CheckCircle,
-        title: "We Deliver",
-        description: "Receive your fresh, clean laundry back, ready to wear and enjoy.",
-    },
+        icon: HandPlatter,
+        title: "Delivery",
+    }
 ];
+
+export const howItWorksStore = {
+    icon: Store,
+    title: "Visit Store",
+};
 
 export const orderStatuses: OrderStatus[] = [
   'Pick up Booked',
