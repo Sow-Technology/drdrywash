@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useState, useCallback } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2 } from 'lucide-react';
+import { CalendarIcon, Loader2, MapPin } from 'lucide-react';
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -17,12 +18,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '../ui/skeleton';
 
 const scheduleSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   address: z.string().min(10, 'Please enter a valid address.'),
   phoneNumber: z.string().min(10, 'Please enter a valid phone number.'),
-  location: z.string({ required_error: 'A location is required.' }),
+  location: z.object({
+    lat: z.number(),
+    lng: z.number(),
+  }),
   pickupDate: z.date({
     required_error: 'A pickup date is required.',
   }),
@@ -34,9 +39,29 @@ const scheduleSchema = z.object({
 
 type ScheduleFormValues = z.infer<typeof scheduleSchema>;
 
+// Surat, Gujarat, India
+const defaultCenter = {
+  lat: 21.1702,
+  lng: 72.8311,
+};
+
+const MapPlaceholder = () => (
+  <div className="w-full h-[300px] rounded-md bg-muted flex flex-col items-center justify-center">
+    <MapPin className="w-10 h-10 text-muted-foreground mb-2" />
+    <p className="text-muted-foreground">Loading map...</p>
+    <Skeleton className="w-full h-full" />
+  </div>
+);
+
 export default function SchedulePickupForm() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [markerPosition, setMarkerPosition] = useState(defaultCenter);
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+  });
 
   const form = useForm<ScheduleFormValues>({
     resolver: zodResolver(scheduleSchema),
@@ -44,11 +69,19 @@ export default function SchedulePickupForm() {
       name: '',
       address: '',
       phoneNumber: '',
-      location: '',
+      location: defaultCenter,
       specialInstructions: '',
     },
   });
 
+  const handleMarkerDrag = (e: google.maps.MapMouseEvent) => {
+    if (e.latLng) {
+      const newPos = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+      setMarkerPosition(newPos);
+      form.setValue('location', newPos);
+    }
+  };
+  
   async function onSubmit(data: ScheduleFormValues) {
     setIsLoading(true);
     // Simulate API call
@@ -59,6 +92,7 @@ export default function SchedulePickupForm() {
             description: `Thanks, ${data.name}! We'll see you on ${format(data.pickupDate, 'PPP')} around ${data.pickupTime}.`,
         });
         form.reset();
+        setMarkerPosition(defaultCenter);
     }, 1500);
   }
   
@@ -67,19 +101,6 @@ export default function SchedulePickupForm() {
     return [`${hour}:00`, `${hour}:30`];
   }).flat();
   timeSlots.push("18:00");
-
-  const locations = [
-    "Adajan",
-    "Athwa",
-    "Katargam",
-    "Limbayat",
-    "Majura",
-    "Palanpur",
-    "Rander",
-    "Udhna",
-    "Varachha",
-    "Vesu",
-  ]
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -134,19 +155,25 @@ export default function SchedulePickupForm() {
               name="location"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Location</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                          <SelectTrigger>
-                              <SelectValue placeholder="Select your location" />
-                          </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                          {locations.map(loc => (
-                              <SelectItem key={loc} value={loc.toLowerCase()}>{loc}</SelectItem>
-                          ))}
-                      </SelectContent>
-                  </Select>
+                  <FormLabel>Pickup Location</FormLabel>
+                  <FormDescription>Drag the pin to your exact pickup location.</FormDescription>
+                  <FormControl>
+                    {isLoaded ? (
+                      <GoogleMap
+                        mapContainerStyle={{ width: '100%', height: '300px', borderRadius: 'var(--radius)' }}
+                        center={defaultCenter}
+                        zoom={12}
+                      >
+                        <Marker
+                          position={markerPosition}
+                          draggable={true}
+                          onDragEnd={handleMarkerDrag}
+                        />
+                      </GoogleMap>
+                    ) : (
+                      <MapPlaceholder />
+                    )}
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
