@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Logo } from '@/components/shared/logo';
@@ -14,9 +14,10 @@ const navLinks = [
   { href: '/#services', label: 'Services' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/schedule-pickup', label: 'Schedule a Pickup' },
-  { href: '/track-order', label: 'Track Order' },
   { href: '/contact', label: 'Contact' },
 ];
+
+const mobileNavLinks = [...navLinks, { href: '/track-order', label: 'Track Order' }];
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -52,6 +53,14 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
+           <div className="hidden md:flex items-center gap-2">
+            <Button asChild>
+                <Link href="/track-order">
+                    Track Order
+                    <Search className="ml-2 h-4 w-4" />
+                </Link>
+            </Button>
+          </div>
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">
@@ -65,7 +74,7 @@ export default function Header() {
                   <Logo />
                 </div>
                 <nav className="grid gap-6 text-lg font-medium mt-6">
-                  {navLinks.map((link) => (
+                  {mobileNavLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
