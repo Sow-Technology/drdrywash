@@ -66,16 +66,16 @@ const PricingTable = ({
           <TableHeader>
             <TableRow>
               {headers.map((header) => (
-                <TableHead key={header} className="text-sm">{header}</TableHead>
+                <TableHead key={header} className="text-sm text-center">{header}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((item, index) => (
               <TableRow key={index} className="hover:bg-muted/50">
-                <TableCell className="font-medium">{item.product}</TableCell>
+                <TableCell className="font-medium text-center">{item.product}</TableCell>
                 {Object.keys(item.prices).map((key) => (
-                  <TableCell key={key} className="text-right tabular-nums">
+                  <TableCell key={key} className="text-center tabular-nums">
                     {item.prices[key]}
                   </TableCell>
                 ))}
@@ -108,15 +108,15 @@ const SimplePricingTable = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-sm">Product</TableHead>
-              <TableHead className="text-right text-sm">Price</TableHead>
+              <TableHead className="text-sm text-center">Product</TableHead>
+              <TableHead className="text-center text-sm">Price</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((item, index) => (
               <TableRow key={index} className="hover:bg-muted/50">
-                <TableCell className="font-medium">{item.product}</TableCell>
-                <TableCell className="text-right tabular-nums">{item.price}</TableCell>
+                <TableCell className="font-medium text-center">{item.product}</TableCell>
+                <TableCell className="text-center tabular-nums">{item.price}</TableCell>
               </TableRow>
             ))}
           </TableBody>
