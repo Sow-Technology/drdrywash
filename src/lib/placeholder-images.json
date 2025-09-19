@@ -8,9 +8,9 @@
     },
     {
       "id": "wash-fold",
-      "description": "A row of modern, clean washing machines.",
-      "imageUrl": "https://picsum.photos/seed/washingmachine/600/400",
-      "imageHint": "washing machine"
+      "description": "A wicker laundry basket full of clean, folded clothes.",
+      "imageUrl": "https://storage.googleapis.com/aif-starlark/prod/prompts/12d577b2-745a-48f8-b3d2-a7201c3132e0.jpeg",
+      "imageHint": "laundry basket"
     },
     {
       "id": "dry-cleaning",
