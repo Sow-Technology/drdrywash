@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import PricingTables from '@/components/pricing/pricing-tables';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import PricingCategories from '@/components/pricing/pricing-categories';
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 50 },
@@ -67,7 +67,7 @@ export default function PricingPage() {
       </motion.div>
 
       <motion.div variants={itemVariants}>
-        <PricingTables searchQuery={searchQuery} />
+        <PricingCategories searchQuery={searchQuery} />
       </motion.div>
 
       <motion.div

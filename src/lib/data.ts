@@ -7,6 +7,7 @@ import { sareePricing } from './saree-pricing';
 import { accessoriesPricing } from './accessories-pricing';
 import { carpetAndCurtainPricing } from './carpet-and-curtain-pricing';
 import { washAndFoldPricing } from './wash-and-fold-pricing';
+import { homeLinenPricing } from './home-linen-pricing';
 
 
 const getImage = (id: string) => {
@@ -150,4 +151,4 @@ export const faqItems = [
     }
 ];
 
-export { mensPricing, womensPricing, sareePricing, accessoriesPricing, carpetAndCurtainPricing, washAndFoldPricing };
+export { mensPricing, womensPricing, sareePricing, accessoriesPricing, carpetAndCurtainPricing, washAndFoldPricing, homeLinenPricing };

@@ -1,14 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import {
-  mensPricing,
-  womensPricing,
-  sareePricing,
-  accessoriesPricing,
-  carpetAndCurtainPricing,
-  washAndFoldPricing,
-} from '@/lib/data';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Table,
   TableBody,
@@ -20,35 +13,31 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { motion } from 'framer-motion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-    },
-  },
-};
+import {
+  mensPricing,
+  womensPricing,
+  sareePricing,
+  accessoriesPricing,
+  carpetAndCurtainPricing,
+  homeLinenPricing,
+  washAndFoldPricing,
+} from '@/lib/data';
 
 const NoResultsFound = () => (
-  <div className="text-center text-muted-foreground py-8">
+  <div className="text-center text-muted-foreground py-8 col-span-full">
     <p>No matching products found.</p>
   </div>
-)
+);
 
 const PricingTable = ({
-  title,
   data,
   headers,
 }: {
-  title: string;
   data: any[];
   headers: string[];
 }) => {
@@ -56,12 +45,7 @@ const PricingTable = ({
 
   return (
     <Card className="w-full h-full border-t-4 border-primary/20 hover:shadow-lg transition-shadow duration-300">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold font-headline">
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+      <CardContent className='p-0'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -89,22 +73,15 @@ const PricingTable = ({
 };
 
 const SimplePricingTable = ({
-  title,
   data,
 }: {
-  title: string;
   data: { product: string; price: string }[];
 }) => {
   if (data.length === 0) return null;
 
   return (
     <Card className="w-full h-full border-t-4 border-primary/20 hover:shadow-lg transition-shadow duration-300">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold font-headline">
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+      <CardContent className='p-0'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -126,7 +103,7 @@ const SimplePricingTable = ({
   );
 };
 
-export default function PricingTables({ searchQuery }: { searchQuery: string }) {
+export default function PricingCategories({ searchQuery }: { searchQuery: string }) {
   const filterData = (data: any[]) => {
     if (!searchQuery) return data;
     return data.filter(item =>
@@ -136,10 +113,10 @@ export default function PricingTables({ searchQuery }: { searchQuery: string }) 
   
   const pricingSections = useMemo(() => [
     {
-      id: 'mens',
+      id: 'men',
+      title: 'Men',
       component: PricingTable,
       props: {
-        title: "Men's Pricing",
         data: filterData(mensPricing),
         headers: [
           'Product',
@@ -150,10 +127,10 @@ export default function PricingTables({ searchQuery }: { searchQuery: string }) 
       },
     },
     {
-      id: 'womens',
+      id: 'ladies-wear',
+      title: 'Ladies Wear',
       component: PricingTable,
       props: {
-        title: "Women's Pricing",
         data: filterData(womensPricing),
         headers: [
           'Product',
@@ -164,66 +141,112 @@ export default function PricingTables({ searchQuery }: { searchQuery: string }) 
       },
     },
     {
-      id: 'saree',
+      id: 'sarees',
+      title: 'Sarees',
       component: PricingTable,
       props: {
-        title: 'Saree Pricing',
         data: filterData(sareePricing),
         headers: ['Product', 'Roll press', 'Polish - Extra', 'Dry Clean', 'Starch - Extra'],
       },
     },
     {
+        id: 'home-linen',
+        title: 'Home Linen',
+        component: SimplePricingTable,
+        props: {
+            data: filterData(homeLinenPricing),
+        },
+    },
+    {
       id: 'accessories',
+      title: 'Accessories',
       component: SimplePricingTable,
       props: {
-        title: 'Accessories Pricing',
         data: filterData(accessoriesPricing),
       },
     },
     {
-      id: 'carpet',
+      id: 'carpet-curtain',
+      title: 'Carpet and Curtain',
       component: PricingTable,
       props: {
-        title: 'Carpet & Curtain Pricing',
         data: filterData(carpetAndCurtainPricing),
         headers: [
           'Product',
           'Premium Laundry',
           'Dry Clean',
-          'Wash & Fold',
-          'Wash & Iron',
         ],
       },
     },
     {
       id: 'wash-fold',
+      title: 'Regular Wash and Iron / Wash & Fold',
       component: PricingTable,
       props: {
-        title: 'Wash & Fold/Iron Pricing',
         data: filterData(washAndFoldPricing),
         headers: ['Product', 'Regular Wash & Iron', 'Regular Wash & Fold', 'Only Iron'],
       },
     },
+    {
+        id: 'shoes',
+        title: 'Shoes - Cleaning and Conditioning',
+        component: () => <div className="text-center p-8">Coming Soon!</div>,
+        props: { data: [] }
+    },
+    {
+        id: 'repairs',
+        title: 'Repairs Service',
+        component: () => <div className="text-center p-8">Coming Soon!</div>,
+        props: { data: [] }
+    },
   ], [searchQuery]);
 
-  const hasResults = pricingSections.some(section => section.props.data.length > 0);
+  const hasResults = pricingSections.some(section => section.id === 'shoes' || section.id === 'repairs' || section.props.data.length > 0);
 
   return (
-    <div className="space-y-12">
-      {hasResults ? (
-        pricingSections.map((section) => {
+    <Tabs defaultValue="men" className="w-full">
+      <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 h-auto">
+        {pricingSections.map(section => (
+          <TabsTrigger key={section.id} value={section.id}>{section.title}</TabsTrigger>
+        ))}
+      </TabsList>
+      <AnimatePresence mode="wait">
+        {pricingSections.map(section => {
           const Comp = section.component;
-          if (section.props.data.length === 0) return null;
+          if (!hasResults && !['shoes', 'repairs'].includes(section.id)) return null;
+
           return (
-            <motion.div key={section.id} variants={itemVariants}>
-              {/* @ts-ignore */}
-              <Comp {...section.props} />
-            </motion.div>
+            <TabsContent key={section.id} value={section.id}>
+              <motion.div
+                key={section.id}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -20, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className='mt-8'
+              >
+                {section.props.data.length > 0 || ['shoes', 'repairs'].includes(section.id) ? (
+                  // @ts-ignore
+                  <Comp {...section.props} />
+                ) : (
+                  <NoResultsFound />
+                )}
+              </motion.div>
+            </TabsContent>
           );
-        })
-      ) : (
-        <NoResultsFound />
-      )}
-    </div>
+        })}
+        {!hasResults && (
+            <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -20, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className='mt-8'
+            >
+                <NoResultsFound />
+            </motion.div>
+        )}
+      </AnimatePresence>
+    </Tabs>
   );
 }
