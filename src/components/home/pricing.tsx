@@ -70,18 +70,12 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="my-16 max-w-3xl mx-auto">
-          <h3 className="text-2xl font-bold text-center mb-8">- Delivery Options -</h3>
-          <div className="space-y-4">
-            <div className="bg-primary text-primary-foreground p-4 rounded-full text-center font-semibold text-lg">
-              STANDARD DELIVERY (72 HOURS) – NO EXTRA CHARGE
-            </div>
-            <div className="bg-primary text-primary-foreground p-4 rounded-full text-center font-semibold text-lg">
-              SEMI-EXPRESS (48 HOURS) – 1.5X PRICE (50% EXTRA)
-            </div>
-            <div className="bg-primary text-primary-foreground p-4 rounded-full text-center font-semibold text-lg">
-              EXPRESS DELIVERY (24 HOURS) – 2X PRICE (100% EXTRA)
-            </div>
+        <div className="my-16 max-w-3xl mx-auto text-center">
+          <h3 className="text-2xl font-bold mb-4">- Delivery Options -</h3>
+          <div className="space-y-2 text-lg text-muted-foreground">
+            <p><span className="font-semibold text-foreground">STANDARD DELIVERY (72 HOURS)</span> – NO EXTRA CHARGE</p>
+            <p><span className="font-semibold text-foreground">SEMI-EXPRESS (48 HOURS)</span> – 1.5X PRICE (50% EXTRA)</p>
+            <p><span className="font-semibold text-foreground">EXPRESS DELIVERY (24 HOURS)</span> – 2X PRICE (100% EXTRA)</p>
           </div>
         </div>
 
