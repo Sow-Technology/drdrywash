@@ -8,21 +8,21 @@
     },
     {
       "id": "wash-fold",
-      "description": "Clean clothes neatly folded in a basket.",
-      "imageUrl": "https://picsum.photos/seed/foldedlaundry/600/400",
-      "imageHint": "folded clothes"
+      "description": "A row of modern, clean washing machines.",
+      "imageUrl": "https://picsum.photos/seed/washingmachine/600/400",
+      "imageHint": "washing machine"
     },
     {
       "id": "dry-cleaning",
-      "description": "Garments hanging on a rack after being professionally dry cleaned.",
-      "imageUrl": "https://picsum.photos/seed/racksuits/600/400",
-      "imageHint": "suits rack"
+      "description": "Professionally dry cleaned clothes ready for pickup.",
+      "imageUrl": "https://picsum.photos/seed/drycleaning/600/400",
+      "imageHint": "dry cleaning"
     },
     {
       "id": "ironing",
-      "description": "A freshly ironed shirt on an ironing board.",
-      "imageUrl": "https://picsum.photos/seed/ironedshirt/600/400",
-      "imageHint": "shirt ironing"
+      "description": "A person carefully ironing a shirt.",
+      "imageUrl": "https://picsum.photos/seed/ironing/600/400",
+      "imageHint": "ironing"
     },
     {
       "id": "bedding",
