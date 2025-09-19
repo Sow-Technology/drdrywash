@@ -8,27 +8,8 @@ import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-export default function TrackedOrderPage({ params }: { params: { id: string } }) {
-  const order = mockOrders.find((o) => o.id.toUpperCase() === params.id.toUpperCase());
-
-  if (!order) {
-    return (
-        <div className="container py-12 md:py-20">
-            <Alert variant="destructive" className="max-w-md mx-auto">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Order Not Found</AlertTitle>
-                <AlertDescription>
-                    We couldn't find an order with the ID "{params.id}". Please check the ID and try again.
-                </AlertDescription>
-            </Alert>
-        </div>
-    );
-  }
-  
-  const customerOrders = mockOrders.filter(o => o.customerName === order.customerName && o.id !== order.id && o.status === 'Delivered');
-
-  return (
-    <div className="container py-12 md:py-20 space-y-8">
+const OrderDetailsCard = ({ order }: { order: (typeof mockOrders)[0] }) => (
+    <div className='space-y-8'>
         <div className="text-center max-w-2xl mx-auto">
             <h1 className="text-4xl font-bold tracking-tight font-headline sm:text-5xl">Order #{order.id}</h1>
             <p className="mt-4 text-lg text-muted-foreground">
@@ -80,37 +61,114 @@ export default function TrackedOrderPage({ params }: { params: { id: string } })
                 </CardContent>
             </Card>
         </div>
-        
-        {customerOrders.length > 0 && (
-            <div className="max-w-3xl mx-auto">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Previous Order History</CardTitle>
-                        <CardDescription>Here are your past completed orders.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <ul className="space-y-4">
-                            {customerOrders.map(prevOrder => (
-                                <li key={prevOrder.id}>
-                                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50">
-                                        <div className='flex items-center gap-4'>
-                                            <FileText className="h-6 w-6 text-primary" />
-                                            <div>
-                                                <p className="font-semibold">Order #{prevOrder.id}</p>
-                                                <p className="text-sm text-muted-foreground">Delivered on: {format(prevOrder.deliveryTime, 'PPP')}</p>
-                                            </div>
-                                        </div>
-                                        <Button variant="outline" size="sm" asChild>
-                                            <Link href={`/track-order/${prevOrder.id}`}>View Details</Link>
-                                        </Button>
+    </div>
+);
+
+const OrderHistoryCard = ({ orders, customerName }: { orders: typeof mockOrders, customerName: string }) => (
+    <div className="max-w-3xl mx-auto">
+        <Card>
+            <CardHeader>
+                <CardTitle>Order History for {customerName}</CardTitle>
+                <CardDescription>Here are all the orders associated with this phone number.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ul className="space-y-4">
+                    {orders.map(order => (
+                        <li key={order.id}>
+                            <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50">
+                                <div className='flex items-center gap-4'>
+                                    <FileText className="h-6 w-6 text-primary" />
+                                    <div>
+                                        <p className="font-semibold">Order #{order.id} <Badge variant={order.status === 'Delivered' ? 'default' : 'secondary'} className='ml-2'>{order.status}</Badge></p>
+                                        <p className="text-sm text-muted-foreground">Ordered on: {format(order.pickupTime, 'PPP')}</p>
                                     </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </CardContent>
-                </Card>
-            </div>
-        )}
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button variant="outline" size="sm" asChild>
+                                        <Link href={`/track-order/${order.id}`}>View Details</Link>
+                                    </Button>
+                                    <Button variant="outline" size="sm">
+                                        <Download className="mr-2 h-4 w-4" />
+                                        Invoice
+                                    </Button>
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </CardContent>
+        </Card>
+    </div>
+);
+
+export default function TrackedOrderPage({ params }: { params: { id: string } }) {
+  const searchQuery = params.id.toUpperCase();
+  
+  // Try to find a single order by ID first
+  const orderById = mockOrders.find((o) => o.id.toUpperCase() === searchQuery);
+
+  // Then, find orders by phone number
+  const ordersByPhone = mockOrders.filter(o => o.phoneNumber.replace(/[^\d]/g, '') === searchQuery.replace(/[^\d]/g, ''));
+  
+  if (orderById) {
+      // Found a specific order, show its details and history of other orders from the same customer
+      const customerOrders = mockOrders.filter(o => o.customerName === orderById.customerName && o.id !== orderById.id);
+      return (
+        <div className="container py-12 md:py-20 space-y-8">
+            <OrderDetailsCard order={orderById} />
+            {customerOrders.length > 0 && (
+                <div className="max-w-3xl mx-auto">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Previous Order History</CardTitle>
+                            <CardDescription>Here are your past completed orders.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ul className="space-y-4">
+                                {customerOrders.map(prevOrder => (
+                                    <li key={prevOrder.id}>
+                                        <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50">
+                                            <div className='flex items-center gap-4'>
+                                                <FileText className="h-6 w-6 text-primary" />
+                                                <div>
+                                                    <p className="font-semibold">Order #{prevOrder.id}</p>
+                                                    <p className="text-sm text-muted-foreground">Delivered on: {format(prevOrder.deliveryTime, 'PPP')}</p>
+                                                </div>
+                                            </div>
+                                            <Button variant="outline" size="sm" asChild>
+                                                <Link href={`/track-order/${prevOrder.id}`}>View Details</Link>
+                                            </Button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+        </div>
+      );
+  }
+
+  if (ordersByPhone.length > 0) {
+      // Found orders by phone number, show the list
+      return (
+          <div className="container py-12 md:py-20">
+              <OrderHistoryCard orders={ordersByPhone} customerName={ordersByPhone[0].customerName} />
+          </div>
+      );
+  }
+
+  // Nothing found
+  return (
+    <div className="container py-12 md:py-20">
+        <Alert variant="destructive" className="max-w-md mx-auto">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Not Found</AlertTitle>
+            <AlertDescription>
+                We couldn't find any orders with the ID or phone number "{params.id}". Please check your entry and try again.
+            </AlertDescription>
+        </Alert>
     </div>
   );
 }

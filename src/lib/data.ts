@@ -56,6 +56,7 @@ export const mockOrders: Order[] = [
   {
     id: 'DDW123',
     customerName: 'Alice Johnson',
+    phoneNumber: '(555) 123-4567',
     status: 'Getting Cleaned',
     items: [
       { serviceId: 'wash-fold', quantity: 15, name: 'Wash & Fold' },
@@ -74,6 +75,7 @@ export const mockOrders: Order[] = [
   {
     id: 'DDW456',
     customerName: 'Bob Smith',
+    phoneNumber: '(555) 987-6543',
     status: 'Delivered',
     items: [{ serviceId: 'bedding', quantity: 1, name: 'Bedding' }],
     pickupTime: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000),
@@ -91,6 +93,7 @@ export const mockOrders: Order[] = [
   {
     id: 'DDW789',
     customerName: 'Alice Johnson',
+    phoneNumber: '(555) 123-4567',
     status: 'Delivered',
     items: [
       { serviceId: 'ironing', quantity: 10, name: 'Ironing' }

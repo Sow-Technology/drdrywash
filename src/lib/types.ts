@@ -14,6 +14,7 @@ export type OrderStatus =
 export type Order = {
   id: string;
   customerName: string;
+  phoneNumber: string;
   status: OrderStatus;
   items: { serviceId: string; quantity: number; name: string }[];
   pickupTime: Date;
