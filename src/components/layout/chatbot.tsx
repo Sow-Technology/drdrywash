@@ -11,6 +11,7 @@ import {
   FileText,
   ArrowRight,
   User,
+  ArrowLeft,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +24,13 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Input } from '../ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+
+type ChatStep =
+  | 'greeting'
+  | 'userInfo'
+  | 'options'
+  | 'scheduleInfo'
+  | 'trackInfo';
 
 const chatbotVariants = {
   closed: { opacity: 0, y: 20, scale: 0.95 },
@@ -45,7 +53,7 @@ const messageVariants = {
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [step, setStep] = useState('greeting'); // greeting, userInfo, options
+  const [step, setStep] = useState<ChatStep>('greeting');
   const [name, setName] = useState('');
   const [tempName, setTempName] = useState('');
 
@@ -67,17 +75,20 @@ export default function Chatbot() {
     {
       icon: Calendar,
       text: 'Schedule a Pickup',
-      href: '/schedule-pickup',
+      action: () => setStep('scheduleInfo'),
+      isLink: false,
     },
     {
       icon: Search,
       text: 'Track an Order',
-      href: '/track-order',
+      action: () => setStep('trackInfo'),
+      isLink: false,
     },
     {
       icon: FileText,
       text: 'Raise a Complaint',
       href: '/contact',
+      isLink: true,
     },
   ];
 
@@ -93,14 +104,14 @@ export default function Chatbot() {
     setStep('greeting');
     setName('');
     setTempName('');
-  }
+  };
 
   const handleToggle = () => {
     if (isOpen) {
       resetChat();
     }
     setIsOpen(!isOpen);
-  }
+  };
 
   const ChatGreeting = () => (
     <motion.div
@@ -127,9 +138,7 @@ export default function Chatbot() {
       animate="visible"
       className="text-center"
     >
-      <p className="text-muted-foreground mb-4">
-        What should I call you?
-      </p>
+      <p className="text-muted-foreground mb-4">What should I call you?</p>
       <form onSubmit={handleNameSubmit} className="flex gap-2">
         <div className="relative flex-grow">
           <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -159,26 +168,72 @@ export default function Chatbot() {
         Hi {name}! How can I help you today?
       </p>
       <div className="space-y-3">
-        {supportOptions.map((option, index) => (
-          <Link href={option.href} key={index} passHref>
+        {supportOptions.map((option, index) =>
+          option.isLink ? (
+            <Link href={option.href!} key={index} passHref>
+              <Button
+                variant="outline"
+                className="w-full justify-start h-auto py-3"
+                onClick={() => setIsOpen(false)}
+              >
+                <option.icon className="mr-3 h-5 w-5 text-primary" />
+                <span className="font-semibold">{option.text}</span>
+              </Button>
+            </Link>
+          ) : (
             <Button
+              key={index}
               variant="outline"
               className="w-full justify-start h-auto py-3"
-              onClick={() => setIsOpen(false)}
+              onClick={option.action}
             >
               <option.icon className="mr-3 h-5 w-5 text-primary" />
               <span className="font-semibold">{option.text}</span>
             </Button>
-          </Link>
-        ))}
+          )
+        )}
       </div>
     </motion.div>
   );
-  
+
+  const ChatResponse = ({
+    text,
+    buttonText,
+    href,
+  }: {
+    text: string;
+    buttonText: string;
+    href: string;
+  }) => (
+    <motion.div
+      variants={messageVariants}
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+    >
+      <div className="flex items-start gap-2 mb-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => setStep('options')}
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <p className="text-muted-foreground pt-1">{text}</p>
+      </div>
+      <Link href={href} passHref>
+        <Button className="w-full" onClick={() => setIsOpen(false)}>
+          {buttonText}
+        </Button>
+      </Link>
+    </motion.div>
+  );
+
   const handleClose = () => {
     setIsOpen(false);
     resetChat();
-  }
+  };
 
   return (
     <>
@@ -196,12 +251,15 @@ export default function Chatbot() {
                 <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-4">
                   <div className="flex items-center gap-3">
                     <Avatar>
-                        <AvatarImage src="https://picsum.photos/seed/lax/100/100" data-ai-hint="friendly robot" />
-                        <AvatarFallback>LX</AvatarFallback>
+                      <AvatarImage
+                        src="https://picsum.photos/seed/lax/100/100"
+                        data-ai-hint="friendly robot"
+                      />
+                      <AvatarFallback>LX</AvatarFallback>
                     </Avatar>
                     <div>
-                        <CardTitle>Lax at your service!</CardTitle>
-                        <CardDescription>Your friendly assistant</CardDescription>
+                      <CardTitle>Lax at your service!</CardTitle>
+                      <CardDescription>Your friendly assistant</CardDescription>
                     </div>
                   </div>
                   <Button
@@ -213,11 +271,25 @@ export default function Chatbot() {
                     <X className="h-4 w-4" />
                   </Button>
                 </CardHeader>
-                <CardContent className="min-h-[150px] flex flex-col justify-center">
+                <CardContent className="min-h-[180px] flex flex-col justify-center">
                   <AnimatePresence mode="wait">
                     {step === 'greeting' && <ChatGreeting />}
                     {step === 'userInfo' && <ChatUserInfo />}
                     {step === 'options' && <ChatOptions />}
+                    {step === 'scheduleInfo' && (
+                      <ChatResponse
+                        text="You can schedule a pickup by filling out the form on our scheduling page. It's quick and easy!"
+                        buttonText="Go to Schedule Page"
+                        href="/schedule-pickup"
+                      />
+                    )}
+                    {step === 'trackInfo' && (
+                      <ChatResponse
+                        text="To track your order, just enter your Order ID or phone number on the tracking page."
+                        buttonText="Go to Tracking Page"
+                        href="/track-order"
+                      />
+                    )}
                   </AnimatePresence>
                 </CardContent>
               </Card>
