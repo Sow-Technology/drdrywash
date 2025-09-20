@@ -17,6 +17,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -32,6 +33,8 @@ type Message = {
   text?: string;
   options?: { text: string; action: () => void; isLink?: boolean, href?: string }[];
 };
+
+type ConversationStage = 'greeting' | 'askName' | 'askPhone' | 'mainOptions';
 
 const chatbotVariants = {
   closed: { opacity: 0, y: 20, scale: 0.95 },
@@ -67,6 +70,9 @@ const supportOptions = [
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [stage, setStage] = useState<ConversationStage>('greeting');
+  const [userName, setUserName] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const isMobile = useIsMobile();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -89,11 +95,14 @@ export default function Chatbot() {
 
   const startChat = () => {
      setMessages([]);
-     setTimeout(() => addMessage('bot', "Hello! I'm Lax, your personal assistant."), 300);
-     setTimeout(() => addMessage('bot', "How can I help you today?", supportOptions.map(opt => ({
-         ...opt,
-         action: () => handleOptionClick(opt.action, opt.href, opt.text),
-     }))), 1000);
+     setStage('greeting');
+     setUserName('');
+     setInputValue('');
+     setTimeout(() => {
+        addMessage('bot', "Hello! I'm Lax, your personal assistant.");
+        setStage('askName');
+     }, 300);
+     setTimeout(() => addMessage('bot', "What's your name?"), 800);
   };
   
   const handleOptionClick = (action?: string, href?: string, text?: string) => {
@@ -123,6 +132,43 @@ export default function Chatbot() {
         }
     }, 500);
 
+  };
+
+  const handleUserInput = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+
+    addMessage('user', inputValue);
+
+    if (stage === 'askName') {
+        setUserName(inputValue);
+        setTimeout(() => addMessage('bot', `Nice to meet you, ${inputValue}!`), 500);
+        setTimeout(() => addMessage('bot', `What's your phone number? (Optional)`), 1000);
+        setStage('askPhone');
+    } else if (stage === 'askPhone') {
+        // Here you could save the phone number
+        setTimeout(() => addMessage('bot', "Thanks!"), 500);
+        setTimeout(() => {
+            addMessage('bot', `How can I help you today, ${userName}?`, supportOptions.map(opt => ({
+                ...opt,
+                action: () => handleOptionClick(opt.action, opt.href, opt.text),
+            })))
+        }, 1000);
+        setStage('mainOptions');
+    }
+
+    setInputValue('');
+  }
+
+  const handleSkipPhone = () => {
+    addMessage('user', "Skip");
+    setTimeout(() => {
+        addMessage('bot', `No problem. How can I help you today, ${userName}?`, supportOptions.map(opt => ({
+            ...opt,
+            action: () => handleOptionClick(opt.action, opt.href, opt.text),
+        })))
+    }, 500);
+    setStage('mainOptions');
   };
 
   const handleToggle = () => {
@@ -198,11 +244,29 @@ export default function Chatbot() {
                     ))}
                   <div ref={messagesEndRef} />
                 </CardContent>
-                <div className="p-4 border-t">
-                    <p className="text-center text-xs text-muted-foreground">
-                        Chat by Dr. Dry Wash
-                    </p>
-                </div>
+                <CardFooter className="p-2 border-t">
+                    {(stage === 'askName' || stage === 'askPhone') ? (
+                        <form onSubmit={handleUserInput} className="w-full flex items-center gap-2">
+                            <Input 
+                                value={inputValue}
+                                onChange={e => setInputValue(e.target.value)}
+                                placeholder={stage === 'askName' ? 'Your name...' : 'Your phone number...'}
+                                className="flex-1"
+                                autoFocus
+                            />
+                            <Button type="submit" size="icon" aria-label="Send">
+                                <Send className="h-4 w-4" />
+                            </Button>
+                            {stage === 'askPhone' && (
+                                <Button type="button" variant="ghost" onClick={handleSkipPhone}>Skip</Button>
+                            )}
+                        </form>
+                    ) : (
+                        <p className="text-center text-xs text-muted-foreground w-full">
+                            Chat by Dr. Dry Wash
+                        </p>
+                    )}
+                </CardFooter>
               </Card>
             </motion.div>
           )}
