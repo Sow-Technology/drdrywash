@@ -9,9 +9,8 @@ import {
   Calendar,
   Search,
   FileText,
-  ArrowRight,
   User,
-  ArrowLeft,
+  Send,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,13 +23,15 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Input } from '../ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { cn } from '@/lib/utils';
+import { Separator } from '../ui/separator';
 
-type ChatStep =
-  | 'greeting'
-  | 'userInfo'
-  | 'options'
-  | 'scheduleInfo'
-  | 'trackInfo';
+type Message = {
+  id: string;
+  sender: 'bot' | 'user';
+  text?: string;
+  options?: { text: string; action: () => void; isLink?: boolean, href?: string }[];
+};
 
 const chatbotVariants = {
   closed: { opacity: 0, y: 20, scale: 0.95 },
@@ -46,193 +47,94 @@ const chatbotVariants = {
   },
 };
 
-const messageVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-};
+const supportOptions = [
+  {
+    text: 'Schedule a Pickup',
+    action: 'scheduleInfo',
+  },
+  {
+    text: 'Track an Order',
+    action: 'trackInfo',
+  },
+  {
+    text: 'Raise a Complaint',
+    isLink: true,
+    href: '/contact',
+  },
+];
+
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [step, setStep] = useState<ChatStep>('greeting');
-  const [name, setName] = useState('');
-  const [tempName, setTempName] = useState('');
-
+  const [messages, setMessages] = useState<Message[]>([]);
   const isMobile = useIsMobile();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const chatbotPosition = isMobile
     ? { bottom: '5.5rem', right: '1rem' }
     : { bottom: '2rem', right: '2rem' };
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (isOpen && step === 'userInfo' && inputRef.current) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 300); // Small delay for animation
-    }
-  }, [isOpen, step]);
-
-  const supportOptions = [
-    {
-      icon: Calendar,
-      text: 'Schedule a Pickup',
-      action: () => setStep('scheduleInfo'),
-      isLink: false,
-    },
-    {
-      icon: Search,
-      text: 'Track an Order',
-      action: () => setStep('trackInfo'),
-      isLink: false,
-    },
-    {
-      icon: FileText,
-      text: 'Raise a Complaint',
-      href: '/contact',
-      isLink: true,
-    },
-  ];
-
-  const handleNameSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (tempName.trim()) {
-      setName(tempName.trim());
-      setStep('options');
-    }
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const resetChat = () => {
-    setStep('greeting');
-    setName('');
-    setTempName('');
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+  
+  const addMessage = (sender: 'bot' | 'user', text?: string, options?: Message['options']) => {
+    const newMessage: Message = { id: Date.now().toString(), sender, text, options };
+    setMessages(prev => [...prev, newMessage]);
+  };
+
+  const startChat = () => {
+     setMessages([]);
+     setTimeout(() => addMessage('bot', "Hello! I'm Lax, your personal assistant."), 300);
+     setTimeout(() => addMessage('bot', "How can I help you today?", supportOptions.map(opt => ({
+         ...opt,
+         action: () => handleOptionClick(opt.action, opt.href, opt.text),
+     }))), 1000);
+  };
+  
+  const handleOptionClick = (action?: string, href?: string, text?: string) => {
+    if (text) {
+        addMessage('user', text);
+    }
+    
+    setTimeout(() => {
+        if (href) {
+            window.location.href = href;
+            return;
+        }
+
+        switch (action) {
+            case 'scheduleInfo':
+                addMessage('bot', "You can schedule a pickup by filling out the form on our scheduling page. It's quick and easy!", [
+                    { text: 'Go to Schedule Page', action: () => { window.location.href = "/schedule-pickup" } }
+                ]);
+                break;
+            case 'trackInfo':
+                addMessage('bot', "To track your order, just enter your Order ID or phone number on the tracking page.", [
+                    { text: 'Go to Tracking Page', action: () => { window.location.href = "/track-order" } }
+                ]);
+                break;
+            default:
+                break;
+        }
+    }, 500);
+
   };
 
   const handleToggle = () => {
-    if (isOpen) {
-      resetChat();
+    const nextIsOpen = !isOpen;
+    if (nextIsOpen) {
+      startChat();
     }
-    setIsOpen(!isOpen);
+    setIsOpen(nextIsOpen);
   };
-
-  const ChatGreeting = () => (
-    <motion.div
-      key="greeting"
-      variants={messageVariants}
-      initial="hidden"
-      animate="visible"
-      className="text-center"
-    >
-      <p className="text-muted-foreground mb-4">
-        Hello! I'm Lax, your personal assistant.
-      </p>
-      <Button onClick={() => setStep('userInfo')}>
-        Let's Get Started <ArrowRight className="ml-2" />
-      </Button>
-    </motion.div>
-  );
-
-  const ChatUserInfo = () => (
-    <motion.div
-      key="userInfo"
-      variants={messageVariants}
-      initial="hidden"
-      animate="visible"
-      className="text-center"
-    >
-      <p className="text-muted-foreground mb-4">What should I call you?</p>
-      <form onSubmit={handleNameSubmit} className="flex gap-2">
-        <div className="relative flex-grow">
-          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            ref={inputRef}
-            value={tempName}
-            onChange={(e) => setTempName(e.target.value)}
-            placeholder="Your name..."
-            className="pl-9"
-          />
-        </div>
-        <Button type="submit" size="icon" aria-label="Submit name">
-          <ArrowRight />
-        </Button>
-      </form>
-    </motion.div>
-  );
-
-  const ChatOptions = () => (
-    <motion.div
-      key="options"
-      variants={messageVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <p className="text-muted-foreground mb-4 text-center">
-        Hi {name}! How can I help you today?
-      </p>
-      <div className="space-y-3">
-        {supportOptions.map((option, index) =>
-          option.isLink ? (
-            <Link href={option.href!} key={index} passHref>
-              <Button
-                variant="outline"
-                className="w-full justify-start h-auto py-3"
-                onClick={() => setIsOpen(false)}
-              >
-                <option.icon className="mr-3 h-5 w-5 text-primary" />
-                <span className="font-semibold">{option.text}</span>
-              </Button>
-            </Link>
-          ) : (
-            <Button
-              key={index}
-              variant="outline"
-              className="w-full justify-start h-auto py-3"
-              onClick={option.action}
-            >
-              <option.icon className="mr-3 h-5 w-5 text-primary" />
-              <span className="font-semibold">{option.text}</span>
-            </Button>
-          )
-        )}
-      </div>
-    </motion.div>
-  );
-
-  const ChatResponse = ({
-    text,
-    buttonText,
-    href,
-  }: {
-    text: string;
-    buttonText: string;
-    href: string;
-  }) => (
-    <motion.div
-      variants={messageVariants}
-      initial="hidden"
-      animate="visible"
-      exit="hidden"
-    >
-      <div className="flex items-start gap-2 mb-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7"
-          onClick={() => setStep('options')}
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <p className="text-muted-foreground pt-1">{text}</p>
-      </div>
-      <Link href={href} passHref>
-        <Button className="w-full" onClick={() => setIsOpen(false)}>
-          {buttonText}
-        </Button>
-      </Link>
-    </motion.div>
-  );
 
   const handleClose = () => {
     setIsOpen(false);
-    resetChat();
   };
 
   return (
@@ -247,8 +149,8 @@ export default function Chatbot() {
               exit="closed"
               className="w-[340px]"
             >
-              <Card className="shadow-2xl">
-                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-4">
+              <Card className="shadow-2xl h-[500px] flex flex-col">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b">
                   <div className="flex items-center gap-3">
                     <Avatar>
                       <AvatarImage
@@ -271,27 +173,36 @@ export default function Chatbot() {
                     <X className="h-4 w-4" />
                   </Button>
                 </CardHeader>
-                <CardContent className="min-h-[180px] flex flex-col justify-center">
-                  <AnimatePresence mode="wait">
-                    {step === 'greeting' && <ChatGreeting />}
-                    {step === 'userInfo' && <ChatUserInfo />}
-                    {step === 'options' && <ChatOptions />}
-                    {step === 'scheduleInfo' && (
-                      <ChatResponse
-                        text="You can schedule a pickup by filling out the form on our scheduling page. It's quick and easy!"
-                        buttonText="Go to Schedule Page"
-                        href="/schedule-pickup"
-                      />
-                    )}
-                    {step === 'trackInfo' && (
-                      <ChatResponse
-                        text="To track your order, just enter your Order ID or phone number on the tracking page."
-                        buttonText="Go to Tracking Page"
-                        href="/track-order"
-                      />
-                    )}
-                  </AnimatePresence>
+                <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {messages.map((msg) => (
+                        <div key={msg.id} className={cn("flex items-end gap-2", { 'justify-end': msg.sender === 'user' })}>
+                           {msg.sender === 'bot' && (
+                                <Avatar className="h-8 w-8">
+                                    <AvatarImage src="https://picsum.photos/seed/lax/100/100" />
+                                    <AvatarFallback>LX</AvatarFallback>
+                                </Avatar>
+                           )}
+                           <div className={cn("max-w-[75%] rounded-lg px-3 py-2", { 'bg-primary text-primary-foreground': msg.sender === 'user', 'bg-muted': msg.sender === 'bot' })}>
+                                {msg.text && <p className="text-sm">{msg.text}</p>}
+                                {msg.options && (
+                                    <div className="flex flex-col gap-2 mt-2">
+                                        {msg.options.map((opt, i) => (
+                                            <Button key={i} variant="outline" size="sm" className="bg-background" onClick={opt.action}>
+                                                {opt.text}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                )}
+                           </div>
+                        </div>
+                    ))}
+                  <div ref={messagesEndRef} />
                 </CardContent>
+                <div className="p-4 border-t">
+                    <p className="text-center text-xs text-muted-foreground">
+                        Chat by Dr. Dry Wash
+                    </p>
+                </div>
               </Card>
             </motion.div>
           )}
