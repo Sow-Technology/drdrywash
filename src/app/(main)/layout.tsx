@@ -1,4 +1,4 @@
-import { Header, Footer, MobileNav } from '@/components/layout';
+import { Header, Footer, MobileNav, Chatbot } from '@/components/layout';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,6 +7,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <main className="flex-1 pb-20 md:pb-0">{children}</main>
       <Footer />
       <MobileNav />
+      <Chatbot />
     </div>
   );
 }
