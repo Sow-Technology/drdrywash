@@ -34,7 +34,7 @@ type Message = {
   id: string;
   sender: 'bot' | 'user';
   text?: string;
-  options?: { text: string; action: () => void; isLink?: boolean, href?: string }[];
+  options?: { text: string; action: () => void; isLink?: boolean, href?: string, disabled?: boolean }[];
   order?: (typeof mockOrders)[0];
 };
 
@@ -82,6 +82,7 @@ export default function Chatbot() {
   const [stage, setStage] = useState<ConversationStage>('greeting');
   const [userName, setUserName] = useState('');
   const [inputValue, setInputValue] = useState('');
+  const [complaintRaised, setComplaintRaised] = useState(false);
   const isMobile = useIsMobile();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -107,11 +108,20 @@ export default function Chatbot() {
      setStage('greeting');
      setUserName('');
      setInputValue('');
+     setComplaintRaised(false);
      setTimeout(() => {
         addMessage('bot', "Hello! I'm Lax, your personal assistant.");
         setStage('askName');
      }, 300);
      setTimeout(() => addMessage('bot', "What's your name?"), 800);
+  };
+  
+  const getMainOptions = () => {
+    return supportOptions.map(opt => ({
+      ...opt,
+      action: () => handleOptionClick(opt.action, undefined, opt.text),
+      disabled: opt.action === 'raiseComplaint' && complaintRaised,
+    }));
   };
   
   const handleOptionClick = (action?: string, href?: string, text?: string) => {
@@ -138,7 +148,7 @@ export default function Chatbot() {
                 break;
             case 'raiseComplaint':
                 setStage('complaint_askIssue');
-                addMessage('bot', "I'm sorry to hear that you have an issue. Please describe what happened, and I'll create a support ticket for you.");
+                addMessage('bot', "I'm very sorry to hear that you have an issue. Please describe what happened, and I'll create a support ticket for you.");
                 break;
             default:
                 break;
@@ -169,29 +179,21 @@ export default function Chatbot() {
             userOrders.forEach((order, index) => {
                 setTimeout(() => addMessage('bot', undefined, undefined, order), 500 + (index * 200));
             });
-            setTimeout(() => addMessage('bot', `Is there anything else I can help with, ${userName}?`, supportOptions.map(opt => ({
-                ...opt,
-                action: () => handleOptionClick(opt.action, opt.href, opt.text),
-            }))), 1000 + (userOrders.length * 200));
+            setTimeout(() => addMessage('bot', `Is there anything else I can help with, ${userName}?`, getMainOptions()), 1000 + (userOrders.length * 200));
         } else {
             setTimeout(() => addMessage('bot', "I couldn't find any orders for that number."), 500);
             setTimeout(() => {
-                addMessage('bot', `How can I help you today, ${userName}?`, supportOptions.map(opt => ({
-                    ...opt,
-                    action: () => handleOptionClick(opt.action, opt.href, opt.text),
-                })))
+                addMessage('bot', `How can I help you today, ${userName}?`, getMainOptions());
             }, 1000);
         }
         setStage('mainOptions');
     } else if (stage === 'complaint_askIssue') {
         const ticketId = `TICKET-${Date.now().toString().slice(-6)}`;
-        setTimeout(() => addMessage('bot', `Thank you for sharing. I've created a ticket for you with the ID: ${ticketId}.`), 500);
+        setComplaintRaised(true);
+        setTimeout(() => addMessage('bot', `Thank you for sharing, and I sincerely apologize for the inconvenience. I've created a ticket for you with the ID: ${ticketId}.`), 500);
         setTimeout(() => addMessage('bot', "I'm escalating this to our support team. They will get in touch with you shortly."), 1500);
         setTimeout(() => {
-            addMessage('bot', `Is there anything else I can help with, ${userName}?`, supportOptions.map(opt => ({
-                ...opt,
-                action: () => handleOptionClick(opt.action, opt.href, opt.text),
-            })))
+            addMessage('bot', `Is there anything else I can help with, ${userName}?`, getMainOptions());
         }, 2500);
         setStage('mainOptions');
     }
@@ -200,10 +202,7 @@ export default function Chatbot() {
   const handleSkipPhone = () => {
     addMessage('user', "Skip");
     setTimeout(() => {
-        addMessage('bot', `No problem. How can I help you today, ${userName}?`, supportOptions.map(opt => ({
-            ...opt,
-            action: () => handleOptionClick(opt.action, opt.href, opt.text),
-        })))
+        addMessage('bot', `No problem. How can I help you today, ${userName}?`, getMainOptions());
     }, 500);
     setStage('mainOptions');
   };
@@ -278,7 +277,7 @@ export default function Chatbot() {
                                                 <Download className="mr-2 h-3 w-3"/>
                                                 Invoice
                                             </Button>
-                                            <Button variant="outline" size="sm" className="bg-background h-auto py-1" onClick={() => handleOptionClick('raiseComplaint', undefined, 'Raise Complaint')}>
+                                            <Button variant="outline" size="sm" className="bg-background h-auto py-1" onClick={() => handleOptionClick('raiseComplaint', undefined, 'Raise Complaint')} disabled={complaintRaised}>
                                                 Raise Complaint
                                             </Button>
                                         </div>
@@ -287,7 +286,7 @@ export default function Chatbot() {
                                 {msg.options && (
                                     <div className="flex flex-col gap-2 mt-2">
                                         {msg.options.map((opt, i) => (
-                                            <Button key={i} variant="outline" size="sm" className="bg-background" onClick={opt.action}>
+                                            <Button key={i} variant="outline" size="sm" className="bg-background" onClick={opt.action} disabled={opt.disabled}>
                                                 {opt.text}
                                             </Button>
                                         ))}
