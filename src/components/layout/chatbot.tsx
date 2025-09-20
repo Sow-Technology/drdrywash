@@ -60,7 +60,7 @@ export default function Chatbot() {
               <Card className="shadow-2xl">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div className="space-y-1">
-                    <CardTitle>Hello! How can I help?</CardTitle>
+                    <CardTitle>Lax at your service!</CardTitle>
                     <CardDescription>Select an option below to get started.</CardDescription>
                   </div>
                   <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8">
