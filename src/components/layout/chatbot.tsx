@@ -73,6 +73,10 @@ const supportOptions = [
     text: 'Raise a Complaint',
     action: 'raiseComplaint',
   },
+  {
+    text: 'Track my Ticket Status',
+    action: 'trackTicket',
+  },
 ];
 
 
@@ -117,10 +121,14 @@ export default function Chatbot() {
   };
   
   const getMainOptions = () => {
-    return supportOptions.map(opt => ({
-      ...opt,
+    const availableOptions = complaintRaised
+      ? supportOptions.filter(opt => opt.action !== 'raiseComplaint')
+      : supportOptions.filter(opt => opt.action !== 'trackTicket');
+
+    return availableOptions.map(opt => ({
+      text: opt.text,
       action: () => handleOptionClick(opt.action, undefined, opt.text),
-      disabled: opt.action === 'raiseComplaint' && complaintRaised,
+      disabled: opt.action === 'trackTicket', // Temporarily disable until feature is ready
     }));
   };
   
@@ -149,6 +157,9 @@ export default function Chatbot() {
             case 'raiseComplaint':
                 setStage('complaint_askIssue');
                 addMessage('bot', "I'm very sorry to hear that you have an issue. Please describe what happened, and I'll create a support ticket for you.");
+                break;
+            case 'trackTicket':
+                addMessage('bot', "The ticket tracking feature is coming soon! Our team will reach out to you via email or phone for any updates.");
                 break;
             default:
                 break;
