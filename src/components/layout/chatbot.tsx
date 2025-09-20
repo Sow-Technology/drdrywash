@@ -11,6 +11,7 @@ import {
   FileText,
   User,
   Send,
+  Download,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,12 +27,15 @@ import { Input } from '../ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { cn } from '@/lib/utils';
 import { Separator } from '../ui/separator';
+import { mockOrders } from '@/lib/data';
+import { format } from 'date-fns';
 
 type Message = {
   id: string;
   sender: 'bot' | 'user';
   text?: string;
   options?: { text: string; action: () => void; isLink?: boolean, href?: string }[];
+  order?: (typeof mockOrders)[0];
 };
 
 type ConversationStage = 'greeting' | 'askName' | 'askPhone' | 'mainOptions';
@@ -88,8 +92,8 @@ export default function Chatbot() {
     scrollToBottom();
   }, [messages]);
   
-  const addMessage = (sender: 'bot' | 'user', text?: string, options?: Message['options']) => {
-    const newMessage: Message = { id: Date.now().toString(), sender, text, options };
+  const addMessage = (sender: 'bot' | 'user', text?: string, options?: Message['options'], order?: Message['order']) => {
+    const newMessage: Message = { id: Date.now().toString(), sender, text, options, order };
     setMessages(prev => [...prev, newMessage]);
   };
 
@@ -139,25 +143,38 @@ export default function Chatbot() {
     if (!inputValue.trim()) return;
 
     addMessage('user', inputValue);
+    const currentInput = inputValue;
+    setInputValue('');
 
     if (stage === 'askName') {
-        setUserName(inputValue);
-        setTimeout(() => addMessage('bot', `Nice to meet you, ${inputValue}!`), 500);
+        setUserName(currentInput);
+        setTimeout(() => addMessage('bot', `Nice to meet you, ${currentInput}!`), 500);
         setTimeout(() => addMessage('bot', `What's your phone number? (Optional)`), 1000);
         setStage('askPhone');
     } else if (stage === 'askPhone') {
-        // Here you could save the phone number
-        setTimeout(() => addMessage('bot', "Thanks!"), 500);
-        setTimeout(() => {
-            addMessage('bot', `How can I help you today, ${userName}?`, supportOptions.map(opt => ({
+        const userPhone = currentInput.replace(/[^\d]/g, '');
+        const userOrders = mockOrders.filter(o => o.phoneNumber.replace(/[^\d]/g, '') === userPhone);
+
+        if (userOrders.length > 0) {
+            setTimeout(() => addMessage('bot', "Thanks! Here's what I found for your number:"), 500);
+            userOrders.forEach((order, index) => {
+                setTimeout(() => addMessage('bot', undefined, undefined, order), 500 + (index * 200));
+            });
+            setTimeout(() => addMessage('bot', `Is there anything else I can help with, ${userName}?`, supportOptions.map(opt => ({
                 ...opt,
                 action: () => handleOptionClick(opt.action, opt.href, opt.text),
-            })))
-        }, 1000);
+            }))), 1000 + (userOrders.length * 200));
+        } else {
+            setTimeout(() => addMessage('bot', "I couldn't find any orders for that number."), 500);
+            setTimeout(() => {
+                addMessage('bot', `How can I help you today, ${userName}?`, supportOptions.map(opt => ({
+                    ...opt,
+                    action: () => handleOptionClick(opt.action, opt.href, opt.text),
+                })))
+            }, 1000);
+        }
         setStage('mainOptions');
     }
-
-    setInputValue('');
   }
 
   const handleSkipPhone = () => {
@@ -228,8 +245,27 @@ export default function Chatbot() {
                                     <AvatarFallback>LX</AvatarFallback>
                                 </Avatar>
                            )}
-                           <div className={cn("max-w-[75%] rounded-lg px-3 py-2", { 'bg-primary text-primary-foreground': msg.sender === 'user', 'bg-muted': msg.sender === 'bot' })}>
+                           <div className={cn("max-w-[85%] rounded-lg px-3 py-2", { 'bg-primary text-primary-foreground': msg.sender === 'user', 'bg-muted': msg.sender === 'bot' })}>
                                 {msg.text && <p className="text-sm">{msg.text}</p>}
+                                {msg.order && (
+                                    <div className='text-sm space-y-2'>
+                                        <p>
+                                            Your order <span className='font-bold'>#{msg.order.id}</span> is currently <span className='font-bold'>{msg.order.status}</span>.
+                                            {msg.order.status === 'Delivered' && ` on ${format(msg.order.deliveryTime, 'PPP')}`}
+                                        </p>
+                                        <div className='flex gap-2 mt-2'>
+                                            <Button variant="outline" size="sm" className="bg-background h-auto py-1">
+                                                <Download className="mr-2 h-3 w-3"/>
+                                                Invoice
+                                            </Button>
+                                            <Button variant="outline" size="sm" className="bg-background h-auto py-1" asChild>
+                                                <Link href="/contact">
+                                                    Raise Complaint
+                                                </Link>
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
                                 {msg.options && (
                                     <div className="flex flex-col gap-2 mt-2">
                                         {msg.options.map((opt, i) => (
