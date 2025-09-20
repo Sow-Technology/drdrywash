@@ -38,7 +38,13 @@ type Message = {
   order?: (typeof mockOrders)[0];
 };
 
-type ConversationStage = 'greeting' | 'askName' | 'askPhone' | 'mainOptions';
+type ConversationStage =
+  | 'greeting'
+  | 'askName'
+  | 'askPhone'
+  | 'mainOptions'
+  | 'complaint_askIssue'
+  | 'complaint_confirm';
 
 const chatbotVariants = {
   closed: { opacity: 0, y: 20, scale: 0.95 },
@@ -65,8 +71,7 @@ const supportOptions = [
   },
   {
     text: 'Raise a Complaint',
-    isLink: true,
-    href: '/contact',
+    action: 'raiseComplaint',
   },
 ];
 
@@ -131,6 +136,10 @@ export default function Chatbot() {
                     { text: 'Go to Tracking Page', action: () => { window.location.href = "/track-order" } }
                 ]);
                 break;
+            case 'raiseComplaint':
+                setStage('complaint_askIssue');
+                addMessage('bot', "I'm sorry to hear that you have an issue. Please describe what happened, and I'll create a support ticket for you.");
+                break;
             default:
                 break;
         }
@@ -173,6 +182,17 @@ export default function Chatbot() {
                 })))
             }, 1000);
         }
+        setStage('mainOptions');
+    } else if (stage === 'complaint_askIssue') {
+        const ticketId = `TICKET-${Date.now().toString().slice(-6)}`;
+        setTimeout(() => addMessage('bot', `Thank you for sharing. I've created a ticket for you with the ID: ${ticketId}.`), 500);
+        setTimeout(() => addMessage('bot', "I'm escalating this to our support team. They will get in touch with you shortly."), 1500);
+        setTimeout(() => {
+            addMessage('bot', `Is there anything else I can help with, ${userName}?`, supportOptions.map(opt => ({
+                ...opt,
+                action: () => handleOptionClick(opt.action, opt.href, opt.text),
+            })))
+        }, 2500);
         setStage('mainOptions');
     }
   }
@@ -258,10 +278,8 @@ export default function Chatbot() {
                                                 <Download className="mr-2 h-3 w-3"/>
                                                 Invoice
                                             </Button>
-                                            <Button variant="outline" size="sm" className="bg-background h-auto py-1" asChild>
-                                                <Link href="/contact">
-                                                    Raise Complaint
-                                                </Link>
+                                            <Button variant="outline" size="sm" className="bg-background h-auto py-1" onClick={() => handleOptionClick('raiseComplaint', undefined, 'Raise Complaint')}>
+                                                Raise Complaint
                                             </Button>
                                         </div>
                                     </div>
@@ -281,12 +299,16 @@ export default function Chatbot() {
                   <div ref={messagesEndRef} />
                 </CardContent>
                 <CardFooter className="p-2 border-t">
-                    {(stage === 'askName' || stage === 'askPhone') ? (
+                    {(stage === 'askName' || stage === 'askPhone' || stage === 'complaint_askIssue') ? (
                         <form onSubmit={handleUserInput} className="w-full flex items-center gap-2">
                             <Input 
                                 value={inputValue}
                                 onChange={e => setInputValue(e.target.value)}
-                                placeholder={stage === 'askName' ? 'Your name...' : 'Your phone number...'}
+                                placeholder={
+                                    stage === 'askName' ? 'Your name...' :
+                                    stage === 'askPhone' ? 'Your phone number...' :
+                                    'Describe your issue...'
+                                }
                                 className="flex-1"
                                 autoFocus
                             />
