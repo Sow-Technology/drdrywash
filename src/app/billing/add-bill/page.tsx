@@ -54,12 +54,13 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { allProductCategories, Product } from '@/lib/all-products';
+import { allProductCategoriesWithServices, ProductWithServices } from '@/lib/all-products-with-services';
 import { Logo } from '@/components/shared/logo';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const lineItemSchema = z.object({
   product: z.string().min(1, 'Product is required.'),
+  service: z.string().min(1, 'Service is required.'),
   quantity: z.coerce.number().min(1, 'Quantity must be at least 1.'),
   price: z.coerce.number().min(0, 'Price cannot be negative.'),
 });
@@ -81,7 +82,7 @@ type AddBillFormValues = z.infer<typeof addBillSchema>;
 export default function AddBillPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
-  const [activeCategory, setActiveCategory] = React.useState(allProductCategories[0].id);
+  const [activeCategory, setActiveCategory] = React.useState(allProductCategoriesWithServices[0].id);
   const defaultDueDate = addDays(new Date(), 30);
 
   const form = useForm<AddBillFormValues>({
@@ -93,7 +94,7 @@ export default function AddBillPage() {
       customerName: '',
       customerPhone: '',
       customerAddress: '',
-      lineItems: [{ product: '', quantity: 1, price: 0 }],
+      lineItems: [{ product: '', service: '', quantity: 1, price: 0 }],
       paymentMethod: 'Cash',
       paymentInstructions: 'Please make the payment upon delivery.',
     },
@@ -114,18 +115,29 @@ export default function AddBillPage() {
   const total = subtotal + taxes;
 
   const currentProducts = React.useMemo(() => {
-    return allProductCategories.find(cat => cat.id === activeCategory)?.products || [];
+    return allProductCategoriesWithServices.find(cat => cat.id === activeCategory)?.products || [];
   }, [activeCategory]);
-
+  
   const handleProductChange = (index: number, productName: string) => {
-    const product = currentProducts.find(p => p.product === productName);
-    if (product) {
-        update(index, {
-            ...lineItems[index],
-            product: product.product,
-            price: product.price,
-        });
-    }
+    update(index, {
+        ...lineItems[index],
+        product: productName,
+        service: '',
+        price: 0,
+    });
+  };
+
+  const handleServiceChange = (index: number, serviceName: string) => {
+      const productName = lineItems[index].product;
+      const product = currentProducts.find(p => p.name === productName);
+      const service = product?.services.find(s => s.name === serviceName);
+      if (service) {
+          update(index, {
+              ...lineItems[index],
+              service: serviceName,
+              price: service.price,
+          });
+      }
   };
   
   async function onSubmit(data: AddBillFormValues) {
@@ -145,15 +157,15 @@ export default function AddBillPage() {
             customerName: '',
             customerPhone: '',
             customerAddress: '',
-            lineItems: [{ product: '', quantity: 1, price: 0 }],
+            lineItems: [{ product: '', service: '', quantity: 1, price: 0 }],
             paymentMethod: 'Cash',
             paymentInstructions: 'Please make the payment upon delivery.'
         });
     }, 1500);
   }
 
-  const topRowCategories = allProductCategories.slice(0, 5);
-  const bottomRowCategories = allProductCategories.slice(5);
+  const topRowCategories = allProductCategoriesWithServices.slice(0, 5);
+  const bottomRowCategories = allProductCategoriesWithServices.slice(5);
 
   return (
     <Form {...form}>
@@ -330,7 +342,8 @@ export default function AddBillPage() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[40%]">Product / Service</TableHead>
+                                <TableHead className="w-[30%]">Product</TableHead>
+                                <TableHead className="w-[30%]">Service</TableHead>
                                 <TableHead>Quantity</TableHead>
                                 <TableHead>Price</TableHead>
                                 <TableHead className="text-right">Total</TableHead>
@@ -338,7 +351,9 @@ export default function AddBillPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {fields.map((field, index) => (
+                            {fields.map((field, index) => {
+                                const selectedProduct = currentProducts.find(p => p.name === lineItems[index]?.product);
+                                return (
                                 <TableRow key={field.id}>
                                     <TableCell>
                                         <FormField
@@ -346,14 +361,34 @@ export default function AddBillPage() {
                                             name={`lineItems.${index}.product`}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <Select onValueChange={(value) => { field.onChange(value); handleProductChange(index, value); }} defaultValue={field.value}>
+                                                    <Select onValueChange={(value) => { field.onChange(value); handleProductChange(index, value); }} value={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger>
                                                                 <SelectValue placeholder="Select a product" />
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
-                                                            {currentProducts.map(p => <SelectItem key={p.product} value={p.product}>{p.product}</SelectItem>)}
+                                                            {currentProducts.map(p => <SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>)}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                         <FormField
+                                            control={form.control}
+                                            name={`lineItems.${index}.service`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <Select onValueChange={(value) => { field.onChange(value); handleServiceChange(index, value); }} value={field.value} disabled={!selectedProduct}>
+                                                        <FormControl>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Select a service" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            {selectedProduct?.services.map(s => <SelectItem key={s.name} value={s.name}>{s.name}</SelectItem>)}
                                                         </SelectContent>
                                                     </Select>
                                                 </FormItem>
@@ -395,7 +430,7 @@ export default function AddBillPage() {
                                         </Button>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )})}
                         </TableBody>
                     </Table>
                     <Button
@@ -403,7 +438,7 @@ export default function AddBillPage() {
                         variant="outline"
                         size="sm"
                         className="mt-4"
-                        onClick={() => append({ product: '', quantity: 1, price: 0 })}
+                        onClick={() => append({ product: '', service: '', quantity: 1, price: 0 })}
                     >
                         <PlusCircle className="mr-2 h-4 w-4" /> Add Item
                     </Button>
