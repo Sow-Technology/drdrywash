@@ -24,7 +24,7 @@ export default function KpiCard({
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{amount}</div>
-        <p className="text-xs text-muted-foreground">{description}</p>
+        <p className="text-xs text-muted-foreground truncate" title={description}>{description}</p>
       </CardContent>
     </Card>
   );

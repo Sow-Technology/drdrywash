@@ -23,10 +23,10 @@ import {
 import { mockOrders } from '@/lib/data';
 
 export function RecentOrders() {
-  const recentOrders = mockOrders.slice(0, 5);
+  const recentOrders = mockOrders.slice(0, 7);
 
   return (
-    <Card className="xl:col-span-2">
+    <Card className="h-full">
       <CardHeader className="flex flex-row items-center">
         <div className="grid gap-2">
           <CardTitle>Recent Orders</CardTitle>
@@ -35,7 +35,7 @@ export function RecentOrders() {
           </CardDescription>
         </div>
         <Button asChild size="sm" className="ml-auto gap-1">
-          <Link href="#">
+          <Link href="/billing/orders">
             View All
             <ArrowUpRight className="h-4 w-4" />
           </Link>
@@ -46,7 +46,7 @@ export function RecentOrders() {
           <TableHeader>
             <TableRow>
               <TableHead>Customer</TableHead>
-              <TableHead className="hidden xl:table-column">Status</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
           </TableHeader>
@@ -56,10 +56,10 @@ export function RecentOrders() {
                 <TableCell>
                   <div className="font-medium">{order.customerName}</div>
                   <div className="hidden text-sm text-muted-foreground md:inline">
-                    {order.phoneNumber}
+                    {order.id}
                   </div>
                 </TableCell>
-                <TableCell className="hidden xl:table-column">
+                <TableCell>
                   <Badge className="text-xs" variant={order.status === 'Delivered' ? 'default' : 'secondary'}>
                     {order.status}
                   </Badge>

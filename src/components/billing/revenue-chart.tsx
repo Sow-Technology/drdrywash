@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import {
   startOfToday,
   startOfWeek,
@@ -10,6 +10,8 @@ import {
   eachWeekOfInterval,
   eachMonthOfInterval,
   format,
+  subDays,
+  subMonths,
 } from 'date-fns';
 
 import {
@@ -38,7 +40,7 @@ type TimeFrame = 'daily' | 'weekly' | 'monthly';
 const chartConfig = {
   revenue: {
     label: 'Revenue',
-    color: 'hsl(var(--primary))',
+    color: 'hsl(var(--chart-1))',
   },
 };
 
@@ -55,7 +57,7 @@ export default function RevenueChart({ orders }: { orders: Order[] }) {
     switch (timeFrame) {
       case 'daily':
         interval = {
-          start: startOfWeek(today),
+          start: subDays(today, 6),
           end: today,
         };
         dataGrouper = eachDayOfInterval(interval);
@@ -63,7 +65,7 @@ export default function RevenueChart({ orders }: { orders: Order[] }) {
         break;
       case 'weekly':
         interval = {
-          start: startOfMonth(today),
+          start: subMonths(today, 2),
           end: today,
         };
         dataGrouper = eachWeekOfInterval(interval, { weekStartsOn: 1 });
@@ -106,12 +108,12 @@ export default function RevenueChart({ orders }: { orders: Order[] }) {
   const totalRevenue = chartData.reduce((acc, item) => acc + item.revenue, 0);
 
   return (
-    <Card className="xl:col-span-1">
-      <CardHeader className="items-center sm:flex-row gap-2">
+    <Card className="h-full">
+      <CardHeader className="items-start sm:flex-row gap-2">
         <div className="grid flex-1 gap-2">
           <CardTitle>Revenue Analytics</CardTitle>
           <CardDescription>
-            Showing total revenue for the selected period
+            Showing total revenue for the selected period. Total: ₹{totalRevenue.toLocaleString()}
           </CardDescription>
         </div>
         <Select value={timeFrame} onValueChange={(value) => setTimeFrame(value as TimeFrame)}>
@@ -119,29 +121,23 @@ export default function RevenueChart({ orders }: { orders: Order[] }) {
             <SelectValue placeholder="Select" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="daily">Daily</SelectItem>
-            <SelectItem value="weekly">Weekly</SelectItem>
-            <SelectItem value="monthly">Monthly</SelectItem>
+            <SelectItem value="daily">Last 7 Days</SelectItem>
+            <SelectItem value="weekly">Last 3 Months (Weekly)</SelectItem>
+            <SelectItem value="monthly">This Year (Monthly)</SelectItem>
           </SelectContent>
         </Select>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-                Total revenue this period: ₹{totalRevenue.toLocaleString()}
-            </div>
-          </div>
-        </div>
-
         <div className="h-[300px] mt-4">
           <ChartContainer config={chartConfig}>
             <BarChart
               accessibilityLayer
               data={chartData}
               margin={{
-                left: 12,
-                right: 12,
+                top: 5,
+                right: 5,
+                left: -20,
+                bottom: 5,
               }}
             >
               <CartesianGrid vertical={false} />
@@ -152,9 +148,14 @@ export default function RevenueChart({ orders }: { orders: Order[] }) {
                 tickMargin={8}
                 tickFormatter={(value) => value.slice(0, 3)}
               />
+              <YAxis
+                tickFormatter={(value) => `₹${Number(value) / 1000}k`}
+                tickLine={false}
+                axisLine={false}
+              />
               <ChartTooltip
                 cursor={false}
-                content={<ChartTooltipContent indicator="dot" />}
+                content={<ChartTooltipContent indicator="dot" formatter={(value) => `₹${value.toLocaleString()}`} />}
               />
               <Bar dataKey="revenue" fill="var(--color-revenue)" radius={4} />
             </BarChart>
