@@ -10,6 +10,7 @@ import {
   ShoppingCart,
   Users,
   PanelLeft,
+  PlusCircle,
 } from 'lucide-react';
 import {
   Sheet,
@@ -92,6 +93,16 @@ export default function BillingLayout({
               </nav>
             </SheetContent>
           </Sheet>
+           <div className="ml-auto flex items-center gap-2">
+             <Button size="sm" className="h-8 gap-1" asChild>
+                <Link href="/schedule-pickup">
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-rap">
+                        Add Order
+                    </span>
+                </Link>
+            </Button>
+          </div>
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0">
           {children}
