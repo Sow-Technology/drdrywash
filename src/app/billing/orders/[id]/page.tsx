@@ -47,61 +47,104 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import {
+  mockOrders,
+  orderStatuses,
+  mensPricing,
+  womensPricing,
+  washAndFoldPricing,
+} from '@/lib/data';
+import type {
+  Order,
+  OrderStatus,
+  PaymentMethod,
+  PaymentStatus,
+} from '@/lib/types';
+import { DropdownMenuLabel } from '@radix-ui/react-dropdown-menu';
 
-import { mockOrders, orderStatuses, mensPricing, womensPricing, washAndFoldPricing } from '@/lib/data';
-import type { Order, OrderStatus, PaymentMethod, PaymentStatus } from '@/lib/types';
+function OrderClientPage({ initialOrder }: { initialOrder: Order }) {
+  const [order, setOrder] = React.useState<Order>(initialOrder);
 
-const allPricing = [
-    ...mensPricing.map(p => ({ ...p, category: 'Men' })),
-    ...womensPricing.map(p => ({ ...p, category: 'Women' })),
-    ...washAndFoldPricing.map(p => ({ ...p, category: 'Wash & Fold' })),
-];
-
-export default function OrderDetailPage({ params }: { params: { id: string } }) {
-  const [order, setOrder] = React.useState<Order | undefined>(
-    mockOrders.find((o) => o.id.toUpperCase() === params.id.toUpperCase())
+  const [orderItems, setOrderItems] = React.useState<any[]>(
+    order.items.map((item) => ({
+      ...item,
+      product: item.name,
+      price: order.totalAmount / item.quantity, // This is a simplification
+    }))
   );
-  
-  const [orderItems, setOrderItems] = React.useState<any[]>([]);
 
   const calculateSubtotal = () => {
-    return orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    return orderItems.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
   };
-
-  if (!order) {
-    return notFound();
-  }
 
   const handleStatusChange = (newStatus: OrderStatus) => {
     setOrder({ ...order, status: newStatus });
   };
-  
-  const handlePaymentChange = (newPaymentStatus: PaymentStatus, newPaymentMethod?: PaymentMethod) => {
-      setOrder({ ...order, paymentStatus: newPaymentStatus, paymentMethod: newPaymentMethod || order.paymentMethod });
+
+  const handlePaymentChange = (
+    newPaymentStatus: PaymentStatus,
+    newPaymentMethod?: PaymentMethod
+  ) => {
+    setOrder({
+      ...order,
+      paymentStatus: newPaymentStatus,
+      paymentMethod: newPaymentMethod || order.paymentMethod,
+    });
   };
-  
-  const handleAddItem = (productName: string, service: string, price: string) => {
+
+  const handleAddItem = (
+    productName: string,
+    service: string,
+    price: string
+  ) => {
     const priceValue = parseFloat(price.split('-')[0]); // Take the lower bound of price ranges
-    const existingItem = orderItems.find(item => item.product === productName && item.service === service);
-    if(existingItem) {
-        setOrderItems(orderItems.map(item => item.product === productName && item.service === service ? { ...item, quantity: item.quantity + 1 } : item));
+    const existingItem = orderItems.find(
+      (item) => item.product === productName && item.service === service
+    );
+    if (existingItem) {
+      setOrderItems(
+        orderItems.map((item) =>
+          item.product === productName && item.service === service
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
+      );
     } else {
-        setOrderItems([...orderItems, { product: productName, service, price: priceValue, quantity: 1 }]);
+      setOrderItems([
+        ...orderItems,
+        { product: productName, service, price: priceValue, quantity: 1 },
+      ]);
     }
   };
 
-  const handleQuantityChange = (productName: string, service: string, quantity: number) => {
+  const handleQuantityChange = (
+    productName: string,
+    service: string,
+    quantity: number
+  ) => {
     if (quantity <= 0) {
-        setOrderItems(orderItems.filter(item => !(item.product === productName && item.service === service)));
+      setOrderItems(
+        orderItems.filter(
+          (item) => !(item.product === productName && item.service === service)
+        )
+      );
     } else {
-        setOrderItems(orderItems.map(item => item.product === productName && item.service === service ? { ...item, quantity } : item));
+      setOrderItems(
+        orderItems.map((item) =>
+          item.product === productName && item.service === service
+            ? { ...item, quantity }
+            : item
+        )
+      );
     }
   };
 
   const subtotal = calculateSubtotal();
   const taxes = subtotal * 0.18; // 18% GST
   const total = subtotal + taxes;
-
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
@@ -131,26 +174,46 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Order Items</CardTitle>
-                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button size="sm" variant="outline">Add Item</Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuLabel>Men</DropdownMenuLabel>
-                        {mensPricing.map(item => (
-                            <DropdownMenuItem key={item.product} onSelect={() => handleAddItem(item.product, 'Dry Clean', item.prices.dryClean)}>
-                                {item.product} (Dry Clean)
-                            </DropdownMenuItem>
-                        ))}
-                         <DropdownMenuSeparator />
-                        <DropdownMenuLabel>Women</DropdownMenuLabel>
-                        {womensPricing.map(item => (
-                            <DropdownMenuItem key={item.product} onSelect={() => handleAddItem(item.product, 'Dry Clean', item.prices.dryClean)}>
-                                {item.product} (Dry Clean)
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                 </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline">
+                      Add Item
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Men</DropdownMenuLabel>
+                    {mensPricing.map((item) => (
+                      <DropdownMenuItem
+                        key={item.product}
+                        onSelect={() =>
+                          handleAddItem(
+                            item.product,
+                            'Dry Clean',
+                            item.prices.dryClean
+                          )
+                        }
+                      >
+                        {item.product} (Dry Clean)
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel>Women</DropdownMenuLabel>
+                    {womensPricing.map((item) => (
+                      <DropdownMenuItem
+                        key={item.product}
+                        onSelect={() =>
+                          handleAddItem(
+                            item.product,
+                            'Dry Clean',
+                            item.prices.dryClean
+                          )
+                        }
+                      >
+                        {item.product} (Dry Clean)
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -158,47 +221,57 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                     <TableRow>
                       <TableHead>Product</TableHead>
                       <TableHead>Service</TableHead>
-                      <TableHead className='w-[100px]'>Quantity</TableHead>
+                      <TableHead className="w-[100px]">Quantity</TableHead>
                       <TableHead className="text-right">Price</TableHead>
                       <TableHead className="text-right">Total</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {orderItems.map((item, index) => (
-                        <TableRow key={index}>
-                            <TableCell>{item.product}</TableCell>
-                            <TableCell>{item.service}</TableCell>
-                            <TableCell>
-                                <Input 
-                                    type="number" 
-                                    value={item.quantity} 
-                                    onChange={(e) => handleQuantityChange(item.product, item.service, parseInt(e.target.value))} 
-                                    className="w-16 h-8"
-                                />
-                            </TableCell>
-                            <TableCell className="text-right">₹{item.price.toFixed(2)}</TableCell>
-                            <TableCell className="text-right">₹{(item.price * item.quantity).toFixed(2)}</TableCell>
-                        </TableRow>
+                      <TableRow key={index}>
+                        <TableCell>{item.product}</TableCell>
+                        <TableCell>{item.service}</TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              handleQuantityChange(
+                                item.product,
+                                item.service,
+                                parseInt(e.target.value)
+                              )
+                            }
+                            className="w-16 h-8"
+                          />
+                        </TableCell>
+                        <TableCell className="text-right">
+                          ₹{item.price.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          ₹{(item.price * item.quantity).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </CardContent>
-               <CardFooter className="justify-center border-t p-4">
-                 <div className="ml-auto w-full max-w-sm space-y-2 text-sm">
-                    <div className="flex justify-between">
-                        <span>Subtotal</span>
-                        <span>₹{subtotal.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span>Taxes (18% GST)</span>
-                        <span>₹{taxes.toFixed(2)}</span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between font-semibold text-base">
-                        <span>Total</span>
-                        <span>₹{total.toFixed(2)}</span>
-                    </div>
-                 </div>
+              <CardFooter className="justify-center border-t p-4">
+                <div className="ml-auto w-full max-w-sm space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>Subtotal</span>
+                    <span>₹{subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Taxes (18% GST)</span>
+                    <span>₹{taxes.toFixed(2)}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between font-semibold text-base">
+                    <span>Total</span>
+                    <span>₹{total.toFixed(2)}</span>
+                  </div>
+                </div>
               </CardFooter>
             </Card>
           </div>
@@ -208,15 +281,22 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 <CardTitle>Order Status</CardTitle>
               </CardHeader>
               <CardContent>
-                <Select value={order.status} onValueChange={(value) => handleStatusChange(value as OrderStatus)}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {orderStatuses.map(status => (
-                            <SelectItem key={status} value={status}>{status}</SelectItem>
-                        ))}
-                    </SelectContent>
+                <Select
+                  value={order.status}
+                  onValueChange={(value) =>
+                    handleStatusChange(value as OrderStatus)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {orderStatuses.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </CardContent>
             </Card>
@@ -246,7 +326,9 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                     <div className="flex items-center justify-between">
                       <dt className="text-muted-foreground">Phone</dt>
                       <dd>
-                        <a href={`tel:${order.phoneNumber}`}>{order.phoneNumber}</a>
+                        <a href={`tel:${order.phoneNumber}`}>
+                          {order.phoneNumber}
+                        </a>
                       </dd>
                     </div>
                   </dl>
@@ -262,11 +344,19 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                       </dt>
                       <dd>{order.paymentMethod}</dd>
                     </div>
-                     <div className="flex items-center justify-between">
-                        <dt>Status</dt>
-                        <dd>
-                             <Badge variant={order.paymentStatus === 'Paid' ? 'default' : 'destructive'}>{order.paymentStatus}</Badge>
-                        </dd>
+                    <div className="flex items-center justify-between">
+                      <dt>Status</dt>
+                      <dd>
+                        <Badge
+                          variant={
+                            order.paymentStatus === 'Paid'
+                              ? 'default'
+                              : 'destructive'
+                          }
+                        >
+                          {order.paymentStatus}
+                        </Badge>
+                      </dd>
                     </div>
                     <div className="flex items-center justify-between font-semibold">
                       <dt className="text-muted-foreground">Total</dt>
@@ -275,54 +365,82 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                   </dl>
                   {order.paymentStatus === 'Pending' && (
                     <>
-                    <Separator className="my-2" />
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className='w-full'>Update Payment</Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem onSelect={() => handlePaymentChange('Paid', 'Cash')}>Mark as Paid (Cash)</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => handlePaymentChange('Paid', 'Card')}>Mark as Paid (Card)</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => handlePaymentChange('Paid', 'Online')}>Mark as Paid (Online)</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                      <Separator className="my-2" />
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" className="w-full">
+                            Update Payment
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem
+                            onSelect={() => handlePaymentChange('Paid', 'Cash')}
+                          >
+                            Mark as Paid (Cash)
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onSelect={() => handlePaymentChange('Paid', 'Card')}
+                          >
+                            Mark as Paid (Card)
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onSelect={() =>
+                              handlePaymentChange('Paid', 'Online')
+                            }
+                          >
+                            Mark as Paid (Online)
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </>
                   )}
                   {order.paymentStatus === 'Paid' && (
                     <>
-                    <Separator className="my-2" />
-                    <Button variant="outline" className='w-full'>
+                      <Separator className="my-2" />
+                      <Button variant="outline" className="w-full">
                         <File className="mr-2 h-4 w-4" />
                         Download Invoice
-                    </Button>
+                      </Button>
                     </>
                   )}
                 </div>
-                 <Separator className="my-4" />
-                 <div className="grid gap-3">
-                    <div className="font-semibold">Schedule</div>
-                     <dl className="grid gap-3">
-                        <div className="flex items-center justify-between">
-                            <dt className="text-muted-foreground">Pickup</dt>
-                            <dd>{format(new Date(order.pickupTime), 'PPp')}</dd>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <dt className="text-muted-foreground">Delivery</dt>
-                            <dd>{format(new Date(order.deliveryTime), 'PPp')}</dd>
-                        </div>
-                    </dl>
-                 </div>
+                <Separator className="my-4" />
+                <div className="grid gap-3">
+                  <div className="font-semibold">Schedule</div>
+                  <dl className="grid gap-3">
+                    <div className="flex items-center justify-between">
+                      <dt className="text-muted-foreground">Pickup</dt>
+                      <dd>{format(new Date(order.pickupTime), 'PPp')}</dd>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <dt className="text-muted-foreground">Delivery</dt>
+                      <dd>{format(new Date(order.deliveryTime), 'PPp')}</dd>
+                    </div>
+                  </dl>
+                </div>
               </CardContent>
             </Card>
           </div>
         </div>
-         <div className="flex items-center justify-center gap-2 md:hidden">
-            <Button variant="outline" size="sm">
-              Discard
-            </Button>
-            <Button size="sm">Save</Button>
-          </div>
+        <div className="flex items-center justify-center gap-2 md:hidden">
+          <Button variant="outline" size="sm">
+            Discard
+          </Button>
+          <Button size="sm">Save</Button>
+        </div>
       </div>
     </main>
   );
+}
+
+export default function ServerPage({ params }: { params: { id: string } }) {
+  const order = mockOrders.find(
+    (o) => o.id.toUpperCase() === params.id.toUpperCase()
+  );
+
+  if (!order) {
+    notFound();
+  }
+
+  return <OrderClientPage initialOrder={order} />;
 }
