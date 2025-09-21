@@ -28,8 +28,7 @@ import { Logo } from '@/components/shared/logo';
 const navLinks = [
   { href: '/billing/dashboard', label: 'Dashboard', icon: Home },
   { href: '/billing/orders', label: 'Orders', icon: ShoppingCart, badge: '6' },
-  { href: '#', label: 'Customers', icon: Users },
-  { href: '#', label: 'User', icon: User },
+  { href: '/billing/user', label: 'User', icon: User },
 ];
 
 export default function BillingLayout({
