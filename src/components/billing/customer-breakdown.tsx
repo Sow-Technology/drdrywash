@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Pie, PieChart, Cell, Tooltip } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 import {
   Card,
   CardContent,
@@ -14,109 +14,102 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Order } from '@/lib/types';
-import { Users } from 'lucide-react';
 
-const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))'];
+const chartConfig = {
+  revenue: {
+    label: 'Revenue',
+    color: 'hsl(var(--chart-1))',
+  },
+};
 
 export function CustomerBreakdown({ orders }: { orders: Order[] }) {
-
   const customerData = React.useMemo(() => {
-    const customerOrderCounts: { [key: string]: number } = {};
+    const customerOrders: { [key: string]: Order[] } = {};
     orders.forEach(order => {
-        customerOrderCounts[order.customerName] = (customerOrderCounts[order.customerName] || 0) + 1;
+        if (!customerOrders[order.customerName]) {
+            customerOrders[order.customerName] = [];
+        }
+        customerOrders[order.customerName].push(order);
     });
 
-    let newCustomers = 0;
-    let existingCustomers = 0;
-    Object.values(customerOrderCounts).forEach(count => {
-        if (count === 1) {
-            newCustomers++;
+    const segments = {
+        new: { revenue: 0, count: 0 },
+        existing: { revenue: 0, count: 0 },
+    };
+
+    Object.values(customerOrders).forEach(customerOrderList => {
+        if (customerOrderList.length === 1) {
+            segments.new.count++;
+            segments.new.revenue += customerOrderList[0].totalAmount;
         } else {
-            existingCustomers++;
+            segments.existing.count++;
+            segments.existing.revenue += customerOrderList.reduce((sum, order) => sum + order.totalAmount, 0);
         }
     });
 
     return [
-      { name: 'New Customers', value: newCustomers, fill: COLORS[0] },
-      { name: 'Existing Customers', value: existingCustomers, fill: COLORS[1] },
+      { name: 'New Customers', revenue: segments.new.revenue, count: segments.new.count },
+      { name: 'Existing Customers', revenue: segments.existing.revenue, count: segments.existing.count },
     ];
   }, [orders]);
-
-  const totalCustomers = customerData.reduce((sum, item) => sum + item.value, 0);
 
   return (
     <Card className="h-full">
       <CardHeader>
         <CardTitle>Customer Segmentation</CardTitle>
         <CardDescription>
-          A breakdown of new vs. returning customers.
+          Revenue and count of new vs. returning customers.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-[200px] flex items-center justify-center">
-          <ChartContainer config={{}} className="w-full h-full">
-            <PieChart>
+        <div className="h-[200px]">
+          <ChartContainer config={chartConfig} className="w-full h-full">
+            <BarChart
+              accessibilityLayer
+              data={customerData}
+              layout="vertical"
+              margin={{
+                left: 10,
+                right: 10,
+              }}
+            >
+              <CartesianGrid horizontal={false} />
+              <YAxis
+                dataKey="name"
+                type="category"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                className="text-xs"
+                width={110}
+              />
+              <XAxis dataKey="revenue" type="number" hide />
               <Tooltip
+                cursor={{ fill: 'hsl(var(--muted))' }}
                 content={<ChartTooltipContent 
-                    formatter={(value) => `${value} customers`}
-                    hideLabel 
+                    formatter={(value, name, props) => {
+                        if (name === 'revenue' && props.payload) {
+                           return (
+                                <div>
+                                    <p>Revenue: ₹{Number(value).toLocaleString()}</p>
+                                    <p>Customers: {props.payload.count}</p>
+                                </div>
+                           )
+                        }
+                        return value;
+                    }}
+                    labelFormatter={() => ''}
+                    indicator="dot"
                 />}
               />
-              <Pie
-                data={customerData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                innerRadius={50}
-                paddingAngle={2}
-                labelLine={false}
-                 label={({
-                    cx,
-                    cy,
-                    midAngle,
-                    innerRadius,
-                    outerRadius,
-                    percent,
-                }) => {
-                    const RADIAN = Math.PI / 180;
-                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-                    return (
-                        <text
-                            x={x}
-                            y={y}
-                            fill="white"
-                            textAnchor={x > cx ? 'start' : 'end'}
-                            dominantBaseline="central"
-                            className="text-xs font-bold"
-                        >
-                            {`${(percent * 100).toFixed(0)}%`}
-                        </text>
-                    );
-                }}
-              >
-                {customerData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
-                ))}
-              </Pie>
-              <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-lg font-bold fill-foreground flex items-center">
-                  <tspan>{totalCustomers}</tspan>
-              </text>
-            </PieChart>
+              <Bar
+                dataKey="revenue"
+                layout="vertical"
+                fill="var(--color-revenue)"
+                radius={4}
+              />
+            </BarChart>
           </ChartContainer>
-        </div>
-        <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
-            {customerData.map((entry) => (
-                <div key={entry.name} className="flex items-center gap-2 text-sm">
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: entry.fill }}></span>
-                    <span className="text-muted-foreground">{entry.name}</span>
-                    <span className="font-semibold">{entry.value}</span>
-                </div>
-            ))}
         </div>
       </CardContent>
     </Card>
