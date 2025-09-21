@@ -1,6 +1,6 @@
 'use client';
 
-import { DollarSign, Package, CreditCard, Clock, Users, Percent } from 'lucide-react';
+import { DollarSign, Package, CreditCard, Clock, Users, Percent, CheckCircle, AlertCircle } from 'lucide-react';
 import KpiCard from '@/components/billing/kpi-card';
 import RevenueChart from '@/components/billing/revenue-chart';
 import { mockOrders } from '@/lib/data';
@@ -11,9 +11,14 @@ import { CustomerBreakdown } from '@/components/billing/customer-breakdown';
 import { PaymentMethodBreakdown } from '@/components/billing/payment-method-breakdown';
 
 export default function DashboardPage() {
-  const totalRevenue = mockOrders
-    .filter((order) => order.paymentStatus === 'Paid')
-    .reduce((sum, order) => sum + order.totalAmount, 0);
+  const paidOrders = mockOrders.filter((order) => order.paymentStatus === 'Paid');
+  const pendingOrders = mockOrders.filter((order) => order.paymentStatus === 'Pending');
+
+  const totalPaidValue = paidOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+  const totalPaidCount = paidOrders.length;
+  
+  const totalPendingValue = pendingOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+  const totalPendingCount = pendingOrders.length;
   
   const totalGST = mockOrders
     .filter(order => order.paymentStatus === 'Paid')
@@ -23,15 +28,9 @@ export default function DashboardPage() {
         return sum + gst;
     }, 0);
 
-  const amountPending = mockOrders
-    .filter((order) => order.paymentStatus === 'Pending')
-    .reduce((sum, order) => sum + order.totalAmount, 0);
-
   const totalOrders = mockOrders.length;
   const deliveredOrders = mockOrders.filter(o => o.status === 'Delivered').length;
   const outForDeliveryOrders = mockOrders.filter(o => o.status === 'Out for Delivery').length;
-  const cleaningOrders = mockOrders.filter(o => o.status === 'Getting Cleaned').length;
-  const bookedOrders = mockOrders.filter(o => o.status === 'Agent Picked').length;
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -42,23 +41,23 @@ export default function DashboardPage() {
           description={`${deliveredOrders} delivered, ${outForDeliveryOrders} in transit`}
           icon={Package}
         />
-         <KpiCard
-          title="Orders In-Progress"
-          amount={`${cleaningOrders}`}
-          description={`${bookedOrders} just picked up`}
-          icon={Clock}
+        <KpiCard
+          title="Fully Paid Orders"
+          amount={`₹${totalPaidValue.toLocaleString()}`}
+          description={`${totalPaidCount} orders have been fully paid`}
+          icon={CheckCircle}
         />
         <KpiCard
-          title="Total Revenue (Paid)"
-          amount={`₹${totalRevenue.toLocaleString()}`}
-          description={`Includes ₹${totalGST.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} GST`}
-          icon={DollarSign}
+          title="Pending Payments"
+          amount={`₹${totalPendingValue.toLocaleString()}`}
+          description={`${totalPendingCount} orders are awaiting payment`}
+          icon={AlertCircle}
         />
         <KpiCard
-          title="Amount Pending"
-          amount={`₹${amountPending.toLocaleString()}`}
-          description="From orders not yet paid"
-          icon={CreditCard}
+          title="Total GST Collected"
+          amount={`₹${totalGST.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          description="From all fully paid orders"
+          icon={Percent}
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4 md:gap-8">
