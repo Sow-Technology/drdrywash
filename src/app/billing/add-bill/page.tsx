@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -56,7 +57,6 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { allProductCategoriesWithServices, ProductWithServices } from '@/lib/all-products-with-services';
 import { Logo } from '@/components/shared/logo';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const lineItemSchema = z.object({
   product: z.string().min(1, 'Product is required.'),
@@ -163,9 +163,6 @@ export default function AddBillPage() {
         });
     }, 1500);
   }
-
-  const topRowCategories = allProductCategoriesWithServices.slice(0, 5);
-  const bottomRowCategories = allProductCategoriesWithServices.slice(5);
 
   return (
     <Form {...form}>
@@ -325,20 +322,19 @@ export default function AddBillPage() {
                     </div>
                 </div>
                 <div>
-                  <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full mb-4">
-                      <div className="flex flex-col items-center">
-                          <TabsList className="h-auto">
-                              {topRowCategories.map(section => (
-                              <TabsTrigger key={section.id} value={section.id}>{section.title}</TabsTrigger>
-                              ))}
-                          </TabsList>
-                          <TabsList className="h-auto mt-2">
-                              {bottomRowCategories.map(section => (
-                              <TabsTrigger key={section.id} value={section.id}>{section.title}</TabsTrigger>
-                              ))}
-                          </TabsList>
-                      </div>
-                  </Tabs>
+                  <div className="mb-4">
+                    <FormLabel>Category</FormLabel>
+                    <Select value={activeCategory} onValueChange={setActiveCategory}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {allProductCategoriesWithServices.map(section => (
+                                <SelectItem key={section.id} value={section.id}>{section.title}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                  </div>
                     <Table>
                         <TableHeader>
                             <TableRow>
