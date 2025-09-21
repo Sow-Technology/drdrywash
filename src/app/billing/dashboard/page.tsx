@@ -80,6 +80,11 @@ export default function DashboardPage() {
           <ServicePerformance orders={mockOrders} />
         </div>
       </div>
+       <div className="grid grid-cols-1 gap-4 md:gap-8">
+        <div>
+          <OrderStatusBreakdown orders={mockOrders} />
+        </div>
+      </div>
     </main>
   );
 }
