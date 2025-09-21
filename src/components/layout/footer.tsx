@@ -45,16 +45,16 @@ export default function Footer() {
               <Button variant="ghost" size="icon" asChild>
                 <a href="#" aria-label="Instagram"><Instagram className="h-4 w-4" /></a>
               </Button>
+              <Button variant="ghost" size="icon" asChild>
+                 <Link href="/billing/login" aria-label="Staff Login">
+                    <User className="h-4 w-4" />
+                 </Link>
+              </Button>
             </div>
           </div>
         </div>
         <div className="mt-8 border-t pt-8 flex justify-between items-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Dr. Dry Wash. All rights reserved.</p>
-          <Button variant="ghost" size="icon" asChild>
-             <Link href="/billing/login" aria-label="Staff Login">
-                <User className="h-4 w-4" />
-             </Link>
-          </Button>
         </div>
       </div>
     </footer>
