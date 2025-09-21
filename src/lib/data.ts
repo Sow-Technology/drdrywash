@@ -50,7 +50,7 @@ export const orderStatuses: OrderStatus[] = [
 
 const now = new Date();
 
-export const mockOrders: Order[] = [
+export let mockOrders: Order[] = [
   {
     id: 'DDW123',
     customerName: 'Alice Johnson',
@@ -140,6 +140,10 @@ export const mockOrders: Order[] = [
     ],
   },
 ];
+
+export function addMockOrder(order: Order) {
+  mockOrders.unshift(order);
+}
 
 export const whyChooseUsItems = [
     {

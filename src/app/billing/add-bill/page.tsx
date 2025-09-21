@@ -58,6 +58,9 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { allProductCategoriesWithServices, ProductWithServices } from '@/lib/all-products-with-services';
 import { Logo } from '@/components/shared/logo';
+import { addMockOrder } from '@/lib/data';
+import type { Order } from '@/lib/types';
+import { useRouter } from 'next/navigation';
 
 const lineItemSchema = z.object({
   category: z.string().min(1, 'Category is required.'),
@@ -82,6 +85,7 @@ const addBillSchema = z.object({
 type AddBillFormValues = z.infer<typeof addBillSchema>;
 
 export default function AddBillPage() {
+  const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
   const defaultDueDate = addDays(new Date(), 30);
@@ -155,7 +159,28 @@ export default function AddBillPage() {
   
   async function onSubmit(data: AddBillFormValues) {
     setIsLoading(true);
-    console.log(data);
+
+    const newOrder: Order = {
+      id: data.invoiceNumber,
+      customerName: data.customerName,
+      phoneNumber: data.customerPhone,
+      address: data.customerAddress,
+      status: 'Pick up Booked',
+      paymentMethod: data.paymentMethod as Order['paymentMethod'],
+      paymentStatus: 'Pending',
+      pickupTime: data.invoiceDate,
+      deliveryTime: data.dueDate,
+      totalAmount: total,
+      items: data.lineItems.map(item => ({
+        name: `${item.product} (${item.service})`,
+        quantity: item.quantity,
+        serviceId: item.product,
+      })),
+      history: [{ status: 'Pick up Booked', date: new Date() }],
+    };
+
+    addMockOrder(newOrder);
+    
     setTimeout(() => {
         setIsLoading(false);
         toast({
@@ -173,7 +198,8 @@ export default function AddBillPage() {
             paymentMethod: 'Cash',
             paymentInstructions: 'Please make the payment upon delivery.'
         });
-    }, 1500);
+        router.push('/billing/orders');
+    }, 500);
   }
 
   return (
@@ -541,5 +567,3 @@ export default function AddBillPage() {
     </Form>
   );
 }
-
-    
