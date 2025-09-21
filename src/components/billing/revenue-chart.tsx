@@ -65,7 +65,7 @@ export default function RevenueChart({ orders }: { orders: Order[] }) {
         break;
       case 'weekly':
         interval = {
-          start: subMonths(today, 2),
+          start: startOfWeek(subMonths(today, 2), { weekStartsOn: 1 }),
           end: today,
         };
         dataGrouper = eachWeekOfInterval(interval, { weekStartsOn: 1 });
@@ -90,9 +90,14 @@ export default function RevenueChart({ orders }: { orders: Order[] }) {
                return format(orderDate, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd');
            }
            if (timeFrame === 'weekly') {
-                return format(startOfWeek(orderDate, {weekStartsOn: 1}), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd');
+                const startOfOrderWeek = startOfWeek(orderDate, { weekStartsOn: 1 });
+                return format(startOfOrderWeek, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd');
            }
-           return orderDate.getMonth() === date.getMonth() && orderDate.getFullYear() === date.getFullYear();
+           if (timeFrame === 'monthly') {
+                const startOfOrderMonth = startOfMonth(orderDate);
+                return format(startOfOrderMonth, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd');
+           }
+           return false;
         })
         .reduce((sum, order) => sum + order.totalAmount, 0);
 
