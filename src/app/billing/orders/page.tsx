@@ -8,6 +8,7 @@ import {
   PlusCircle,
   Search,
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -68,6 +69,26 @@ export default function OrdersPage() {
     });
   }, [searchQuery, statusFilter]);
 
+  const handleExport = () => {
+    const formattedOrders = filteredOrders.map(order => ({
+      'Order ID': order.id,
+      'Customer Name': order.customerName,
+      'Phone Number': order.phoneNumber,
+      'Status': order.status,
+      'Payment Status': order.paymentStatus,
+      'Payment Method': order.paymentMethod,
+      'Pickup Time': new Date(order.pickupTime).toLocaleString(),
+      'Delivery Time': new Date(order.deliveryTime).toLocaleString(),
+      'Address': order.address,
+      'Total Amount': order.totalAmount,
+      'Items': order.items.map(item => `${item.name} (x${item.quantity})`).join(', '),
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(formattedOrders);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
+    XLSX.writeFile(workbook, 'orders.xlsx');
+  };
+
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <Tabs defaultValue="all" onValueChange={(value) => setStatusFilter(value as OrderStatus | 'all')}>
@@ -89,7 +110,7 @@ export default function OrdersPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button size="sm" variant="outline" className="h-8 gap-1">
+            <Button size="sm" variant="outline" className="h-8 gap-1" onClick={handleExport}>
               <File className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                 Export
