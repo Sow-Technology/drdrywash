@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -55,47 +54,34 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { mensPricing, womensPricing, washAndFoldPricing } from '@/lib/data';
+import { allProductCategories, Product } from '@/lib/all-products';
 import { Logo } from '@/components/shared/logo';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const lineItemSchema = z.object({
-  product: z.string().min(1, "Product is required."),
-  quantity: z.coerce.number().min(1, "Quantity must be at least 1."),
-  price: z.coerce.number().min(0, "Price cannot be negative."),
+  product: z.string().min(1, 'Product is required.'),
+  quantity: z.coerce.number().min(1, 'Quantity must be at least 1.'),
+  price: z.coerce.number().min(0, 'Price cannot be negative.'),
 });
 
 const addBillSchema = z.object({
-  customerName: z.string().min(2, "Customer name is required."),
-  customerPhone: z.string().min(10, "A valid phone number is required."),
-  customerAddress: z.string().min(10, "Customer address is required."),
+  customerName: z.string().min(2, 'Customer name is required.'),
+  customerPhone: z.string().min(10, 'A valid phone number is required.'),
+  customerAddress: z.string().min(10, 'Customer address is required.'),
   invoiceDate: z.date(),
   dueDate: z.date(),
-  invoiceNumber: z.string().min(1, "Invoice number is required."),
-  lineItems: z.array(lineItemSchema).min(1, "At least one item is required."),
-  paymentMethod: z.string().min(1, "Payment method is required."),
+  invoiceNumber: z.string().min(1, 'Invoice number is required.'),
+  lineItems: z.array(lineItemSchema).min(1, 'At least one item is required.'),
+  paymentMethod: z.string().min(1, 'Payment method is required.'),
   paymentInstructions: z.string().optional(),
 });
 
 type AddBillFormValues = z.infer<typeof addBillSchema>;
 
-const allProducts = [
-  ...mensPricing,
-  ...womensPricing,
-  ...washAndFoldPricing,
-].reduce((acc, item) => {
-    const existing = acc.find(p => p.product === item.product);
-    if (!existing) {
-        // A simple way to get a single price for the dropdown
-        const price = Object.values(item.prices)[0].toString().split('-')[0];
-        acc.push({ product: item.product, price: parseFloat(price) });
-    }
-    return acc;
-}, [] as { product: string; price: number }[]);
-
-
 export default function AddBillPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [activeCategory, setActiveCategory] = React.useState(allProductCategories[0].id);
   const defaultDueDate = addDays(new Date(), 30);
 
   const form = useForm<AddBillFormValues>({
@@ -109,13 +95,13 @@ export default function AddBillPage() {
       customerAddress: '',
       lineItems: [{ product: '', quantity: 1, price: 0 }],
       paymentMethod: 'Cash',
-      paymentInstructions: 'Please make the payment upon delivery.'
+      paymentInstructions: 'Please make the payment upon delivery.',
     },
   });
 
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
-    name: "lineItems",
+    name: 'lineItems',
   });
 
   const lineItems = form.watch('lineItems');
@@ -127,8 +113,12 @@ export default function AddBillPage() {
   const taxes = subtotal * 0.18; // 18% GST
   const total = subtotal + taxes;
 
+  const currentProducts = React.useMemo(() => {
+    return allProductCategories.find(cat => cat.id === activeCategory)?.products || [];
+  }, [activeCategory]);
+
   const handleProductChange = (index: number, productName: string) => {
-    const product = allProducts.find(p => p.product === productName);
+    const product = currentProducts.find(p => p.product === productName);
     if (product) {
         update(index, {
             ...lineItems[index],
@@ -161,6 +151,9 @@ export default function AddBillPage() {
         });
     }, 1500);
   }
+
+  const topRowCategories = allProductCategories.slice(0, 5);
+  const bottomRowCategories = allProductCategories.slice(5);
 
   return (
     <Form {...form}>
@@ -319,7 +312,21 @@ export default function AddBillPage() {
                         />
                     </div>
                 </div>
-                 <div>
+                <div>
+                  <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full mb-4">
+                      <div className="flex flex-col items-center">
+                          <TabsList className="h-auto">
+                              {topRowCategories.map(section => (
+                              <TabsTrigger key={section.id} value={section.id}>{section.title}</TabsTrigger>
+                              ))}
+                          </TabsList>
+                          <TabsList className="h-auto mt-2">
+                              {bottomRowCategories.map(section => (
+                              <TabsTrigger key={section.id} value={section.id}>{section.title}</TabsTrigger>
+                              ))}
+                          </TabsList>
+                      </div>
+                  </Tabs>
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -346,7 +353,7 @@ export default function AddBillPage() {
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
-                                                            {allProducts.map(p => <SelectItem key={p.product} value={p.product}>{p.product}</SelectItem>)}
+                                                            {currentProducts.map(p => <SelectItem key={p.product} value={p.product}>{p.product}</SelectItem>)}
                                                         </SelectContent>
                                                     </Select>
                                                 </FormItem>
@@ -373,7 +380,7 @@ export default function AddBillPage() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Input type="number" {...field} />
+                                                        <Input type="number" step="0.01" {...field} />
                                                     </FormControl>
                                                 </FormItem>
                                             )}
