@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Pie, PieChart, Cell } from 'recharts';
+import { Pie, PieChart, Cell, Tooltip } from 'recharts';
 import {
   Card,
   CardContent,
@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/card';
 import {
   ChartContainer,
-  ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Order } from '@/lib/types';
