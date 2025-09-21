@@ -63,6 +63,9 @@ export const mockOrders: Order[] = [
     pickupTime: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000),
     deliveryTime: new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000),
     address: '123 Maple St, Springfield, IL',
+    totalAmount: 2550,
+    paymentMethod: 'Card',
+    paymentStatus: 'Paid',
     history: [
       { status: 'Pick up Booked', date: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000 - 600000) },
       { status: 'Agent Picked', date: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000) },
@@ -79,6 +82,9 @@ export const mockOrders: Order[] = [
     pickupTime: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000),
     deliveryTime: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000),
     address: '456 Oak Ave, Springfield, IL',
+    totalAmount: 1200,
+    paymentMethod: 'Online',
+    paymentStatus: 'Paid',
     history: [
       { status: 'Pick up Booked', date: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000 - 600000) },
       { status: 'Agent Picked', date: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000) },
@@ -99,6 +105,9 @@ export const mockOrders: Order[] = [
     pickupTime: new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000),
     deliveryTime: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
     address: '123 Maple St, Springfield, IL',
+    totalAmount: 950,
+    paymentMethod: 'Cash',
+    paymentStatus: 'Paid',
     history: [
       { status: 'Pick up Booked', date: new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000 - 300000) },
       { status: 'Agent Picked', date: new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000) },
@@ -106,6 +115,28 @@ export const mockOrders: Order[] = [
       { status: 'Getting Cleaned', date: new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000) },
       { status: 'Out for Delivery', date: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000 - 300000) },
       { status: 'Delivered', date: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) },
+    ],
+  },
+   {
+    id: 'DDW234',
+    customerName: 'Charlie Brown',
+    phoneNumber: '(555) 234-5678',
+    status: 'Out for Delivery',
+    items: [
+      { serviceId: 'dry-cleaning', quantity: 5, name: 'Dry Cleaning' }
+    ],
+    pickupTime: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000),
+    deliveryTime: new Date(),
+    address: '789 Pine Ln, Springfield, IL',
+    totalAmount: 4250,
+    paymentMethod: 'Card',
+    paymentStatus: 'Pending',
+    history: [
+      { status: 'Pick up Booked', date: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000 - 300000) },
+      { status: 'Agent Picked', date: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000) },
+      { status: 'Reached the Store', date: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000) },
+      { status: 'Getting Cleaned', date: new Date(now.getTime() - 12 * 60 * 60 * 1000) },
+      { status: 'Out for Delivery', date: new Date(now.getTime() - 1 * 60 * 60 * 1000) },
     ],
   },
 ];

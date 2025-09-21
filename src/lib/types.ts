@@ -11,6 +11,9 @@ export type OrderStatus =
   | 'Out for Delivery'
   | 'Delivered';
 
+export type PaymentMethod = 'Online' | 'Card' | 'Cash';
+export type PaymentStatus = 'Paid' | 'Pending';
+
 export type Order = {
   id: string;
   customerName: string;
@@ -20,6 +23,9 @@ export type Order = {
   pickupTime: Date;
   deliveryTime: Date;
   address: string;
+  totalAmount: number;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
   history: {
     status: OrderStatus;
     date: Date;

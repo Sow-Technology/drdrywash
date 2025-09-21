@@ -25,6 +25,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, LogIn } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Logo } from '@/components/shared/logo';
+import { useRouter } from 'next/navigation';
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required.'),
@@ -34,6 +35,7 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function BillingLoginPage() {
+  const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,8 +49,6 @@ export default function BillingLoginPage() {
 
   function onSubmit(data: LoginFormValues) {
     setIsLoading(true);
-    // In a real app, you would authenticate the user here.
-    // For this prototype, we'll just simulate a successful login.
     setTimeout(() => {
       setIsLoading(false);
       if (data.username === 'AjithT' && data.password === 'Ajju@2205') {
@@ -56,8 +56,7 @@ export default function BillingLoginPage() {
           title: 'Login Successful!',
           description: `Welcome back, ${data.username}!`,
         });
-        // Redirect to a billing dashboard would happen here
-        // router.push('/billing/dashboard');
+        router.push('/billing/dashboard');
       } else {
         toast({
           variant: 'destructive',
@@ -78,8 +77,8 @@ export default function BillingLoginPage() {
       >
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
-            <div className='flex justify-center mb-4'>
-                <Logo />
+            <div className="flex justify-center mb-4">
+              <Logo />
             </div>
             <CardTitle>Billing Software Login</CardTitle>
             <CardDescription>
@@ -88,7 +87,10 @@ export default function BillingLoginPage() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="username"
