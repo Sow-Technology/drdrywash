@@ -37,7 +37,7 @@ import {
 
 const navLinks = [
   { href: '/billing/dashboard', label: 'Dashboard', icon: Home },
-  { href: '#', label: 'Orders', icon: ShoppingCart, badge: '6' },
+  { href: '/billing/orders', label: 'Orders', icon: ShoppingCart, badge: '6' },
   { href: '#', label: 'Products', icon: Package },
   { href: '#', label: 'Customers', icon: Users },
   { href: '#', label: 'Analytics', icon: LineChart },
@@ -63,7 +63,7 @@ export default function BillingLayout({
               <SidebarMenuItem key={link.label}>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname === link.href}
+                  isActive={pathname.startsWith(link.href)}
                   tooltip={{
                     children: link.label,
                   }}
