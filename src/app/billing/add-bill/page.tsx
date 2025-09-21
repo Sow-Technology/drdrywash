@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -108,7 +109,7 @@ export default function AddBillPage() {
   const lineItems = form.watch('lineItems');
 
   const subtotal = React.useMemo(() => {
-    return lineItems.reduce((acc, item) => acc + (item.price * item.quantity || 0), 0);
+    return lineItems.reduce((acc, item) => acc + (Number(item.price) * Number(item.quantity) || 0), 0);
   }, [lineItems]);
 
   const taxes = subtotal * 0.18; // 18% GST
@@ -440,7 +441,7 @@ export default function AddBillPage() {
                                         />
                                     </TableCell>
                                     <TableCell className="text-right font-medium">
-                                        ₹{((lineItems[index]?.price || 0) * (lineItems[index]?.quantity || 0)).toFixed(2)}
+                                        ₹{((Number(lineItems[index]?.price) || 0) * (Number(lineItems[index]?.quantity) || 0)).toFixed(2)}
                                     </TableCell>
                                     <TableCell>
                                         <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
