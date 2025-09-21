@@ -206,6 +206,11 @@ export default function OrdersPage() {
                   ))}
                 </TableBody>
               </Table>
+            </CardContent>
+            <CardFooter>
+              <div className="text-xs text-muted-foreground">
+                Showing <strong>{filteredOrders.length}</strong> of <strong>{mockOrders.length}</strong> orders.
+              </div>
             </CardFooter>
           </Card>
         </TabsContent>
