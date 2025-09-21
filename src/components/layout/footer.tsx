@@ -1,4 +1,4 @@
-import { Twitter, Facebook, Instagram } from 'lucide-react';
+import { Twitter, Facebook, Instagram, User } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 export default function Footer() {
   return (
     <footer className="border-t bg-card pb-16 md:pb-0">
-      <div className="container py-8">
+      <div className="container py-8 relative">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <Logo />
@@ -48,8 +48,13 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
+        <div className="mt-8 border-t pt-8 flex justify-between items-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Dr. Dry Wash. All rights reserved.</p>
+          <Button variant="ghost" size="icon" asChild>
+             <Link href="/billing/login" aria-label="Staff Login">
+                <User className="h-4 w-4" />
+             </Link>
+          </Button>
         </div>
       </div>
     </footer>
