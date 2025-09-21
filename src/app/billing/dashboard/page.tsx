@@ -66,10 +66,10 @@ export default function DashboardPage() {
           <RevenueChart orders={mockOrders} />
         </div>
         <div className="lg:col-span-2">
-           <CustomerBreakdown orders={mockOrders} />
+           <PaymentMethodBreakdown orders={mockOrders} />
         </div>
          <div className="lg:col-span-2">
-           <PaymentMethodBreakdown orders={mockOrders} />
+           <CustomerBreakdown orders={mockOrders} />
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-8">
