@@ -1,15 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageSquare,
   X,
-  Calendar,
-  Search,
-  FileText,
-  User,
   Send,
   Download,
 } from 'lucide-react';
@@ -22,11 +17,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { Input } from '../ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { cn } from '@/lib/utils';
-import { Separator } from '../ui/separator';
 import { mockOrders } from '@/lib/data';
 import { format } from 'date-fns';
 
@@ -87,12 +80,7 @@ export default function Chatbot() {
   const [userName, setUserName] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [complaintRaised, setComplaintRaised] = useState(false);
-  const isMobile = useIsMobile();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const chatbotPosition = isMobile
-    ? { bottom: '5.5rem', right: '1rem' }
-    : { bottom: '2rem', right: '2rem' };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -232,7 +220,7 @@ export default function Chatbot() {
 
   return (
     <>
-      <div style={{ position: 'fixed', zIndex: 1000, ...chatbotPosition }}>
+      <div className="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-50">
         <AnimatePresence>
           {isOpen && (
             <motion.div

@@ -9,31 +9,19 @@ import {
   Package2,
   ShoppingCart,
   Users,
+  PanelLeft,
 } from 'lucide-react';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/shared/logo';
-import {
-  Sidebar,
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarInset,
-  SidebarHeader,
-  SidebarContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from '@/components/ui/sidebar';
 
 const navLinks = [
   { href: '/billing/dashboard', label: 'Dashboard', icon: Home },
@@ -50,40 +38,65 @@ export default function BillingLayout({
 }) {
   const pathname = usePathname();
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <div className="p-2 flex justify-center">
+      <div className="flex min-h-screen w-full flex-col bg-muted/40">
+      <aside className="fixed inset-y-0 left-0 z-10 hidden w-60 flex-col border-r bg-background sm:flex">
+        <nav className="flex flex-col items-center gap-4 px-2 sm:py-4">
+           <div className="p-2 flex justify-center">
             <Logo />
           </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            {navLinks.map((link) => (
-              <SidebarMenuItem key={link.label}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname.startsWith(link.href)}
-                  tooltip={{
-                    children: link.label,
-                  }}
-                >
-                  <Link href={link.href}>
-                    <link.icon />
-                    <span>{link.label}</span>
-                    {link.badge && (
-                      <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                        {link.badge}
-                      </Badge>
-                    )}
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+           {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className={cn("flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary", {
+                    "text-primary bg-muted": pathname.startsWith(link.href)
+                })}
+              >
+                <link.icon className="h-4 w-4" />
+                {link.label}
+                {link.badge && (
+                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                    {link.badge}
+                  </Badge>
+                )}
+              </Link>
             ))}
-          </SidebarMenu>
-        </SidebarContent>
-      </Sidebar>
-      <SidebarInset>{children}</SidebarInset>
-    </SidebarProvider>
+        </nav>
+      </aside>
+      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-64">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button size="icon" variant="outline" className="sm:hidden">
+                <PanelLeft className="h-5 w-5" />
+                <span className="sr-only">Toggle Menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="sm:max-w-xs">
+              <nav className="grid gap-6 text-lg font-medium">
+                <div className="p-2 flex justify-center">
+                    <Logo />
+                </div>
+                {navLinks.map((link) => (
+                    <Link
+                        key={link.label}
+                        href={link.href}
+                        className={cn("flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground", {
+                            "text-foreground": pathname.startsWith(link.href)
+                        })}
+                    >
+                        <link.icon className="h-5 w-5" />
+                        {link.label}
+                    </Link>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </header>
+        <main className="flex-1 p-4 sm:px-6 sm:py-0">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 }
