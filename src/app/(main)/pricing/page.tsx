@@ -7,14 +7,13 @@ import { Search } from 'lucide-react';
 import PricingCategories from '@/components/pricing/pricing-categories';
 
 const sectionVariants = {
-  hidden: { opacity: 0, y: 50 },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    y: 0,
     transition: {
-      duration: 0.6,
+      duration: 0.5,
       ease: 'easeOut',
-      staggerChildren: 0.2,
+      staggerChildren: 0.1,
     },
   },
 };

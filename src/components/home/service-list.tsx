@@ -34,14 +34,13 @@ const services = [
 ];
 
 const sectionVariants = {
-  hidden: { opacity: 0, y: 50 },
+  hidden: { opacity: 0 },
   visible: { 
-    opacity: 1, 
-    y: 0,
+    opacity: 1,
     transition: {
-      duration: 0.6,
+      duration: 0.5,
       ease: "easeOut",
-      staggerChildren: 0.2
+      staggerChildren: 0.1
     }
   },
 };
