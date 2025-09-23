@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Search, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Logo } from '@/components/shared/logo';
+import { Logo, ThemeSwitcher } from '@/components/shared';
 import { cn } from '@/lib/utils';
 import {
   Sheet,
@@ -70,6 +70,7 @@ export default function Header() {
                     <Search className="ml-2 h-4 w-4" />
                 </Link>
             </Button>
+            <ThemeSwitcher />
           </div>
            <div className="md:hidden">
              <Sheet>
@@ -85,6 +86,9 @@ export default function Header() {
                             <MobileNavLink key={link.href} {...link} />
                         ))}
                     </nav>
+                     <div className="absolute bottom-8 left-8">
+                        <ThemeSwitcher />
+                    </div>
                 </SheetContent>
             </Sheet>
            </div>
