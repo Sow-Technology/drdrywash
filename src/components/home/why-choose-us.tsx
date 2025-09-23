@@ -1,4 +1,3 @@
-
 'use client';
 
 import { whyChooseUsItems } from "@/lib/data";
@@ -57,14 +56,33 @@ export default function WhyChooseUs() {
             {whyChooseUsItems.map((item, index) => (
                 <motion.div 
                     key={index}
-                    className="flex flex-col items-center text-center p-6 border rounded-lg bg-background group transform transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:shadow-primary/20" 
+                    className="p-6 border rounded-lg bg-background shadow-sm" 
                     variants={itemVariants}
+                    whileHover={{ 
+                      y: -8, 
+                      boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+                      transition: { duration: 0.3 }
+                    }}
+                    style={{
+                      transformStyle: "preserve-3d"
+                    }}
                 >
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4 transition-transform duration-300 group-hover:scale-110">
-                        <item.icon className="h-8 w-8 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-bold font-headline mb-2">{item.title}</h3>
-                    <p className="text-muted-foreground">{item.description}</p>
+                    <motion.div
+                      style={{
+                        transform: "translateZ(50px)"
+                      }}
+                      className="flex flex-col items-center text-center"
+                    >
+                      <motion.div 
+                        className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      >
+                          <item.icon className="h-8 w-8 text-primary" />
+                      </motion.div>
+                      <h3 className="text-xl font-bold font-headline mb-2">{item.title}</h3>
+                      <p className="text-muted-foreground">{item.description}</p>
+                    </motion.div>
                 </motion.div>
             ))}
         </motion.div>

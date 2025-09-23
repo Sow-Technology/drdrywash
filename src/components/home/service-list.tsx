@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Shirt, Sparkles, CheckSquare, BedDouble } from 'lucide-react';
@@ -83,29 +82,47 @@ export default function ServiceList() {
             const serviceImage = PlaceHolderImages.find(img => img.id === service.id);
             return (
               <motion.div key={service.id} variants={itemVariants}>
-                <Card className="overflow-hidden group transform transition-all duration-300 h-full bg-card shadow-sm hover:shadow-xl hover:-translate-y-2 hover:shadow-primary/20">
-                  {serviceImage && (
-                    <Image
-                      src={serviceImage.imageUrl}
-                      alt={serviceImage.description}
-                      data-ai-hint={serviceImage.imageHint}
-                      width={600}
-                      height={400}
-                      className="object-cover h-48 w-full"
-                    />
-                  )}
-                  <CardHeader>
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
-                        <service.icon className="h-6 w-6 text-primary" />
+                <motion.div
+                  className="h-full"
+                  whileHover="hover"
+                  transition={{
+                    duration: 0.1,
+                    ease: "easeOut",
+                  }}
+                  variants={{
+                    hover: {
+                      y: -8,
+                    },
+                  }}
+                >
+                  <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl hover:shadow-primary/20 transition-shadow duration-300">
+                    {serviceImage && (
+                      <Image
+                        src={serviceImage.imageUrl}
+                        alt={serviceImage.description}
+                        data-ai-hint={serviceImage.imageHint}
+                        width={600}
+                        height={400}
+                        className="object-cover h-48 w-full"
+                      />
+                    )}
+                    <CardHeader>
+                      <div className="flex items-center gap-4">
+                        <motion.div 
+                          className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 flex-shrink-0"
+                          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                          whileHover={{ scale: 1.1 }}
+                        >
+                          <service.icon className="h-6 w-6 text-primary" />
+                        </motion.div>
+                        <CardTitle className="font-headline text-xl">{service.title}</CardTitle>
                       </div>
-                      <CardTitle className="font-headline text-xl">{service.title}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription>{service.description}</CardDescription>
-                  </CardContent>
-                </Card>
+                    </CardHeader>
+                    <CardContent>
+                      <CardDescription>{service.description}</CardDescription>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               </motion.div>
             );
           })}

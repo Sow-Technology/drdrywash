@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -71,9 +70,10 @@ export default function Header() {
                     <Search className="ml-2 h-4 w-4" />
                 </Link>
             </Button>
+            <ThemeSwitcher />
           </div>
-          <ThemeSwitcher />
-           <div className="md:hidden">
+           <div className="flex items-center md:hidden">
+             <ThemeSwitcher />
              <Sheet>
                 <SheetTrigger asChild>
                     <Button variant="ghost" size="icon">
