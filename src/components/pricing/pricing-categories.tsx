@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo } from 'react';
@@ -42,7 +43,7 @@ const PricingTable = ({
   if (data.length === 0) return null;
 
   return (
-    <Card className="w-full h-full border-t-4 border-primary/20 hover:shadow-lg transition-shadow duration-300">
+    <Card className="w-full h-full border-t-4 border-primary/20 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
       <CardContent className='p-0'>
         <Table>
           <TableHeader>
@@ -78,7 +79,7 @@ const SimplePricingTable = ({
   if (data.length === 0) return null;
 
   return (
-    <Card className="w-full h-full border-t-4 border-primary/20 hover:shadow-lg transition-shadow duration-300">
+    <Card className="w-full h-full border-t-4 border-primary/20 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
       <CardContent className='p-0'>
         <Table>
           <TableHeader>

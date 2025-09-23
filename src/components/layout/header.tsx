@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -29,7 +30,7 @@ export default function Header() {
       <Link
         href={href}
         className={cn(
-          'text-sm font-medium transition-colors hover:text-primary',
+          'text-sm font-medium transition-all hover:text-primary hover:-translate-y-px',
           isActive ? 'text-primary' : 'text-muted-foreground'
         )}
       >

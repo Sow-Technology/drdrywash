@@ -1,3 +1,4 @@
+
 'use client';
 
 import { whyChooseUsItems } from "@/lib/data";
@@ -28,7 +29,7 @@ const itemVariants = {
 export default function WhyChooseUs() {
   return (
     <motion.section 
-      className="py-20 md:py-28 bg-background"
+      className="py-20 md:py-28 bg-card"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.1 }}
@@ -56,10 +57,10 @@ export default function WhyChooseUs() {
             {whyChooseUsItems.map((item, index) => (
                 <motion.div 
                     key={index}
-                    className="flex flex-col items-center text-center p-6 border rounded-lg bg-card transform hover:-translate-y-2 transition-transform duration-300 shadow-sm hover:shadow-lg" 
+                    className="flex flex-col items-center text-center p-6 border rounded-lg bg-background group transform transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:shadow-primary/20" 
                     variants={itemVariants}
                 >
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4 transition-transform duration-300 group-hover:scale-110">
                         <item.icon className="h-8 w-8 text-primary" />
                     </div>
                     <h3 className="text-xl font-bold font-headline mb-2">{item.title}</h3>

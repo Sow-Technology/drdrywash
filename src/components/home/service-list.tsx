@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Shirt, Sparkles, CheckSquare, BedDouble } from 'lucide-react';
@@ -82,7 +83,7 @@ export default function ServiceList() {
             const serviceImage = PlaceHolderImages.find(img => img.id === service.id);
             return (
               <motion.div key={service.id} variants={itemVariants}>
-                <Card className="overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 h-full bg-card shadow-sm hover:shadow-xl">
+                <Card className="overflow-hidden group transform transition-all duration-300 h-full bg-card shadow-sm hover:shadow-xl hover:-translate-y-2 hover:shadow-primary/20">
                   {serviceImage && (
                     <Image
                       src={serviceImage.imageUrl}
@@ -95,7 +96,7 @@ export default function ServiceList() {
                   )}
                   <CardHeader>
                     <div className="flex items-center gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 flex-shrink-0">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
                         <service.icon className="h-6 w-6 text-primary" />
                       </div>
                       <CardTitle className="font-headline text-xl">{service.title}</CardTitle>

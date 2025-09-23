@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Building, Building2, Hotel, Landmark, Hospital, Home } from "lucide-react";
@@ -76,7 +77,7 @@ export default function WeAlsoServe() {
                 >
                     {services.map((service) => (
                         <motion.div key={service.name} className="flex flex-col items-center" variants={itemVariants}>
-                            <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-primary/50 bg-primary/10 mb-4">
+                            <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-primary/50 bg-primary/10 mb-4 transition-transform duration-300 hover:scale-110 hover:rotate-6">
                                 <service.icon className="h-10 w-10 text-primary" />
                             </div>
                             <h3 className="font-semibold text-center">{service.name}</h3>

@@ -1,3 +1,4 @@
+
 import { Twitter, Facebook, Instagram, User } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/logo';
@@ -24,36 +25,36 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link href="/" className="text-sm text-muted-foreground hover:text-primary">Home</Link></li>
-              <li><Link href="/#services" className="text-sm text-muted-foreground hover:text-primary">Services</Link></li>
-              <li><Link href="/pricing" className="text-sm text-muted-foreground hover:text-primary">Pricing</Link></li>
-              <li><Link href="/schedule-pickup" className="text-sm text-muted-foreground hover:text-primary">Schedule a Pickup</Link></li>
-              <li><Link href="/#faq" className="text-sm text-muted-foreground hover:text-primary">FAQ</Link></li>
-              <li><Link href="/track-order" className="text-sm text-muted-foreground hover:text-primary">Track Order</Link></li>
-              <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-primary">Contact Us</Link></li>
+              <li><Link href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">Home</Link></li>
+              <li><Link href="/#services" className="text-sm text-muted-foreground hover:text-primary transition-colors">Services</Link></li>
+              <li><Link href="/pricing" className="text-sm text-muted-foreground hover:text-primary transition-colors">Pricing</Link></li>
+              <li><Link href="/schedule-pickup" className="text-sm text-muted-foreground hover:text-primary transition-colors">Schedule a Pickup</Link></li>
+              <li><Link href="/#faq" className="text-sm text-muted-foreground hover:text-primary transition-colors">FAQ</Link></li>
+              <li><Link href="/track-order" className="text-sm text-muted-foreground hover:text-primary transition-colors">Track Order</Link></li>
+              <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">Contact Us</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
-              <li><Link href="/privacy-policy" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
-              <li><Link href="/terms-of-service" className="text-sm text-muted-foreground hover:text-primary">Terms of Service</Link></li>
+              <li><Link href="/privacy-policy" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/terms-of-service" className="text-sm text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-semibold mb-4">Follow Us</h3>
             <div className="flex space-x-2">
               <Button variant="ghost" size="icon" asChild>
-                <a href="#" aria-label="Twitter"><Twitter className="h-4 w-4" /></a>
+                <a href="#" aria-label="Twitter" className="text-muted-foreground hover:text-primary hover:scale-110 transform transition-all"><Twitter className="h-4 w-4" /></a>
               </Button>
               <Button variant="ghost" size="icon" asChild>
-                <a href="#" aria-label="Facebook"><Facebook className="h-4 w-4" /></a>
+                <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-primary hover:scale-110 transform transition-all"><Facebook className="h-4 w-4" /></a>
               </Button>
               <Button variant="ghost" size="icon" asChild>
-                <a href="#" aria-label="Instagram"><Instagram className="h-4 w-4" /></a>
+                <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-primary hover:scale-110 transform transition-all"><Instagram className="h-4 w-4" /></a>
               </Button>
               <Button variant="ghost" size="icon" asChild>
-                 <Link href="/billing/login" aria-label="Staff Login">
+                 <Link href="/billing/login" aria-label="Staff Login" className="text-muted-foreground hover:text-primary hover:scale-110 transform transition-all">
                     <User className="h-4 w-4" />
                  </Link>
               </Button>
