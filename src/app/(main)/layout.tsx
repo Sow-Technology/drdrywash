@@ -1,3 +1,5 @@
+'use client';
+
 import { Header, Footer, MobileNav, Chatbot } from '@/components/layout';
 
 export default function MainLayout({

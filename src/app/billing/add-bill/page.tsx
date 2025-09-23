@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import * as React from 'react';
@@ -403,16 +401,16 @@ export default function AddBillPage() {
                         />
                     </div>
                 </div>
-                <div>
+                <div className='overflow-x-auto'>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[18%]">Category</TableHead>
-                                <TableHead className="w-[18%]">Product</TableHead>
-                                <TableHead className="w-[18%]">Service</TableHead>
-                                <TableHead>Quantity</TableHead>
-                                <TableHead>Price</TableHead>
-                                <TableHead className="text-right">Total</TableHead>
+                                <TableHead className="w-full min-w-[150px] sm:w-[18%]">Category</TableHead>
+                                <TableHead className="w-full min-w-[150px] sm:w-[18%]">Product</TableHead>
+                                <TableHead className="w-full min-w-[150px] sm:w-[18%]">Service</TableHead>
+                                <TableHead className='min-w-[100px]'>Quantity</TableHead>
+                                <TableHead className='min-w-[120px]'>Price</TableHead>
+                                <TableHead className="text-right min-w-[100px]">Total</TableHead>
                                 <TableHead className="w-[50px]"><span className="sr-only">Actions</span></TableHead>
                             </TableRow>
                         </TableHeader>
@@ -522,6 +520,8 @@ export default function AddBillPage() {
                             )})}
                         </TableBody>
                     </Table>
+                </div>
+                <div>
                     <Button
                         type="button"
                         variant="outline"
