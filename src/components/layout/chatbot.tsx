@@ -54,6 +54,11 @@ const chatbotVariants = {
   },
 };
 
+const fabVariants = {
+    closed: { opacity: 0, y: 10 },
+    open: { opacity: 1, y: 0 },
+};
+
 const supportOptions = [
   {
     text: 'Schedule a Pickup',
@@ -89,6 +94,7 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isFabOpen, setIsFabOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [stage, setStage] = useState<ConversationStage>('greeting');
   const [userName, setUserName] = useState('');
@@ -110,6 +116,8 @@ export default function Chatbot() {
   };
 
   const startChat = () => {
+     setIsOpen(true);
+     setIsFabOpen(false);
      setMessages([]);
      setStage('greeting');
      setUserName('');
@@ -218,14 +226,6 @@ export default function Chatbot() {
         addMessage('bot', `No problem. How can I help you today, ${userName}?`, getMainOptions());
     }, 500);
     setStage('mainOptions');
-  };
-
-  const handleToggle = () => {
-    const nextIsOpen = !isOpen;
-    if (nextIsOpen) {
-      startChat();
-    }
-    setIsOpen(nextIsOpen);
   };
 
   const handleClose = () => {
@@ -342,36 +342,63 @@ export default function Chatbot() {
           )}
         </AnimatePresence>
 
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{
-            type: 'spring',
-            stiffness: 260,
-            damping: 20,
-            delay: 1,
-          }}
-          className="flex items-center gap-4 justify-end mt-4"
-        >
-            <Button
-                size="lg"
-                className="rounded-full w-16 h-16 shadow-lg !bg-[#25D366] hover:!bg-[#1DAE51] text-white"
-                aria-label="Chat on WhatsApp"
-                asChild
-            >
-                <Link href="https://wa.me/919738045714" target="_blank">
-                    <WhatsAppIcon className="h-8 w-8" />
-                </Link>
-            </Button>
+        <div className="relative flex flex-col items-center gap-3">
+             <AnimatePresence>
+                {isFabOpen && (
+                    <motion.div 
+                        className="flex flex-col items-center gap-3"
+                        variants={fabVariants}
+                        initial="closed"
+                        animate="open"
+                        exit="closed"
+                    >
+                        <div className="flex items-center gap-2">
+                            <span className='bg-background text-foreground text-sm py-1 px-3 rounded-md shadow-lg'>Chat on WhatsApp</span>
+                            <Button
+                                size="lg"
+                                className="rounded-full w-16 h-16 shadow-lg !bg-[#25D366] hover:!bg-[#1DAE51] text-white"
+                                aria-label="Chat on WhatsApp"
+                                asChild
+                            >
+                                <Link href="https://wa.me/919738045714" target="_blank">
+                                    <WhatsAppIcon className="h-8 w-8" />
+                                </Link>
+                            </Button>
+                        </div>
+                         <div className="flex items-center gap-2">
+                            <span className='bg-background text-foreground text-sm py-1 px-3 rounded-md shadow-lg'>Chat with LAX</span>
+                            <Button
+                                size="lg"
+                                className="rounded-full w-16 h-16 shadow-lg"
+                                onClick={startChat}
+                                aria-label="Open AI Chatbot"
+                            >
+                                <MessageSquare className="h-6 w-6" />
+                            </Button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <Button
                 size="lg"
                 className="rounded-full w-16 h-16 shadow-lg"
-                onClick={handleToggle}
-                aria-label={isOpen ? 'Close chat' : 'Open chat'}
+                onClick={() => setIsFabOpen(prev => !prev)}
+                aria-label={isFabOpen ? 'Close chat options' : 'Open chat options'}
             >
-                {isOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
+                <AnimatePresence initial={false} mode="wait">
+                    <motion.div
+                        key={isFabOpen ? 'x' : 'chat'}
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -10, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        {isFabOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
+                    </motion.div>
+                </AnimatePresence>
             </Button>
-        </motion.div>
+        </div>
       </div>
     </>
   );
