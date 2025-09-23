@@ -1,17 +1,13 @@
 import type { Metadata } from 'next';
-import { Manrope, JetBrains_Mono } from 'next/font/google';
+import { PT_Sans } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 
-const manrope = Manrope({
+const ptSans = PT_Sans({
   subsets: ['latin'],
-  variable: '--font-manrope',
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
+  weight: ['400', '700'],
+  variable: '--font-pt-sans',
 });
 
 export const metadata: Metadata = {
@@ -25,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={cn('font-body antialiased', manrope.variable, jetbrainsMono.variable)}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn('font-body antialiased', ptSans.variable)}>
           {children}
           <Toaster />
       </body>
