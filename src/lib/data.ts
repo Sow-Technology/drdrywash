@@ -1,4 +1,4 @@
-import { Leaf, BadgePercent, Headset, ShoppingBag, CheckCircle, Flower, MonitorSmartphone, Bike, HandPlatter, Store } from 'lucide-react';
+import { Leaf, BadgePercent, Headset, ShoppingBag, CheckCircle, Flower, MonitorSmartphone, Bike, Store, Truck } from 'lucide-react';
 import type { Order, OrderStatus } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import { mensPricing } from './mens-pricing';
@@ -29,7 +29,7 @@ export const howItWorksOnline = [
         title: "Pickup",
     },
     {
-        icon: HandPlatter,
+        icon: Truck,
         title: "Delivery",
     }
 ];
