@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -49,8 +50,10 @@ export default function HowItWorks() {
         <motion.div className="mt-16 max-w-4xl mx-auto" variants={itemVariants}>
           <Card className="p-8 border-2 border-primary/10 shadow-lg bg-background">
             <CardContent className="p-0">
-              <div className="bg-primary text-primary-foreground font-bold py-2 px-4 rounded-md inline-block mb-8">
-                HOW IT WORKS
+              <div className="text-center mb-8">
+                <div className="bg-primary text-primary-foreground font-bold py-2 px-4 rounded-md inline-block">
+                  HOW IT WORKS
+                </div>
               </div>
               <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                 {/* Book Online Section */}
