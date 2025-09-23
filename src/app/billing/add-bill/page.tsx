@@ -83,6 +83,7 @@ const addBillSchema = z.object({
   lineItems: z.array(lineItemSchema).min(1, 'At least one item is required.'),
   paymentMethod: z.string().min(1, 'Payment method is required.'),
   paymentInstructions: z.string().optional(),
+  shippingCharge: z.coerce.number().min(0).optional().default(0),
 });
 
 type AddBillFormValues = z.infer<typeof addBillSchema>;
@@ -107,6 +108,7 @@ export default function AddBillPage() {
       lineItems: [{ category: '', product: '', service: '', quantity: 1, price: 0 }],
       paymentMethod: 'Cash',
       paymentInstructions: 'Please make the payment upon delivery.',
+      shippingCharge: 0,
     },
   });
 
@@ -117,6 +119,8 @@ export default function AddBillPage() {
 
   const lineItems = form.watch('lineItems');
   const branchId = form.watch('branchId');
+  const shippingCharge = form.watch('shippingCharge');
+
 
   React.useEffect(() => {
     const branch = mockBranches.find(b => b.id === branchId) || null;
@@ -129,7 +133,7 @@ export default function AddBillPage() {
   }, [lineItems]);
 
   const taxes = subtotal * 0.18; // 18% GST
-  const total = subtotal + taxes;
+  const total = subtotal + taxes + (shippingCharge || 0);
 
   const getProductsForCategory = (categoryId: string) => {
     return allProductCategoriesWithServices.find(cat => cat.id === categoryId)?.products || [];
@@ -537,6 +541,20 @@ export default function AddBillPage() {
                         <div className="flex justify-between">
                             <span className="text-muted-foreground">Taxes (18% GST)</span>
                             <span>₹{taxes.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-muted-foreground">Shipping Charge</span>
+                             <FormField
+                                control={form.control}
+                                name="shippingCharge"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Input type="number" step="0.01" {...field} className="w-24 h-8 text-right" />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
                         </div>
                         <Separator />
                         <div className="flex justify-between font-bold text-lg">
