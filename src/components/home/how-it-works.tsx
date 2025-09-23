@@ -58,7 +58,7 @@ export default function HowItWorks() {
                 {/* Book Online Section */}
                 <div className="flex-1">
                   <h3 className="text-2xl font-bold text-center mb-6">BOOK ONLINE</h3>
-                  <div className="flex items-center justify-around text-center">
+                  <div className="flex items-start justify-around text-center gap-4">
                     {howItWorksOnline.map((step, index) => (
                       <div key={index} className="flex flex-col items-center">
                         <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-primary/50 bg-primary/10 mb-2">
