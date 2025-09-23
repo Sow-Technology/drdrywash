@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef } from 'react';
@@ -46,11 +47,13 @@ const defaultCenter = {
   lng: 72.8311,
 };
 
-const MapPlaceholder = () => (
-  <div className="w-full h-[300px] rounded-md bg-muted flex flex-col items-center justify-center">
-    <MapPin className="w-10 h-10 text-muted-foreground mb-2" />
-    <p className="text-muted-foreground">Loading map...</p>
-    <Skeleton className="w-full h-full" />
+const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
+const MapPlaceholder = ({ message, subMessage }: { message: string, subMessage?: string }) => (
+  <div className="w-full h-[300px] rounded-md bg-muted flex flex-col items-center justify-center p-4 text-center">
+    <MapPin className="w-10 h-10 text-muted-foreground mb-4" />
+    <p className="font-semibold text-muted-foreground">{message}</p>
+    {subMessage && <p className="text-sm text-muted-foreground mt-1">{subMessage}</p>}
   </div>
 );
 
@@ -63,7 +66,9 @@ export default function SchedulePickupForm() {
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+    googleMapsApiKey: apiKey!,
+    preventGoogleFontsLoading: true,
+    libraries: ['places'],
   });
 
   const form = useForm<ScheduleFormValues>({
@@ -140,6 +145,44 @@ export default function SchedulePickupForm() {
   }).flat();
   timeSlots.push("18:00");
 
+  const renderMap = () => {
+    if (!apiKey) {
+      return (
+        <MapPlaceholder 
+            message="Google Maps API Key is Missing"
+            subMessage="Please add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your environment variables."
+        />
+      );
+    }
+
+    if (!isLoaded) {
+       return (
+        <div className="w-full h-[300px] rounded-md bg-muted flex flex-col items-center justify-center">
+            <Skeleton className="w-full h-full" />
+        </div>
+       );
+    }
+
+    return (
+        <GoogleMap
+            mapContainerStyle={{ width: '100%', height: '300px', borderRadius: 'var(--radius)' }}
+            center={mapCenter}
+            zoom={12}
+            onLoad={handleMapLoad}
+            options={{
+                disableDefaultUI: true,
+                zoomControl: true,
+            }}
+        >
+            <Marker
+                position={markerPosition}
+                draggable={true}
+                onDragEnd={handleMarkerDrag}
+            />
+        </GoogleMap>
+    );
+  }
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
@@ -198,28 +241,13 @@ export default function SchedulePickupForm() {
                       <FormLabel>Pickup Location</FormLabel>
                       <FormDescription>Drag the pin to your exact pickup location.</FormDescription>
                     </div>
-                     <Button type="button" variant="outline" size="sm" onClick={handleCurrentLocation}>
+                     <Button type="button" variant="outline" size="sm" onClick={handleCurrentLocation} disabled={!apiKey || !isLoaded}>
                       <LocateFixed className="mr-2 h-4 w-4" />
                       Use Current Location
                     </Button>
                   </div>
                   <FormControl>
-                    {isLoaded ? (
-                      <GoogleMap
-                        mapContainerStyle={{ width: '100%', height: '300px', borderRadius: 'var(--radius)' }}
-                        center={mapCenter}
-                        zoom={12}
-                        onLoad={handleMapLoad}
-                      >
-                        <Marker
-                          position={markerPosition}
-                          draggable={true}
-                          onDragEnd={handleMarkerDrag}
-                        />
-                      </GoogleMap>
-                    ) : (
-                      <MapPlaceholder />
-                    )}
+                    {renderMap()}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -323,3 +351,5 @@ export default function SchedulePickupForm() {
     </Card>
   );
 }
+
+    
