@@ -3,7 +3,7 @@
     {
       "id": "hero-image",
       "description": "A bright and modern laundry room with neatly stacked towels.",
-      "imageUrl": "https://picsum.photos/seed/laundryhero/1200/800",
+      "imageUrl": "https://images.unsplash.com/photo-1701421048900-e0adbde9b90c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxsYXVuZHJ5JTIwcm9vbXxlbnwwfHx8fDE3NTg1OTc3NTZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "laundry room"
     },
     {
@@ -15,32 +15,38 @@
     {
       "id": "dry-cleaning",
       "description": "Professionally dry cleaned clothes ready for pickup.",
-      "imageUrl": "https://picsum.photos/seed/drycleaning/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1604335398980-ededcadcc37d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkcnklMjBjbGVhbmluZ3xlbnwwfHx8fDE3NTg2NTQzNDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "dry cleaning"
     },
     {
       "id": "ironing",
       "description": "A person carefully ironing a shirt.",
-      "imageUrl": "https://picsum.photos/seed/ironing/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1633680889715-2c9752bf0840?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxpcm9uaW5nfGVufDB8fHx8MTc1ODY1NDM0M3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "ironing"
     },
     {
       "id": "bedding",
       "description": "Clean and fresh bed sheets and pillows on a well-made bed.",
-      "imageUrl": "https://picsum.photos/seed/freshbed/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1628255438300-5eecc61f19a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjbGVhbiUyMGJlZHxlbnwwfHx8fDE3NTg2NTQzNDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "clean bed"
     },
     {
       "id": "contact-us",
       "description": "A friendly customer service representative on the phone.",
-      "imageUrl": "https://picsum.photos/seed/contact/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1626863905121-3b0c0ed7b94c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjdXN0b21lciUyMHNlcnZpY2V8ZW58MHx8fHwxNzU4NjAyOTA2fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "customer service"
     },
     {
       "id": "why-choose-us",
       "description": "A young girl playing with two puppies on a clean carpet.",
-      "imageUrl": "https://picsum.photos/seed/puppies/400/400",
+      "imageUrl": "https://images.unsplash.com/photo-1522254795997-60bd803817b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxnaXJsJTIwcHVwcGllc3xlbnwwfHx8fDE3NTg2NTQzNDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "girl puppies"
+    },
+    {
+      "id": "founder-photo",
+      "description": "Portrait of Ajith T, Founder and CEO of Dr. Dry Wash.",
+      "imageUrl": "https://storage.googleapis.com/aif-starlark/prod/users/google-oauth2%7C107352355523971593952/d7494481-e380-4943-8531-50e5e0116035.png",
+      "imageHint": "man portrait"
     }
   ]
 }
