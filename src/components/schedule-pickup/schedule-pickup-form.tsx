@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
+import Link from 'next/link';
 
 const scheduleSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -307,10 +308,15 @@ export default function SchedulePickupForm() {
                   </FormItem>
                 )}
               />
-            <Button type="submit" disabled={isLoading} className="w-full">
-              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {isLoading ? 'Scheduling...' : 'Confirm Pickup'}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2">
+                <Button variant="outline" asChild className="w-full">
+                    <Link href="/pricing">Check Prices</Link>
+                </Button>
+                <Button type="submit" disabled={isLoading} className="w-full">
+                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {isLoading ? 'Scheduling...' : 'Confirm Pickup'}
+                </Button>
+            </div>
           </CardContent>
         </form>
       </Form>
