@@ -24,7 +24,7 @@ export default function Faq() {
   return (
     <motion.section 
       id="faq" 
-      className="py-20 md:py-28 bg-card"
+      className="py-20 md:py-28 bg-background"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}

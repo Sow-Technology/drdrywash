@@ -53,7 +53,7 @@ export default function ServiceList() {
   return (
     <motion.section 
       id="services" 
-      className="py-20 md:py-28 bg-card"
+      className="py-20 md:py-28 bg-background"
       variants={sectionVariants}
       initial="hidden"
       whileInView="visible"
@@ -82,7 +82,7 @@ export default function ServiceList() {
             const serviceImage = PlaceHolderImages.find(img => img.id === service.id);
             return (
               <motion.div key={service.id} variants={itemVariants}>
-                <Card className="overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 h-full">
+                <Card className="overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 h-full bg-card shadow-sm hover:shadow-xl">
                   {serviceImage && (
                     <Image
                       src={serviceImage.imageUrl}

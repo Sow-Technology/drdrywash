@@ -32,7 +32,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative w-full py-20 md:py-32 lg:py-40 bg-card overflow-hidden">
+    <section className="relative w-full py-20 md:py-32 lg:py-40 bg-background overflow-hidden">
         <motion.div 
           className="container relative z-10"
           variants={containerVariants}

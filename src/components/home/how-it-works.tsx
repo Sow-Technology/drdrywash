@@ -25,7 +25,7 @@ export default function HowItWorks() {
   const { icon: StoreIcon } = howItWorksStore;
   return (
     <motion.section 
-      className="py-20 md:py-28 bg-background"
+      className="py-20 md:py-28 bg-card"
       variants={sectionVariants}
       initial="hidden"
       whileInView="visible"
@@ -47,7 +47,7 @@ export default function HowItWorks() {
           </motion.div>
         </div>
         <motion.div className="mt-16 max-w-4xl mx-auto" variants={itemVariants}>
-          <Card className="p-8 border-2 border-primary/20 shadow-xl">
+          <Card className="p-8 border-2 border-primary/10 shadow-lg bg-background">
             <CardContent className="p-0">
               <div className="bg-primary text-primary-foreground font-bold py-2 px-4 rounded-md inline-block mb-8">
                 HOW IT WORKS

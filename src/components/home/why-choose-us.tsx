@@ -28,7 +28,7 @@ const itemVariants = {
 export default function WhyChooseUs() {
   return (
     <motion.section 
-      className="py-20 md:py-28 bg-card"
+      className="py-20 md:py-28 bg-background"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.1 }}
@@ -56,7 +56,7 @@ export default function WhyChooseUs() {
             {whyChooseUsItems.map((item, index) => (
                 <motion.div 
                     key={index}
-                    className="flex flex-col items-center text-center p-6 border rounded-lg bg-background/50 transform hover:-translate-y-2 transition-transform duration-300 shadow-sm hover:shadow-lg" 
+                    className="flex flex-col items-center text-center p-6 border rounded-lg bg-card transform hover:-translate-y-2 transition-transform duration-300 shadow-sm hover:shadow-lg" 
                     variants={itemVariants}
                 >
                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
