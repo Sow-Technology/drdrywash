@@ -12,6 +12,7 @@ import {
   PanelLeft,
   PlusCircle,
   User,
+  Building,
 } from 'lucide-react';
 import {
   Sheet,
@@ -29,6 +30,7 @@ const navLinks = [
   { href: '/billing/dashboard', label: 'Dashboard', icon: Home },
   { href: '/billing/orders', label: 'Orders', icon: ShoppingCart, badge: '6' },
   { href: '/billing/user', label: 'User', icon: User },
+  { href: '/billing/branch', label: 'Branch', icon: Building },
 ];
 
 export default function BillingLayout({

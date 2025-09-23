@@ -61,6 +61,8 @@ import { Logo } from '@/components/shared/logo';
 import { addMockOrder } from '@/lib/data';
 import type { Order } from '@/lib/types';
 import { useRouter } from 'next/navigation';
+import { mockBranches } from '@/lib/branches';
+import type { Branch } from '@/lib/branches';
 
 const lineItemSchema = z.object({
   category: z.string().min(1, 'Category is required.'),
@@ -71,6 +73,7 @@ const lineItemSchema = z.object({
 });
 
 const addBillSchema = z.object({
+  branchId: z.string().min(1, "Please select a branch."),
   customerName: z.string().min(2, 'Customer name is required.'),
   customerPhone: z.string().min(10, 'A valid phone number is required.'),
   customerAddress: z.string().min(10, 'Customer address is required.'),
@@ -89,10 +92,12 @@ export default function AddBillPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
   const defaultDueDate = addDays(new Date(), 30);
+  const [selectedBranch, setSelectedBranch] = React.useState<Branch | null>(mockBranches.length > 0 ? mockBranches[0] : null);
 
   const form = useForm<AddBillFormValues>({
     resolver: zodResolver(addBillSchema),
     defaultValues: {
+      branchId: mockBranches.length > 0 ? mockBranches[0].id : '',
       invoiceDate: new Date(),
       dueDate: defaultDueDate,
       invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
@@ -111,6 +116,13 @@ export default function AddBillPage() {
   });
 
   const lineItems = form.watch('lineItems');
+  const branchId = form.watch('branchId');
+
+  React.useEffect(() => {
+    const branch = mockBranches.find(b => b.id === branchId) || null;
+    setSelectedBranch(branch);
+  }, [branchId]);
+
 
   const subtotal = React.useMemo(() => {
     return lineItems.reduce((acc, item) => acc + (Number(item.price) * Number(item.quantity) || 0), 0);
@@ -188,6 +200,7 @@ export default function AddBillPage() {
             description: `Invoice ${data.invoiceNumber} for ${data.customerName} has been successfully created.`,
         });
         form.reset({
+            branchId: mockBranches.length > 0 ? mockBranches[0].id : '',
             invoiceDate: new Date(),
             dueDate: defaultDueDate,
             invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
@@ -228,13 +241,18 @@ export default function AddBillPage() {
 
         <Card>
             <CardHeader>
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-start">
                     <div>
                         <Logo />
-                        <p className="text-sm text-muted-foreground mt-2">
-                            984 Wintergreen Rd, Tucker, GA 30084<br/>
-                            712-336-2459 | company@example.com
-                        </p>
+                        {selectedBranch ? (
+                            <div className="text-sm text-muted-foreground mt-2">
+                                <p className="font-semibold">{selectedBranch.name}</p>
+                                <p>{selectedBranch.address}</p>
+                                <p>{selectedBranch.phone}</p>
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground mt-2">Please select a branch</p>
+                        )}
                     </div>
                     <div className="text-left sm:text-right mt-4 sm:mt-0">
                         <h2 className="text-2xl font-bold tracking-tight">BILLING STATEMENT</h2>
@@ -290,6 +308,28 @@ export default function AddBillPage() {
                         />
                     </div>
                     <div className="grid gap-4">
+                        <FormField
+                            control={form.control}
+                            name="branchId"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Branch</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                    <SelectValue placeholder="Select a branch" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {mockBranches.map(branch => (
+                                        <SelectItem key={branch.id} value={branch.id}>{branch.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
                         <div className='grid grid-cols-2 gap-4'>
                             <FormField
                                 control={form.control}
