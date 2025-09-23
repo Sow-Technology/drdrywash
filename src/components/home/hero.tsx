@@ -74,14 +74,10 @@ export default function Hero() {
                     </Button>
                 </motion.div>
                 <motion.div 
-                    className="mt-8 text-xs text-muted-foreground bg-muted p-3 rounded-lg border max-w-md mx-auto"
+                    className="mt-8 text-sm text-muted-foreground"
                     variants={itemVariants}
                 >
-                    <p className="font-semibold text-foreground">Delivery Conditions:</p>
-                    <ul className="list-disc list-inside mt-1 text-left">
-                        <li>Free pickup & drop for orders above ₹400 within a 5KM radius.</li>
-                        <li>Free pickup & drop for all other orders within a 2KM radius.</li>
-                    </ul>
+                    <p>Free pickup and delivery within a 2KM Radius.</p>
                 </motion.div>
             </div>
         </motion.div>

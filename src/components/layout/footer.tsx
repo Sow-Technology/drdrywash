@@ -13,6 +13,13 @@ export default function Footer() {
             <p className="text-sm text-muted-foreground">
               Fresh clothes, delivered to your door. Dr. Dry Wash makes laundry day easy.
             </p>
+             <div className="text-sm text-muted-foreground">
+                <h4 className="font-semibold text-foreground mb-2">Delivery Conditions:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                    <li>Free pickup & drop for orders above ₹400 within a 5KM radius.</li>
+                    <li>Free pickup & drop for all other orders within a 2KM radius.</li>
+                </ul>
+            </div>
           </div>
           <div>
             <h3 className="font-semibold mb-4">Quick Links</h3>
