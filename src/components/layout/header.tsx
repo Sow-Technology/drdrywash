@@ -63,7 +63,7 @@ export default function Header() {
             <NavLink key={link.href} {...link} />
           ))}
         </nav>
-        <div className="flex flex-1 items-center justify-end space-x-4">
+        <div className="flex flex-1 items-center justify-end space-x-2">
            <div className="hidden md:flex items-center gap-2">
             <Button asChild>
                 <Link href="/track-order">
@@ -71,8 +71,8 @@ export default function Header() {
                     <Search className="ml-2 h-4 w-4" />
                 </Link>
             </Button>
-            <ThemeSwitcher />
           </div>
+          <ThemeSwitcher />
            <div className="md:hidden">
              <Sheet>
                 <SheetTrigger asChild>
@@ -86,6 +86,7 @@ export default function Header() {
                         {navLinks.map((link) => (
                             <MobileNavLink key={link.href} {...link} />
                         ))}
+                         <MobileNavLink href="/track-order" label="Track Order" />
                     </nav>
                 </SheetContent>
             </Sheet>
