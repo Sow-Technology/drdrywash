@@ -26,6 +26,7 @@ import {
   homeLinenPricing,
   washAndFoldPricing,
 } from '@/lib/data';
+import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 
 const NoResultsFound = () => (
   <div className="text-center text-muted-foreground py-8 col-span-full">
@@ -59,7 +60,7 @@ const PricingTable = ({
                 <TableCell className="font-medium text-center">{item.product}</TableCell>
                 {Object.keys(item.prices).map((key) => (
                   <TableCell key={key} className="text-center tabular-nums">
-                    {item.prices[key]}
+                    {item.prices[key] !== '-' ? `₹${item.prices[key]}` : '-'}
                   </TableCell>
                 ))}
               </TableRow>
@@ -92,7 +93,7 @@ const SimplePricingTable = ({
             {data.map((item, index) => (
               <TableRow key={index} className="hover:bg-muted/50">
                 <TableCell className="font-medium text-center">{item.product}</TableCell>
-                <TableCell className="text-center tabular-nums">{item.price}</TableCell>
+                <TableCell className="text-center tabular-nums">₹{item.price}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -201,23 +202,18 @@ export default function PricingCategories({ searchQuery }: { searchQuery: string
   ], [searchQuery]);
 
   const hasResults = pricingSections.some(section => section.id === 'shoes' || section.id === 'repairs' || section.props.data.length > 0);
-  const topRowCategories = pricingSections.slice(0, 5);
-  const bottomRowCategories = pricingSections.slice(5);
-
+  
   return (
     <Tabs defaultValue="men" className="w-full">
-        <div className="flex flex-col items-center">
+        <ScrollArea className="w-full whitespace-nowrap">
             <TabsList className="h-auto">
-                {topRowCategories.map(section => (
+                {pricingSections.map(section => (
                 <TabsTrigger key={section.id} value={section.id}>{section.title}</TabsTrigger>
                 ))}
             </TabsList>
-            <TabsList className="h-auto mt-2">
-                {bottomRowCategories.map(section => (
-                <TabsTrigger key={section.id} value={section.id}>{section.title}</TabsTrigger>
-                ))}
-            </TabsList>
-        </div>
+            <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+
       <AnimatePresence mode="wait">
         {pricingSections.map(section => {
           const Comp = section.component;
