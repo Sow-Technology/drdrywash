@@ -43,6 +43,16 @@ export default function SchedulePickupPage() {
         >
           Ready for a laundry-free life? Fill out the form below to schedule a convenient pickup time.
         </motion.p>
+        <motion.div 
+            className="mt-6 text-base text-muted-foreground bg-muted p-4 rounded-lg border"
+            variants={itemVariants}
+        >
+            <p className="font-semibold text-foreground">Delivery Conditions:</p>
+            <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Free pickup and drop for orders above ₹400 within a 5KM radius.</li>
+                <li>Free pickup and drop for all other orders within a 2KM radius.</li>
+            </ul>
+        </motion.div>
       </div>
       <motion.div variants={itemVariants}>
         <SchedulePickupForm />
