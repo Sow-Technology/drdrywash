@@ -5,4 +5,3 @@ export { default as WhyChooseUs } from './why-choose-us';
 export { default as Faq } from './faq';
 export { default as WeAlsoServe } from './we-also-serve';
 export { default as GetAQuoteDialog } from './get-a-quote-dialog';
-export { default as AboutUs } from './about-us';
