@@ -9,7 +9,7 @@
     {
       "id": "wash-fold",
       "description": "A wicker laundry basket full of clean, folded clothes.",
-      "imageUrl": "https://storage.googleapis.com/aif-starlark/prod/prompts/12d577b2-745a-48f8-b3d2-a7201c3132e0.jpeg",
+      "imageUrl": "https://images.unsplash.com/photo-1630329273801-8f629dba0a72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxsYXVuZHJ5JTIwYmFza2V0fGVufDB8fHx8MTc1ODY0MDk2Nnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "laundry basket"
     },
     {
@@ -33,7 +33,7 @@
     {
       "id": "contact-us",
       "description": "A friendly customer service representative on the phone.",
-      "imageUrl": "https://images.unsplash.com/photo-1626863905121-3b0c0ed7b94c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjdXN0b21lciUyMHNlcnZpY2V8ZW58MHx8fHwxNzU4NjAyOTA2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1626863905121-3b0c0ed7b94c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjdXN0b21lciUyMHNlcnZpY2V8ZW58MHx8fHwxNzU4NjAyOTA2fDA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "customer service"
     },
     {
