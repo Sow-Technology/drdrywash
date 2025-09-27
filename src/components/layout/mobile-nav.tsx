@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Home, Tag, Calendar, Phone, Search } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 const mobileNavLinks = [
   { href: '/', label: 'Home', icon: Home },
@@ -18,8 +19,8 @@ export default function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">
-      <div className="container flex h-16 items-center justify-around">
+    <nav className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 md:hidden">
+      <div className="relative flex h-16 items-center justify-around gap-2 rounded-full border bg-background/80 p-2 shadow-lg backdrop-blur-lg">
         {mobileNavLinks.map((link) => {
           const isActive = pathname === link.href;
           return (
@@ -27,12 +28,19 @@ export default function MobileNav() {
               key={link.href}
               href={link.href}
               className={cn(
-                'flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors hover:text-primary',
-                isActive ? 'text-primary' : 'text-muted-foreground'
+                'relative flex h-full w-16 flex-col items-center justify-center gap-1 rounded-full text-xs font-medium transition-colors hover:text-primary',
+                isActive ? 'text-primary-foreground' : 'text-muted-foreground'
               )}
             >
-              <link.icon className="h-5 w-5" />
-              <span>{link.label}</span>
+              {isActive && (
+                <motion.div
+                  layoutId="active-nav-pill"
+                  className="absolute inset-0 z-0 rounded-full bg-foreground"
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                />
+              )}
+              <link.icon className="relative z-10 h-5 w-5" />
+              <span className="relative z-10">{link.label}</span>
             </Link>
           );
         })}
