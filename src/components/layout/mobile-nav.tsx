@@ -36,7 +36,7 @@ export default function MobileNav() {
               {isActive && (
                 <motion.div
                   layoutId="active-nav-pill"
-                  className="absolute inset-0 z-0 rounded-full bg-foreground/10"
+                  className="absolute z-0 h-12 w-12 rounded-full bg-foreground/10"
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
               )}
