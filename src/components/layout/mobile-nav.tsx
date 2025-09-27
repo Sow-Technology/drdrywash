@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -39,8 +40,14 @@ export default function MobileNav() {
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
               )}
-              <link.icon className="relative z-10 h-5 w-5" />
-              <span className="relative z-10">{link.label}</span>
+               <motion.div
+                className="relative z-10 flex flex-col items-center"
+                animate={{ scale: isActive ? 1.15 : 0.9 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+              >
+                <link.icon className="h-5 w-5" />
+                <span className="text-xs">{link.label}</span>
+              </motion.div>
             </Link>
           );
         })}
