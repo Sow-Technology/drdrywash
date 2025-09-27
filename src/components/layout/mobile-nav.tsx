@@ -29,14 +29,14 @@ export default function MobileNav() {
               key={link.href}
               href={link.href}
               className={cn(
-                'relative flex h-full w-16 flex-col items-center justify-center gap-1 rounded-full text-xs font-medium transition-colors hover:text-primary',
+                'relative flex h-14 w-14 flex-col items-center justify-center gap-1 rounded-full text-xs font-medium transition-colors hover:text-primary',
                 isActive ? 'text-primary' : 'text-muted-foreground'
               )}
             >
               {isActive && (
                 <motion.div
                   layoutId="active-nav-pill"
-                  className="absolute z-0 h-12 w-12 rounded-full bg-foreground/10"
+                  className="absolute inset-0 z-0 rounded-full bg-foreground/10"
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
               )}
@@ -46,7 +46,7 @@ export default function MobileNav() {
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
               >
                 <link.icon className="h-5 w-5" />
-                <span className="text-xs">{link.label}</span>
+                <span className="text-[10px]">{link.label}</span>
               </motion.div>
             </Link>
           );
