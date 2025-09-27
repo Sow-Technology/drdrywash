@@ -29,13 +29,13 @@ export default function MobileNav() {
               href={link.href}
               className={cn(
                 'relative flex h-full w-16 flex-col items-center justify-center gap-1 rounded-full text-xs font-medium transition-colors hover:text-primary',
-                isActive ? 'text-primary-foreground' : 'text-muted-foreground'
+                isActive ? 'text-primary' : 'text-muted-foreground'
               )}
             >
               {isActive && (
                 <motion.div
                   layoutId="active-nav-pill"
-                  className="absolute inset-0 z-0 rounded-full bg-foreground"
+                  className="absolute inset-0 z-0 rounded-full bg-foreground/10"
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
               )}
