@@ -37,12 +37,11 @@ const iconAnimation = (step: number) => {
             };
         case 1: // Pick Up
              return {
-                x: ["0%", "0%", "110%", "-110%", "0%"],
+                x: ["-110%", "110%"],
                 transition: {
-                    duration: 4,
+                    duration: 3,
                     repeat: Infinity,
-                    ease: "easeInOut",
-                    times: [0, 0.25, 0.5, 0.75, 1]
+                    ease: "linear",
                 },
             };
         case 2: // Cleaning
@@ -52,12 +51,11 @@ const iconAnimation = (step: number) => {
             };
         case 3: // Drop Off
             return {
-                x: ["0%", "0%", "110%", "-110%", "0%"],
+                x: ["-110%", "110%"],
                 transition: {
-                    duration: 4,
+                    duration: 3,
                     repeat: Infinity,
-                    ease: "easeInOut",
-                    times: [0, 0.25, 0.5, 0.75, 1]
+                    ease: "linear",
                 },
             };
         default:
