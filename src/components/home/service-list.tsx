@@ -38,7 +38,7 @@ const services = [
     description: 'Tailored specifically for formals & premium wear.',
   },
   {
-    icon: Sparkles,
+    icon: SprayCan,
     title: 'Dry Clean',
     description:
       'Wedding Dresses, Lehengas, Sarees, Jackets, Blazers & more.',
@@ -59,7 +59,7 @@ const services = [
     description: 'Premium packing and crease-free garments on hanger.',
   },
   {
-    icon: SprayCan,
+    icon: Gem,
     title: 'Premium Dry clean',
     description: 'Exclusive care for premium garments.',
   },
