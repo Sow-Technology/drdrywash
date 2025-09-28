@@ -17,6 +17,7 @@ const navLinks = [
   { href: '/about', label: 'About' },
   { href: '/#services', label: 'Services' },
   { href: '/pricing', label: 'Pricing' },
+  { href: '/stores', label: 'Stores' },
   { href: '/schedule-pickup', label: 'Schedule a Pickup' },
   { href: '/contact', label: 'Contact' },
 ];
