@@ -237,7 +237,7 @@ export default function Chatbot() {
 
   return (
     <>
-      <div className="fixed bottom-8 right-4 md:bottom-8 md:right-8 z-50">
+      <div className="fixed top-1/2 right-0 -translate-y-1/2 z-50 flex items-center">
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -245,7 +245,7 @@ export default function Chatbot() {
               initial="closed"
               animate="open"
               exit="closed"
-              className="w-[340px]"
+              className="w-[340px] mr-4"
             >
               <Card className="shadow-2xl h-[500px] flex flex-col">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b">
@@ -347,37 +347,37 @@ export default function Chatbot() {
           )}
         </AnimatePresence>
 
-        <div className="relative flex flex-col items-end gap-3">
-             <Button
-                size="lg"
-                className="rounded-full h-14 shadow-lg !bg-[#25D366] hover:!bg-[#1DAE51] text-white"
-                aria-label="Chat on WhatsApp"
-                asChild
-            >
-                <Link href="https://wa.me/919738045714" target="_blank" className='gap-2'>
-                    <WhatsAppIcon className="h-7 w-7" />
-                    <span className='text-lg font-semibold'>Whatsapp Us</span>
-                </Link>
-            </Button>
-             <div className='flex gap-2'>
+        <div className="flex items-center gap-0">
+             <div className='flex flex-col gap-2 bg-background p-2 rounded-l-full shadow-lg border-l border-y'>
                  <Button
                     size="icon"
-                    className="rounded-full w-12 h-12 shadow-lg !bg-red-500 hover:!bg-red-600 text-white"
+                    className="rounded-full w-10 h-10 shadow-lg !bg-red-500 hover:!bg-red-600 text-white"
                     aria-label="Call Us"
                     asChild
                 >
                     <Link href="tel:+919738045714">
-                        <Phone className="h-6 w-6" />
+                        <Phone className="h-5 w-5" />
                     </Link>
                 </Button>
                  <Button
                     size="icon"
-                    className="rounded-full w-12 h-12 shadow-lg !bg-blue-500 hover:!bg-blue-600 text-white"
+                    className="rounded-full w-10 h-10 shadow-lg !bg-blue-500 hover:!bg-blue-600 text-white"
                     aria-label="Get our App"
                 >
-                     <Download className="h-6 w-6" />
+                     <Download className="h-5 w-5" />
                 </Button>
              </div>
+             <Button
+                size="lg"
+                className="h-28 shadow-lg !bg-[#25D366] hover:!bg-[#1DAE51] text-white rounded-l-none rounded-r-full"
+                aria-label="Chat on WhatsApp"
+                asChild
+            >
+                <Link href="https://wa.me/919738045714" target="_blank" className='flex flex-col items-center gap-2'>
+                    <WhatsAppIcon className="h-7 w-7" />
+                    <span className='text-sm font-semibold writing-mode-vertical-rl text-orientation-mixed'>Whatsapp</span>
+                </Link>
+            </Button>
         </div>
       </div>
     </>
