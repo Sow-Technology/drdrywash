@@ -3,13 +3,12 @@
 import {
   Shirt,
   Sparkles,
-  Spray,
+  SprayCan,
   Star,
   Wind,
   CheckSquare,
   ShoppingCart,
   Gem,
-  Iron,
 } from 'lucide-react';
 import {
   Card,
@@ -29,7 +28,7 @@ const services = [
     description: 'Affordable laundry service. Delivery Time: 72 Hours',
   },
   {
-    icon: Iron,
+    icon: Sparkles,
     title: 'Wash & Iron',
     description: 'Preferred for regular and formals. Delivery Time: 72 Hours',
   },
@@ -60,7 +59,7 @@ const services = [
     description: 'Premium packing and crease-free garments on hanger.',
   },
   {
-    icon: Spray,
+    icon: SprayCan,
     title: 'Premium Dry clean',
     description: 'Exclusive care for premium garments.',
   },
