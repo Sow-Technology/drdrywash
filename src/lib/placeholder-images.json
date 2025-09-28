@@ -27,7 +27,7 @@
     {
       "id": "bedding",
       "description": "Clean and fresh bed sheets and pillows on a well-made bed.",
-      "imageUrl": "https://images.unsplash.com/photo-1628255438300-5eecc61f19a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjbGVhbiUyMGJlZHxlbnwwfHx8fDE3NTg2NTQzNDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1628255438300-5eecc61f19a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjbGVhbiUyMGJlZHxlbnwwfHx8fDE3NTg2NTQzNDN8MA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "clean bed"
     },
     {
@@ -39,7 +39,7 @@
     {
       "id": "why-choose-us",
       "description": "A young girl playing with two puppies on a clean carpet.",
-      "imageUrl": "https://images.unsplash.com/photo-1522254795997-60bd803817b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxnaXJsJTIwcHVwcGllc3xlbnwwfHx8fDE3NTg2NTQzNDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1522254795997-60bd803817b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxnaXJsJTIwcHVwcGllc3xlbnwwfHx8fDE3NTg2NTQzNDN8MA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "girl puppies"
     },
     {
@@ -47,6 +47,24 @@
       "description": "Portrait of Ajith T, Founder and CEO of Dr. Dry Wash.",
       "imageUrl": "https://storage.googleapis.com/aif-starlark/prod/users/google-oauth2%7C107352355523971593952/d7494481-e380-4943-8531-50e5e0116035.png",
       "imageHint": "man portrait"
+    },
+    {
+      "id": "product-jacket",
+      "description": "A stylish black leather jacket.",
+      "imageUrl": "https://images.unsplash.com/photo-1602370463198-086436840055?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxsZWF0aGVyJTIwamFja2V0fGVufDB8fHx8MTc1ODk3NTM3N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "leather jacket"
+    },
+    {
+      "id": "product-blanket",
+      "description": "A rolled up green blanket.",
+      "imageUrl": "https://images.unsplash.com/photo-1695783063633-8fc90cd69e8a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxyb2xsZWQlMjBibGFua2V0fGVufDB8fHx8MTc1OTA0OTk4MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "rolled blanket"
+    },
+    {
+      "id": "product-shirt",
+      "description": "A folded blue collared shirt.",
+      "imageUrl": "https://images.unsplash.com/photo-1716951988375-37d5793385d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxmb2xkZWQlMjBzaGlydHxlbnwwfHx8fDE3NTkwNDk5ODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "folded shirt"
     }
   ]
 }
