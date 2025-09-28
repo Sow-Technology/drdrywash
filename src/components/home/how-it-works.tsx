@@ -32,22 +32,26 @@ const iconAnimation = (step: number) => {
         case 0: // Order Online
             return {
                 scale: [1, 1.05, 1],
-                transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" }
             };
         case 1: // Pick Up
             return {
                 x: [-5, 5, -5],
-                transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                rotate: [0, -3, 3, 0],
+                transition: { 
+                    x: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                }
             };
         case 2: // Cleaning
             return {
-                rotate: [0, 360],
-                transition: { duration: 2, repeat: Infinity, ease: "linear" }
+                rotate: [0, 5, -5, 5, 0],
+                transition: { duration: 0.7, repeat: Infinity, ease: "easeInOut" }
             };
         case 3: // Drop Off
             return {
-                x: [0, -1, 1, -1, 1, 0],
-                transition: { duration: 0.5, repeat: Infinity, ease: "easeInOut" }
+                y: [0, -2, 0],
+                transition: { duration: 1, repeat: Infinity, ease: "easeInOut" }
             };
         default:
             return {};
