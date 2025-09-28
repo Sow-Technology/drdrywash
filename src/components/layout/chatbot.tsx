@@ -60,12 +60,12 @@ const chatbotVariants = {
 
 const fabContainerVariants = {
     closed: { opacity: 1 },
-    open: { opacity: 1, transition: { staggerChildren: 0.07, delayChildren: 0.2 } },
+    open: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
 };
 
 const fabItemVariants = {
-    closed: { y: 20, opacity: 0 },
-    open: { y: 0, opacity: 1 },
+    closed: { y: 10, scale: 0.9, opacity: 0, transition: { type: 'spring', stiffness: 300, damping: 20 } },
+    open: { y: 0, scale: 1, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 20 } },
 };
 
 const supportOptions = [
@@ -354,7 +354,7 @@ export default function Chatbot() {
         </AnimatePresence>
 
         <motion.div
-            className="flex flex-col items-center gap-3"
+            className="flex flex-col items-end gap-4"
             variants={fabContainerVariants}
             initial="closed"
             animate={isFabOpen ? "open" : "closed"}
@@ -362,24 +362,24 @@ export default function Chatbot() {
             <AnimatePresence>
                 {isFabOpen && (
                     <>
-                        <motion.div variants={fabItemVariants} exit={{ y: 20, opacity: 0 }} className='flex items-center gap-2'>
-                            <span className="bg-card text-card-foreground text-sm py-1 px-3 rounded-md shadow-lg">Chat on WhatsApp</span>
+                        <motion.div variants={fabItemVariants} exit={{ y: 20, opacity: 0 }} className='flex items-center gap-3'>
+                            <span className="bg-card text-card-foreground text-sm py-1 px-3 rounded-md shadow-lg whitespace-nowrap">Chat on WhatsApp</span>
                              <Button asChild size="icon" className="rounded-full w-12 h-12 shadow-lg !bg-[#25D366] hover:!bg-[#1DAE51] text-white">
                                 <Link href="https://wa.me/919738045714" target="_blank" aria-label="Chat on WhatsApp">
                                     <WhatsAppIcon className="h-6 w-6" />
                                 </Link>
                             </Button>
                         </motion.div>
-                        <motion.div variants={fabItemVariants} exit={{ y: 20, opacity: 0 }} className='flex items-center gap-2'>
-                             <span className="bg-card text-card-foreground text-sm py-1 px-3 rounded-md shadow-lg">Call Us</span>
+                        <motion.div variants={fabItemVariants} exit={{ y: 20, opacity: 0 }} className='flex items-center gap-3'>
+                             <span className="bg-card text-card-foreground text-sm py-1 px-3 rounded-md shadow-lg whitespace-nowrap">Call Us</span>
                             <Button asChild size="icon" className="rounded-full w-12 h-12 shadow-lg !bg-red-500 hover:!bg-red-600 text-white">
                                 <Link href="tel:+919738045714" aria-label="Call Us">
                                     <Phone className="h-6 w-6" />
                                 </Link>
                             </Button>
                         </motion.div>
-                         <motion.div variants={fabItemVariants} exit={{ y: 20, opacity: 0 }} className='flex items-center gap-2'>
-                            <span className="bg-card text-card-foreground text-sm py-1 px-3 rounded-md shadow-lg">Chat with AI</span>
+                         <motion.div variants={fabItemVariants} exit={{ y: 20, opacity: 0 }} className='flex items-center gap-3'>
+                            <span className="bg-card text-card-foreground text-sm py-1 px-3 rounded-md shadow-lg whitespace-nowrap">Chat with AI</span>
                             <Button size="icon" className="rounded-full w-12 h-12 shadow-lg" onClick={startChat} aria-label="Chat with AI">
                                 <MessageSquare className="h-6 w-6" />
                             </Button>
@@ -394,7 +394,7 @@ export default function Chatbot() {
                 aria-expanded={isFabOpen}
                 aria-label="Toggle contact menu"
             >
-                <motion.div animate={{ rotate: isFabOpen ? 45 : 0 }}>
+                <motion.div animate={{ rotate: isFabOpen ? 45 : 0 }} transition={{ duration: 0.3 }}>
                     <Plus className="h-7 w-7" />
                 </motion.div>
             </Button>
