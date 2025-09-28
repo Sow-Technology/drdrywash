@@ -77,13 +77,13 @@ const sectionVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, x: 50 },
+  hidden: { opacity: 0, y: 20 },
   visible: { 
     opacity: 1,
-    x: 0,
+    y: 0,
     transition: {
-        type: 'spring',
-        stiffness: 100,
+        duration: 0.5,
+        ease: 'easeOut',
     }
    },
 };
@@ -138,15 +138,10 @@ export default function ServiceList() {
             <motion.div key={service.title} variants={itemVariants}>
               <motion.div
                 className="h-full"
-                whileHover="hover"
+                whileHover={{ y: -8 }}
                 transition={{
-                  duration: 0.1,
+                  duration: 0.3,
                   ease: 'easeOut',
-                }}
-                variants={{
-                  hover: {
-                    y: -8,
-                  },
                 }}
               >
                 <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl hover:shadow-primary/20 transition-shadow duration-300 text-center flex flex-col">

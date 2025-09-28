@@ -7,10 +7,7 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { motion } from 'framer-motion';
 
-export default function Hero() {
-  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-image');
-  
-  const containerVariants = {
+const sectionVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -18,27 +15,31 @@ export default function Hero() {
         staggerChildren: 0.1,
       },
     },
-  };
+};
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.5,
+        ease: 'easeOut',
       },
     },
-  };
+};
 
+export default function Hero() {
+  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-image');
+  
   return (
-    <section className="relative w-full py-20 md:py-32 lg:py-40 bg-background overflow-hidden">
-        <motion.div 
-          className="container relative z-10"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
+    <motion.section 
+        className="relative w-full py-20 md:py-32 lg:py-40 bg-background overflow-hidden"
+        variants={sectionVariants}
+        initial="hidden"
+        animate="visible"
+    >
+        <div className="container relative z-10">
             <div className="max-w-3xl text-center mx-auto">
                 <motion.h1 
                     className="text-4xl font-extrabold tracking-tight font-headline sm:text-5xl md:text-6xl text-primary"
@@ -78,7 +79,7 @@ export default function Hero() {
                     <p>Free pickup and delivery within a 2KM Radius.</p>
                 </motion.div>
             </div>
-        </motion.div>
+        </div>
         {heroImage && (
             <Image
                 src={heroImage.imageUrl}
@@ -91,6 +92,6 @@ export default function Hero() {
             />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent z-5"></div>
-    </section>
+    </motion.section>
   );
 }
