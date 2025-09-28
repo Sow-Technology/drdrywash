@@ -4,6 +4,7 @@
 import { motion } from 'framer-motion';
 import { howItWorksOnline } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnimatedWashingMachine } from './animated-washing-machine';
 
 const sectionVariants = {
   hidden: { opacity: 0 },
@@ -43,14 +44,11 @@ const iconAnimation = (step: number) => {
                     duration: 5,
                     repeat: Infinity,
                     ease: "linear",
-                    times: [0, 0.2, 0.6, 0.8]
+                    times: [0, 0.4, 0.6, 1]
                 },
             };
-        case 2: // Cleaning
-            return {
-                rotate: [0, 360],
-                transition: { duration: 2.5, repeat: Infinity, ease: "linear" }
-            };
+        case 2: // Cleaning - The component now handles its own animation
+            return {};
         default:
             return {};
     }
@@ -86,34 +84,37 @@ export default function HowItWorks() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
           variants={sectionVariants}
         >
-          {howItWorksOnline.map((step, index) => (
-            <motion.div key={index} variants={itemVariants} className="h-full">
-              <Card className="text-center h-full shadow-sm hover:shadow-lg transition-shadow duration-300">
-                <CardHeader>
-                  <div className="flex justify-center">
-                    <div 
-                        className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 overflow-hidden"
-                    >
-                      <motion.div animate={iconAnimation(index)}>
-                        <step.icon className="h-10 w-10 text-primary" />
-                      </motion.div>
+          {howItWorksOnline.map((step, index) => {
+            const IconComponent = index === 2 ? AnimatedWashingMachine : step.icon;
+            return (
+              <motion.div key={index} variants={itemVariants} className="h-full">
+                <Card className="text-center h-full shadow-sm hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader>
+                    <div className="flex justify-center">
+                      <div 
+                          className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 overflow-hidden"
+                      >
+                        <motion.div animate={iconAnimation(index)}>
+                          <IconComponent className="h-10 w-10 text-primary" />
+                        </motion.div>
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="font-semibold text-primary mb-2">
-                    Step {index + 1}
-                  </p>
-                  <CardTitle className="font-headline text-xl">
-                    {step.title}
-                  </CardTitle>
-                  <p className="mt-2 text-muted-foreground">
-                    {step.description}
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+                  </CardHeader>
+                  <CardContent>
+                    <p className="font-semibold text-primary mb-2">
+                      Step {index + 1}
+                    </p>
+                    <CardTitle className="font-headline text-xl">
+                      {step.title}
+                    </CardTitle>
+                    <p className="mt-2 text-muted-foreground">
+                      {step.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )
+          })}
         </motion.div>
       </div>
     </motion.section>
