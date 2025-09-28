@@ -77,8 +77,15 @@ const sectionVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
+  hidden: { opacity: 0, x: 50 },
+  visible: { 
+    opacity: 1,
+    x: 0,
+    transition: {
+        type: 'spring',
+        stiffness: 100,
+    }
+   },
 };
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -142,7 +149,7 @@ export default function ServiceList() {
                   },
                 }}
               >
-                <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl hover:shadow-primary/20 transition-shadow duration-300 text-center">
+                <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl hover:shadow-primary/20 transition-shadow duration-300 text-center flex flex-col">
                   <CardHeader>
                     <motion.div
                       className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 mx-auto"
@@ -152,14 +159,14 @@ export default function ServiceList() {
                       <service.icon className="h-10 w-10 text-primary" />
                     </motion.div>
                   </CardHeader>
-                  <CardContent className="flex flex-col flex-grow">
+                  <CardContent className="flex flex-col flex-grow p-6 pt-0">
                     <CardTitle className="font-headline text-xl">
                       {service.title}
                     </CardTitle>
                     <CardDescription className="mt-2 flex-grow">
                       {service.description}
                     </CardDescription>
-                    <Button className="mt-4" asChild>
+                    <Button className="mt-6 w-full" asChild>
                       <Link href="/schedule-pickup">Book Now</Link>
                     </Button>
                   </CardContent>
