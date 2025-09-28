@@ -10,6 +10,7 @@ import {
   Phone,
   Apple,
   AppWindow,
+  Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -57,9 +58,14 @@ const chatbotVariants = {
   },
 };
 
-const fabVariants = {
-    closed: { opacity: 0, y: 10 },
-    open: { opacity: 1, y: 0 },
+const fabContainerVariants = {
+    closed: { opacity: 1 },
+    open: { opacity: 1, transition: { staggerChildren: 0.07, delayChildren: 0.2 } },
+};
+
+const fabItemVariants = {
+    closed: { y: 20, opacity: 0 },
+    open: { y: 0, opacity: 1 },
 };
 
 const supportOptions = [
@@ -237,7 +243,7 @@ export default function Chatbot() {
 
   return (
     <>
-      <div className="fixed top-1/2 right-0 -translate-y-1/2 z-50 flex items-center">
+      <div className="fixed bottom-8 right-8 z-50">
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -245,7 +251,7 @@ export default function Chatbot() {
               initial="closed"
               animate="open"
               exit="closed"
-              className="w-[340px] mr-4"
+              className="w-[340px] absolute bottom-0 right-0"
             >
               <Card className="shadow-2xl h-[500px] flex flex-col">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b">
@@ -347,41 +353,53 @@ export default function Chatbot() {
           )}
         </AnimatePresence>
 
-        <div className="flex items-center gap-0">
-             <div className='flex flex-col gap-2 bg-background p-2 rounded-l-full shadow-lg border-l border-y'>
-                 <Button
-                    size="icon"
-                    className="rounded-full w-10 h-10 shadow-lg !bg-red-500 hover:!bg-red-600 text-white"
-                    aria-label="Call Us"
-                    asChild
-                >
-                    <Link href="tel:+919738045714">
-                        <Phone className="h-5 w-5" />
-                    </Link>
-                </Button>
-                 <Button
-                    size="icon"
-                    className="rounded-full w-10 h-10 shadow-lg !bg-blue-500 hover:!bg-blue-600 text-white"
-                    aria-label="Get our App"
-                >
-                     <Download className="h-5 w-5" />
-                </Button>
-             </div>
-             <Button
-                size="lg"
-                className="h-28 shadow-lg !bg-[#25D366] hover:!bg-[#1DAE51] text-white rounded-l-none rounded-r-full"
-                aria-label="Chat on WhatsApp"
-                asChild
+        <motion.div
+            className="flex flex-col items-center gap-3"
+            variants={fabContainerVariants}
+            initial="closed"
+            animate={isFabOpen ? "open" : "closed"}
+        >
+            <AnimatePresence>
+                {isFabOpen && (
+                    <>
+                        <motion.div variants={fabItemVariants} exit={{ y: 20, opacity: 0 }} className='flex items-center gap-2'>
+                            <span className="bg-card text-card-foreground text-sm py-1 px-3 rounded-md shadow-lg">Chat on WhatsApp</span>
+                             <Button asChild size="icon" className="rounded-full w-12 h-12 shadow-lg !bg-[#25D366] hover:!bg-[#1DAE51] text-white">
+                                <Link href="https://wa.me/919738045714" target="_blank" aria-label="Chat on WhatsApp">
+                                    <WhatsAppIcon className="h-6 w-6" />
+                                </Link>
+                            </Button>
+                        </motion.div>
+                        <motion.div variants={fabItemVariants} exit={{ y: 20, opacity: 0 }} className='flex items-center gap-2'>
+                             <span className="bg-card text-card-foreground text-sm py-1 px-3 rounded-md shadow-lg">Call Us</span>
+                            <Button asChild size="icon" className="rounded-full w-12 h-12 shadow-lg !bg-red-500 hover:!bg-red-600 text-white">
+                                <Link href="tel:+919738045714" aria-label="Call Us">
+                                    <Phone className="h-6 w-6" />
+                                </Link>
+                            </Button>
+                        </motion.div>
+                         <motion.div variants={fabItemVariants} exit={{ y: 20, opacity: 0 }} className='flex items-center gap-2'>
+                            <span className="bg-card text-card-foreground text-sm py-1 px-3 rounded-md shadow-lg">Chat with AI</span>
+                            <Button size="icon" className="rounded-full w-12 h-12 shadow-lg" onClick={startChat} aria-label="Chat with AI">
+                                <MessageSquare className="h-6 w-6" />
+                            </Button>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+            <Button
+                size="icon"
+                className="rounded-full w-16 h-16 shadow-lg"
+                onClick={() => setIsFabOpen(!isFabOpen)}
+                aria-expanded={isFabOpen}
+                aria-label="Toggle contact menu"
             >
-                <Link href="https://wa.me/919738045714" target="_blank" className='flex flex-col items-center gap-2'>
-                    <WhatsAppIcon className="h-7 w-7" />
-                    <span className='text-sm font-semibold writing-mode-vertical-rl text-orientation-mixed'>Whatsapp</span>
-                </Link>
+                <motion.div animate={{ rotate: isFabOpen ? 45 : 0 }}>
+                    <Plus className="h-7 w-7" />
+                </motion.div>
             </Button>
-        </div>
+        </motion.div>
       </div>
     </>
   );
 }
-
-    
