@@ -52,18 +52,25 @@ export default function Faq() {
             Have questions? We have answers. If you can't find what you're looking for, feel free to contact us.
           </motion.p>
         </div>
-        <Accordion type="single" collapsible className="w-full">
-          {faqItems.map((item, index) => (
-            <motion.div key={index} variants={itemVariants}>
-              <AccordionItem value={`item-${index}`}>
-                <AccordionTrigger className="text-lg text-left">{item.question}</AccordionTrigger>
-                <AccordionContent className="text-base text-muted-foreground">
-                  {item.answer}
-                </AccordionContent>
-              </AccordionItem>
-            </motion.div>
-          ))}
-        </Accordion>
+        <motion.div
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+            <Accordion type="single" collapsible className="w-full">
+            {faqItems.map((item, index) => (
+                <motion.div key={index} variants={itemVariants}>
+                <AccordionItem value={`item-${index}`}>
+                    <AccordionTrigger className="text-lg text-left">{item.question}</AccordionTrigger>
+                    <AccordionContent className="text-base text-muted-foreground">
+                    {item.answer}
+                    </AccordionContent>
+                </AccordionItem>
+                </motion.div>
+            ))}
+            </Accordion>
+        </motion.div>
       </div>
     </motion.section>
   );

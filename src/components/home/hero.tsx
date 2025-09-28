@@ -96,9 +96,19 @@ export default function Hero() {
                     alt={heroImage.description}
                     data-ai-hint={heroImage.imageHint}
                     fill
-                    className="object-cover"
-                    style={{ opacity: 0.1 }}
+                    className="object-cover opacity-10"
                     priority
+                />
+                 <motion.div 
+                    className="absolute inset-0 bg-gradient-radial from-transparent to-background/50"
+                    animate={{ 
+                        opacity: [0.3, 0.5, 0.3],
+                    }}
+                    transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                    }}
                 />
             </motion.div>
         )}

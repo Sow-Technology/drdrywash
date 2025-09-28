@@ -30,6 +30,18 @@ const itemVariants = {
   },
 };
 
+const handFloat = {
+  animate: {
+    y: ["-8px", "8px"],
+    transition: {
+      duration: 3,
+      repeat: Infinity,
+      repeatType: "reverse",
+      ease: "easeInOut",
+    },
+  },
+};
+
 const features = [
   {
     icon: Clock,
@@ -111,8 +123,8 @@ export default function MobileAppPromo() {
             </div>
           </motion.div>
           <motion.div className="relative h-[500px] flex items-center justify-center" variants={itemVariants}>
-            <div className="absolute inset-y-0 right-0 w-2/3 bg-green-700 rounded-l-full" style={{zIndex: 0, opacity: 0.2}}></div>
-            <div className="relative flex items-center justify-center">
+            <div className="absolute inset-y-0 right-0 w-2/3 bg-green-700 rounded-l-full" style={{zIndex: 0, opacity: 0.1}}></div>
+            <motion.div className="relative flex items-center justify-center" variants={handFloat} animate="animate">
               {handImage && (
                 <Image
                   src={handImage.imageUrl}
@@ -124,7 +136,11 @@ export default function MobileAppPromo() {
                 />
               )}
               {qrImage && (
-                <div className="absolute bottom-4 right-[-40px] z-20 bg-white p-2 rounded-lg shadow-lg">
+                <motion.div 
+                    className="absolute bottom-4 right-[-40px] z-20 bg-white p-2 rounded-lg shadow-lg"
+                    animate={{ scale: [1, 1.05, 1]}}
+                    transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse'}}
+                >
                   <Image
                     src={qrImage.imageUrl}
                     alt={qrImage.description}
@@ -132,9 +148,9 @@ export default function MobileAppPromo() {
                     width={100}
                     height={100}
                   />
-                </div>
+                </motion.div>
               )}
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
