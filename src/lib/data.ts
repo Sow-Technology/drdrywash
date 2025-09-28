@@ -1,4 +1,4 @@
-import { Leaf, BadgePercent, Headset, ShoppingBag, CheckCircle, Flower, MonitorSmartphone, Bike, Store, Truck, WashingMachine } from 'lucide-react';
+import { Leaf, BadgePercent, Headset, ShoppingBag, CheckCircle, Flower, MonitorSmartphone, Bike, Store, Truck, WashingMachine, User, Tag, Car, Asterisk, CreditCard } from 'lucide-react';
 import type { Order, OrderStatus } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import { mensPricing } from './mens-pricing';
@@ -155,34 +155,34 @@ export function addMockOrder(order: Order) {
 
 export const whyChooseUsItems = [
     {
-        icon: Leaf,
-        title: "Eco Friendly",
-        description: "We give importance to the environment. We recycle 100% of water we use.",
+        icon: User,
+        title: "PROFESSIONALLY TRAINED GARMENTS CARE",
+        description: "All Experts at fabric practice professional world-class processes to take care of your garments.",
+        highlighted: false,
     },
     {
-        icon: BadgePercent,
-        title: "Price Promise",
-        description: "Automatically rewarded with special pricing, offers & discounts based on your usage pattern.",
+        icon: Tag,
+        title: "NO MORE GARMENTS LOSS",
+        description: "All garments are tagged with their respective codes right from intake and processed accordingly until delivered.",
+        highlighted: false,
+    },
+     {
+        icon: Asterisk,
+        title: "NO GARMENTS DAMAGE",
+        description: "No colour bleeding, no colour fading, no tearing or other damage risks under fabrico approved process.",
+        highlighted: true,
     },
     {
-        icon: Headset,
-        title: "Responsive",
-        description: "We are not perfect. So we listen to your feedback and act on it.",
+        icon: CreditCard,
+        title: "CONVENIENT PAYMENT OPTIONS",
+        description: "Pay as you prefer via card, net banking, e-wallets, UPI, cash, etc. we accept all modes of payment.",
+        highlighted: false,
     },
     {
-        icon: ShoppingBag,
-        title: "Mixed Bag",
-        description: "With a multitude of services, we make laundry a 1 minute chore!",
-    },
-    {
-        icon: CheckCircle,
-        title: "Health Promise",
-        description: "Our cleaning chemicals are non-toxic, skin-friendly agents that are safe for your family.",
-    },
-    {
-        icon: Flower,
-        title: "Convenient",
-        description: "With stores, on-demand pickup & delivery, express services - we work at your convenience.",
+        icon: Car,
+        title: "CONVENIENT AND FREE PICK UP & DROP",
+        description: "Now schedule and manage your pickup & Drop conveniently on the Fabrico app.",
+        highlighted: false,
     },
 ];
 

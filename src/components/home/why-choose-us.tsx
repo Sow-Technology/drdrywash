@@ -2,6 +2,7 @@
 
 import { whyChooseUsItems } from "@/lib/data";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const sectionVariants = {
     hidden: { opacity: 0 },
@@ -35,18 +36,18 @@ export default function WhyChooseUs() {
       variants={sectionVariants}
     >
       <div className="container">
-        <div className="text-center max-w-2xl mx-auto">
+        <div className="text-center max-w-3xl mx-auto">
           <motion.h2 
             className="text-3xl font-bold tracking-tight font-headline sm:text-4xl"
             variants={itemVariants}
           >
-            Why Choose Us?
+            Best Dry Clean And Laundry Service in India
           </motion.h2>
           <motion.p 
             className="mt-4 text-lg text-muted-foreground"
             variants={itemVariants}
           >
-            Spin Cycles provides a variety of cleaning services. Choose us because of our reputation for excellence.
+            When it comes to Laundry & Dry clean services in India, our team of skilled professionals is committed to delivering superior results. We understand the importance of clean and fresh laundry, and that's why we use advanced techniques and state-of-the-art equipment to ensure optimal cleanliness and hygiene.
           </motion.p>
         </div>
         <motion.div 
@@ -56,33 +57,38 @@ export default function WhyChooseUs() {
             {whyChooseUsItems.map((item, index) => (
                 <motion.div 
                     key={index}
-                    className="p-6 border rounded-lg bg-background shadow-sm" 
+                    className={cn(
+                        "p-6 rounded-lg shadow-sm flex flex-col items-center text-center",
+                        item.highlighted 
+                            ? "bg-background lg:col-span-1 md:col-span-2" 
+                            : "bg-primary/10 lg:col-span-1",
+                        // Spanning logic for a 5 item grid (2-1-2)
+                        (whyChooseUsItems.length === 5) && {
+                            'md:col-span-1': index < 2 || index > 2,
+                            'md:col-span-2 lg:col-span-1': index === 2,
+                            'lg:col-start-2': index === 2,
+                            'lg:col-span-1': index !== 2,
+                        }
+                    )}
                     variants={itemVariants}
                     whileHover={{ 
                       y: -8, 
                       boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
                       transition: { duration: 0.3 }
                     }}
-                    style={{
-                      transformStyle: "preserve-3d"
-                    }}
                 >
                     <motion.div
-                      style={{
-                        transform: "translateZ(50px)"
-                      }}
-                      className="flex flex-col items-center text-center"
+                      className="flex h-16 w-16 items-center justify-center rounded-full bg-background mb-4"
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
                     >
-                      <motion.div 
-                        className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4"
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      >
-                          <item.icon className="h-8 w-8 text-primary" />
-                      </motion.div>
-                      <h3 className="text-xl font-bold font-headline mb-2">{item.title}</h3>
-                      <p className="text-muted-foreground">{item.description}</p>
+                      <item.icon className="h-8 w-8 text-primary" />
                     </motion.div>
+                    <h3 className={cn(
+                        "text-lg font-bold font-headline mb-2",
+                        item.highlighted ? "text-foreground" : "text-primary"
+                    )}>{item.title}</h3>
+                    <p className="text-muted-foreground text-sm">{item.description}</p>
                 </motion.div>
             ))}
         </motion.div>
