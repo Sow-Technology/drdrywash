@@ -27,6 +27,33 @@ const itemVariants = {
   },
 };
 
+const iconAnimation = (step: number) => {
+    switch (step) {
+        case 0: // Order Online
+            return {
+                scale: [1, 1.05, 1],
+                transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+            };
+        case 1: // Pick Up
+            return {
+                x: [-5, 5, -5],
+                transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+            };
+        case 2: // Cleaning
+            return {
+                rotate: [0, 360],
+                transition: { duration: 2, repeat: Infinity, ease: "linear" }
+            };
+        case 3: // Drop Off
+            return {
+                x: [0, -1, 1, -1, 1, 0],
+                transition: { duration: 0.5, repeat: Infinity, ease: "easeInOut" }
+            };
+        default:
+            return {};
+    }
+}
+
 export default function HowItWorks() {
   return (
     <motion.section
@@ -62,9 +89,12 @@ export default function HowItWorks() {
               <Card className="text-center h-full shadow-sm hover:shadow-lg transition-shadow duration-300">
                 <CardHeader>
                   <div className="flex justify-center">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+                    <motion.div 
+                        className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10"
+                        animate={iconAnimation(index)}
+                    >
                       <step.icon className="h-10 w-10 text-primary" />
-                    </div>
+                    </motion.div>
                   </div>
                 </CardHeader>
                 <CardContent>
