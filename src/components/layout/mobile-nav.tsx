@@ -28,10 +28,7 @@ export default function MobileNav() {
             <Link
               key={link.href}
               href={link.href}
-              className={cn(
-                'relative flex h-14 w-14 flex-col items-center justify-center gap-1 rounded-full text-xs font-medium transition-colors hover:text-primary',
-                isActive ? 'text-primary' : 'text-muted-foreground'
-              )}
+              className="relative flex h-14 w-14 flex-col items-center justify-center"
             >
               {isActive && (
                 <motion.div
@@ -40,13 +37,16 @@ export default function MobileNav() {
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
               )}
-               <motion.div
-                className="relative z-10 flex flex-col items-center"
+              <motion.div
+                className="relative z-10 flex flex-col items-center justify-center gap-1"
                 animate={{ scale: isActive ? 1.15 : 0.9 }}
+                whileTap={{ scale: 0.8 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
               >
-                <link.icon className="h-5 w-5" />
-                <span className="text-[10px]">{link.label}</span>
+                <link.icon className="h-5 w-5 text-muted-foreground" />
+                <span className="text-[10px] text-muted-foreground">
+                  {link.label}
+                </span>
               </motion.div>
             </Link>
           );
