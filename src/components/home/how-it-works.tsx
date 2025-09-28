@@ -1,34 +1,17 @@
 'use client';
 
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+  useScroll,
+  useTransform,
+  motion,
+  useMotionValueEvent,
+} from 'framer-motion';
+import { useRef, useState } from 'react';
 import { howItWorksOnline } from '@/lib/data';
-import { motion } from 'framer-motion';
-import { ShoppingCart } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
 import Link from 'next/link';
-import { Badge } from '../ui/badge';
-
-const sectionVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      duration: 0.5,
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-};
+import { ShoppingCart } from 'lucide-react';
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -44,77 +27,116 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export default function HowItWorks() {
+  const targetRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ['start start', 'end end'],
+  });
+
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const totalSteps = howItWorksOnline.length;
+  const stepProgress = 1 / totalSteps;
+
+  const opacities = howItWorksOnline.map((_, index) => {
+    const start = index * stepProgress;
+    const end = start + stepProgress;
+    return useTransform(
+      scrollYProgress,
+      [start, start + stepProgress * 0.4, end - stepProgress * 0.4, end],
+      [0, 1, 1, 0]
+    );
+  });
+
+  const scales = howItWorksOnline.map((_, index) => {
+    const start = index * stepProgress;
+    const end = start + stepProgress;
+    return useTransform(
+      scrollYProgress,
+      [start, start + stepProgress * 0.4, end - stepProgress * 0.4, end],
+      [0.8, 1, 1, 0.8]
+    );
+  });
+
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    const newIndex = Math.floor(latest * totalSteps);
+    if (newIndex >= 0 && newIndex < totalSteps) {
+      setActiveIndex(newIndex);
+    }
+  });
+
   return (
-    <motion.section
-      className="py-20 md:py-28 bg-card"
-      variants={sectionVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
-    >
-      <div className="container">
-        <div className="text-center max-w-3xl mx-auto">
-          <motion.h2
-            className="text-3xl font-bold tracking-tight font-headline sm:text-4xl"
-            variants={itemVariants}
-          >
-            A Seamless Laundry Experience in 4 Easy Steps
-          </motion.h2>
-          <motion.p
-            className="mt-4 text-lg text-muted-foreground"
-            variants={itemVariants}
-          >
-            At Dr. Dry Wash, we provide a premium cleaning service that fits into your busy lifestyle. We pick up, treat each item with care, and deliver everything back to your doorstep. Quality meets convenience.
-          </motion.p>
+    <section ref={targetRef} className="relative h-[400vh] bg-background">
+      <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 p-8 z-10">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight font-headline sm:text-4xl">
+              A Seamless Laundry Experience
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
+              At Dr. Dry Wash, quality meets convenience. We pick up, treat each item with expert care, and deliver everything back to your doorstep.
+            </p>
+          </div>
+          <div className="w-full max-w-3xl mx-auto mt-8">
+            <motion.div
+              className="h-1 bg-primary rounded-full"
+              style={{ scaleX: scrollYProgress }}
+            />
+          </div>
         </div>
 
-        <motion.div
-          className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-          variants={sectionVariants}
-        >
+        <div className="container relative flex items-center justify-center mt-24">
           {howItWorksOnline.map((step, index) => (
-            <motion.div key={index} variants={itemVariants}>
-              <Card className="h-full text-center hover:shadow-xl transition-shadow duration-300">
-                <CardHeader>
-                  <div className="relative inline-block">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 mx-auto mb-4">
-                      <step.icon className="h-10 w-10 text-primary" />
-                    </div>
-                    <Badge className="absolute -top-2 -right-2">{index + 1}</Badge>
-                  </div>
-                  <CardTitle className="font-headline">{step.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{step.description}</p>
-                </CardContent>
-              </Card>
+            <motion.div
+              key={step.title}
+              style={{
+                opacity: opacities[index],
+                scale: scales[index],
+              }}
+              className="absolute grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full max-w-4xl"
+            >
+              <div className="text-center md:text-left">
+                <p className="text-primary font-semibold">Step {index + 1}</p>
+                <h3 className="text-3xl font-bold font-headline mt-2">{step.title}</h3>
+                <p className="mt-4 text-lg text-muted-foreground">{step.description}</p>
+              </div>
+              <div className="flex items-center justify-center">
+                <div className="flex h-48 w-48 items-center justify-center rounded-full bg-primary/10">
+                  <step.icon className="h-24 w-24 text-primary" />
+                </div>
+              </div>
             </motion.div>
           ))}
-        </motion.div>
-
-        <motion.div
-          className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-4"
-          variants={itemVariants}
-        >
-          <Button size="lg" className="w-full sm:w-auto" asChild>
-            <Link href="/schedule-pickup">
-              <ShoppingCart className="mr-2 h-5 w-5" />
-              Schedule Free Pickup
-            </Link>
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="w-full sm:w-auto !bg-green-500 hover:!bg-green-600 !text-white"
-            asChild
+        </div>
+        
+        <div className="absolute bottom-12 z-10">
+           <motion.div
+              style={{
+                opacity: useTransform(scrollYProgress, [0.95, 1], [0, 1]),
+                y: useTransform(scrollYProgress, [0.95, 1], [20, 0]),
+              }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Link href="https://wa.me/919738045714" target="_blank">
-              <WhatsAppIcon className="mr-2 h-5 w-5" />
-              Chat on WhatsApp
-            </Link>
-          </Button>
-        </motion.div>
+            <Button size="lg" className="w-full sm:w-auto" asChild>
+              <Link href="/schedule-pickup">
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                Schedule Free Pickup
+              </Link>
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto !bg-green-500 hover:!bg-green-600 !text-white"
+              asChild
+            >
+              <Link href="https://wa.me/919738045714" target="_blank">
+                <WhatsAppIcon className="mr-2 h-5 w-5" />
+                Chat on WhatsApp
+              </Link>
+            </Button>
+          </motion.div>
+        </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
