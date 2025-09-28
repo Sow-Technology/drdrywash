@@ -95,12 +95,13 @@ export default function HowItWorks() {
               <Card className="text-center h-full shadow-sm hover:shadow-lg transition-shadow duration-300">
                 <CardHeader>
                   <div className="flex justify-center">
-                    <motion.div 
+                    <div 
                         className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10"
-                        animate={iconAnimation(index)}
                     >
-                      <step.icon className="h-10 w-10 text-primary" />
-                    </motion.div>
+                      <motion.div animate={iconAnimation(index)}>
+                        <step.icon className="h-10 w-10 text-primary" />
+                      </motion.div>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
