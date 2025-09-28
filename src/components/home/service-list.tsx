@@ -136,37 +136,26 @@ export default function ServiceList() {
         >
           {services.map((service) => (
             <motion.div key={service.title} variants={itemVariants}>
-              <motion.div
-                className="h-full"
-                whileHover={{ y: -8 }}
-                transition={{
-                  duration: 0.3,
-                  ease: 'easeOut',
-                }}
-              >
-                <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl hover:shadow-primary/20 transition-shadow duration-300 text-center flex flex-col">
-                  <CardHeader>
-                    <motion.div
-                      className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 mx-auto"
-                      transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      <service.icon className="h-10 w-10 text-primary" />
-                    </motion.div>
-                  </CardHeader>
-                  <CardContent className="flex flex-col flex-grow p-6 pt-0">
-                    <CardTitle className="font-headline text-xl">
-                      {service.title}
-                    </CardTitle>
-                    <CardDescription className="mt-2 flex-grow">
-                      {service.description}
-                    </CardDescription>
-                    <Button className="mt-6 w-full" asChild>
-                      <Link href="/schedule-pickup">Book Now</Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
+              <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl transition-shadow duration-300 text-center flex flex-col p-6">
+                  <motion.div
+                    className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 mx-auto"
+                    transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    <service.icon className="h-10 w-10 text-primary" />
+                  </motion.div>
+                <CardContent className="flex flex-col flex-grow p-0 pt-6">
+                  <CardTitle className="font-headline text-xl">
+                    {service.title}
+                  </CardTitle>
+                  <CardDescription className="mt-2 flex-grow">
+                    {service.description}
+                  </CardDescription>
+                  <Button className="mt-6 w-full" asChild>
+                    <Link href="/schedule-pickup">Book Now</Link>
+                  </Button>
+                </CardContent>
+              </Card>
             </motion.div>
           ))}
         </motion.div>
