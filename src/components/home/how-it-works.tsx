@@ -36,27 +36,20 @@ const iconAnimation = (step: number) => {
                 transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" }
             };
         case 1: // Pick Up
+        case 3: // Drop Off
              return {
-                x: ["-110%", "110%"],
+                x: ["-110%", 0, 0, "110%"],
                 transition: {
-                    duration: 3,
+                    duration: 5,
                     repeat: Infinity,
                     ease: "linear",
+                    times: [0, 0.2, 0.6, 0.8]
                 },
             };
         case 2: // Cleaning
             return {
                 rotate: [0, 360],
                 transition: { duration: 2.5, repeat: Infinity, ease: "linear" }
-            };
-        case 3: // Drop Off
-            return {
-                x: ["-110%", "110%"],
-                transition: {
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "linear",
-                },
             };
         default:
             return {};
