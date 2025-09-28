@@ -1,3 +1,4 @@
+
 'use client';
 
 import { motion } from 'framer-motion';
@@ -35,24 +36,22 @@ const iconAnimation = (step: number) => {
                 transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" }
             };
         case 1: // Pick Up
-            return {
-                x: [0, 50, -50, 0],
-                transition: { 
-                    duration: 4,
-                    repeat: Infinity, 
-                    ease: "easeInOut",
-                    times: [0, 0.4, 0.6, 1],
-                }
+             return {
+                x: [0, 5, -5, 5, 0],
+                transition: {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                },
             };
         case 2: // Cleaning
             return {
                 rotate: [0, 360],
-                transition: { duration: 2, repeat: Infinity, ease: "linear" }
+                transition: { duration: 2.5, repeat: Infinity, ease: "linear" }
             };
         case 3: // Drop Off
             return {
-                y: [0, -5, 0],
-                 x: [0, 2, 0, -2, 0],
+                y: [0, -3, 0],
                 transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
             };
         default:
