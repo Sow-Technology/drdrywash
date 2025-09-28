@@ -40,6 +40,12 @@ export default function HowItWorks() {
           >
             Best Laundry & Dry Cleaning Service
           </motion.h2>
+          <motion.p 
+            className="mt-4 text-lg text-muted-foreground"
+            variants={itemVariants}
+          >
+            Pickup. Clean. Deliver.
+          </motion.p>
           <motion.div 
             className="mt-4 inline-block"
             variants={itemVariants}
