@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -14,6 +15,8 @@ const sectionVariants = {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
+        ease: 'easeOut',
+        duration: 0.5
       },
     },
 };

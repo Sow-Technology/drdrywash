@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -54,9 +55,6 @@ export default function Faq() {
         </div>
         <motion.div
           variants={sectionVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
         >
             <Accordion type="single" collapsible className="w-full">
             {faqItems.map((item, index) => (

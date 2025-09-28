@@ -39,12 +39,13 @@ const iconAnimation = (step: number) => {
         case 1: // Pick Up
         case 3: // Drop Off
              return {
-                x: ["-110%", 0, 0, "110%"],
+                x: ["-110%", "110%"],
                 transition: {
-                    duration: 5,
+                    duration: 4,
                     repeat: Infinity,
                     ease: "linear",
-                    times: [0, 0.4, 0.6, 1]
+                    repeatType: 'loop',
+                    repeatDelay: 2
                 },
             };
         case 2: // Cleaning - The component now handles its own animation
