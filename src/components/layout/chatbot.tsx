@@ -7,6 +7,9 @@ import {
   X,
   Send,
   Download,
+  Phone,
+  Apple,
+  AppWindow,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -234,7 +237,7 @@ export default function Chatbot() {
 
   return (
     <>
-      <div className="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-50">
+      <div className="fixed bottom-8 right-4 md:bottom-8 md:right-8 z-50">
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -332,9 +335,11 @@ export default function Chatbot() {
                             )}
                         </form>
                     ) : (
-                        <p className="text-center text-xs text-muted-foreground w-full">
-                            Chat by Dr. Dry Wash
-                        </p>
+                        <div className="w-full flex justify-center">
+                            <Button variant="link" size="sm" onClick={startChat}>
+                                Chat with LAX AI
+                            </Button>
+                        </div>
                     )}
                 </CardFooter>
               </Card>
@@ -342,64 +347,41 @@ export default function Chatbot() {
           )}
         </AnimatePresence>
 
-        <div className="relative flex flex-col items-center gap-3">
-             <AnimatePresence>
-                {isFabOpen && (
-                    <motion.div 
-                        className="flex flex-col items-center gap-3"
-                        variants={fabVariants}
-                        initial="closed"
-                        animate="open"
-                        exit="closed"
-                    >
-                        <div className="flex items-center gap-2">
-                            <span className='bg-background text-foreground text-sm py-1 px-3 rounded-md shadow-lg'>Chat on WhatsApp</span>
-                            <Button
-                                size="lg"
-                                className="rounded-full w-16 h-16 shadow-lg !bg-[#25D366] hover:!bg-[#1DAE51] text-white"
-                                aria-label="Chat on WhatsApp"
-                                asChild
-                            >
-                                <Link href="https://wa.me/919738045714" target="_blank">
-                                    <WhatsAppIcon className="h-8 w-8" />
-                                </Link>
-                            </Button>
-                        </div>
-                         <div className="flex items-center gap-2">
-                            <span className='bg-background text-foreground text-sm py-1 px-3 rounded-md shadow-lg'>Chat with LAX</span>
-                            <Button
-                                size="lg"
-                                className="rounded-full w-16 h-16 shadow-lg"
-                                onClick={startChat}
-                                aria-label="Open AI Chatbot"
-                            >
-                                <MessageSquare className="h-6 w-6" />
-                            </Button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            <Button
+        <div className="relative flex flex-col items-end gap-3">
+             <Button
                 size="lg"
-                className="rounded-full w-16 h-16 shadow-lg"
-                onClick={() => setIsFabOpen(prev => !prev)}
-                aria-label={isFabOpen ? 'Close chat options' : 'Open chat options'}
+                className="rounded-full h-14 shadow-lg !bg-[#25D366] hover:!bg-[#1DAE51] text-white"
+                aria-label="Chat on WhatsApp"
+                asChild
             >
-                <AnimatePresence initial={false} mode="wait">
-                    <motion.div
-                        key={isFabOpen ? 'x' : 'chat'}
-                        initial={{ y: 10, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -10, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                    >
-                        {isFabOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
-                    </motion.div>
-                </AnimatePresence>
+                <Link href="https://wa.me/919738045714" target="_blank" className='gap-2'>
+                    <WhatsAppIcon className="h-7 w-7" />
+                    <span className='text-lg font-semibold'>Whatsapp Us</span>
+                </Link>
             </Button>
+             <div className='flex gap-2'>
+                 <Button
+                    size="icon"
+                    className="rounded-full w-12 h-12 shadow-lg !bg-red-500 hover:!bg-red-600 text-white"
+                    aria-label="Call Us"
+                    asChild
+                >
+                    <Link href="tel:+919738045714">
+                        <Phone className="h-6 w-6" />
+                    </Link>
+                </Button>
+                 <Button
+                    size="icon"
+                    className="rounded-full w-12 h-12 shadow-lg !bg-blue-500 hover:!bg-blue-600 text-white"
+                    aria-label="Get our App"
+                >
+                     <Download className="h-6 w-6" />
+                </Button>
+             </div>
         </div>
       </div>
     </>
   );
 }
+
+    
