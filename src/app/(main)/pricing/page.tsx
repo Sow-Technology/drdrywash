@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -48,6 +49,10 @@ export default function PricingPage() {
           <span className="text-sm">
             *Please note that the prices above are exclusive of GST
           </span>
+          <br />
+            <span className="text-sm font-semibold text-destructive">
+                *Caution: Pricing may vary depending on the cloth or material.
+            </span>
         </motion.p>
       </div>
 
