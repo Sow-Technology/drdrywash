@@ -66,17 +66,26 @@ const services = [
   },
 ];
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
+const textContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: (i = 1) => ({
     opacity: 1,
-    y: 0,
-    transition: {
+    transition: { staggerChildren: 0.12, delayChildren: i * 0.04 },
+  }),
+};
+
+const textItemVariants = {
+    hidden: { opacity: 0, y: '100%' },
+    visible: {
+      opacity: 1,
+      y: '0%',
+      transition: {
         duration: 0.5,
         ease: 'easeOut',
-    }
-   },
+      },
+    },
 };
+
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -99,27 +108,41 @@ export default function ServiceList() {
   });
 
   const x = useTransform(scrollYProgress, [0.1, 0.85], ['50%', '-95%']);
-  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
 
   return (
     <section ref={targetRef} id="services" className="relative h-[300vh] bg-background">
       <div className="sticky top-0 h-screen flex items-center overflow-hidden">
         
-        <motion.div style={{ opacity }} className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full px-4">
-            <div className="text-center max-w-3xl mx-auto">
-                <h2
-                    className="text-3xl font-bold tracking-tight font-headline sm:text-4xl"
-                >
-                    Say Goodbye to Odours & Dirty Clothes!
-                </h2>
-                <p
-                    className="mt-4 text-lg text-muted-foreground"
-                >
-                    No more traditional dhobi ghats or manual labour—just Hi-Tech,
-                    state-of-the-art smart machines ensuring your garments are cleaned
-                    with the utmost precision and care.
-                </p>
-            </div>
+        <motion.div 
+            style={{ opacity: textOpacity }} 
+            className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full px-4 z-10"
+        >
+            <motion.div 
+                className="text-center max-w-3xl mx-auto"
+                variants={textContainerVariants}
+                initial="hidden"
+                animate="visible"
+            >
+                <div className="overflow-hidden">
+                    <motion.h2
+                        className="text-3xl font-bold tracking-tight font-headline sm:text-4xl"
+                        variants={textItemVariants}
+                    >
+                        Say Goodbye to Odours & Dirty Clothes!
+                    </motion.h2>
+                </div>
+                <div className="overflow-hidden mt-4">
+                    <motion.p
+                        className="text-lg text-muted-foreground"
+                        variants={textItemVariants}
+                    >
+                        No more traditional dhobi ghats or manual labour—just Hi-Tech,
+                        state-of-the-art smart machines ensuring your garments are cleaned
+                        with the utmost precision and care.
+                    </motion.p>
+                </div>
+            </motion.div>
         </motion.div>
 
         <motion.div style={{ x }} className="flex gap-8 pl-12 pt-48">
