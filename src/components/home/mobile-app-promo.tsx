@@ -56,7 +56,7 @@ export default function MobileAppPromo() {
 
   return (
     <motion.section
-      className="py-20 md:py-28 bg-card"
+      className="py-16 md:py-20 bg-card"
       variants={sectionVariants}
       initial="hidden"
       whileInView="visible"

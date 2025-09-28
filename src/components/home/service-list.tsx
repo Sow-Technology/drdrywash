@@ -1,6 +1,5 @@
 'use client';
 
-import { useRef } from 'react';
 import {
   Shirt,
   Sparkles,
@@ -18,7 +17,7 @@ import {
   CardTitle,
   CardDescription,
 } from '../ui/card';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 
@@ -66,26 +65,28 @@ const services = [
   },
 ];
 
-const textContainerVariants = {
+const sectionVariants = {
   hidden: { opacity: 0 },
-  visible: (i = 1) => ({
+  visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.12, delayChildren: i * 0.04 },
-  }),
-};
-
-const textItemVariants = {
-    hidden: { opacity: 0, y: '100%' },
-    visible: {
-      opacity: 1,
-      y: '0%',
-      transition: {
-        duration: 0.5,
-        ease: 'easeOut',
-      },
+    transition: {
+      duration: 0.5,
+      staggerChildren: 0.1,
     },
+  },
 };
 
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+    },
+  },
+};
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -101,103 +102,86 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export default function ServiceList() {
-  const targetRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ['start start', 'end end'],
-  });
-
-  const x = useTransform(scrollYProgress, [0.1, 0.85], ['50%', '-95%']);
-
   return (
-    <section ref={targetRef} id="services" className="relative h-[300vh] bg-background py-20 md:py-28">
-      <div className="sticky top-0 h-screen flex items-center overflow-hidden">
-        
-        <motion.div 
-            className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full px-4 z-10"
+    <motion.section
+      id="services"
+      className="py-16 md:py-20 bg-background"
+      variants={sectionVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+    >
+      <div className="container">
+        <motion.div
+          className="text-center max-w-3xl mx-auto mb-16"
+          variants={itemVariants}
         >
-            <motion.div 
-                className="text-center max-w-3xl mx-auto"
-                variants={textContainerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-            >
-                <div className="overflow-hidden">
-                    <motion.h2
-                        className="text-3xl font-bold tracking-tight font-headline sm:text-4xl"
-                        variants={textItemVariants}
-                    >
-                        Say Goodbye to Odours & Dirty Clothes!
-                    </motion.h2>
-                </div>
-                <div className="overflow-hidden mt-4">
-                    <motion.p
-                        className="text-lg text-muted-foreground"
-                        variants={textItemVariants}
-                    >
-                        No more traditional dhobi ghats or manual labour—just Hi-Tech,
-                        state-of-the-art smart machines ensuring your garments are cleaned
-                        with the utmost precision and care.
-                    </motion.p>
-                </div>
-            </motion.div>
+          <h2 className="text-3xl font-bold tracking-tight font-headline sm:text-4xl">
+            Say Goodbye to Odours & Dirty Clothes!
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            No more traditional dhobi ghats or manual labour—just Hi-Tech,
+            state-of-the-art smart machines ensuring your garments are cleaned
+            with the utmost precision and care.
+          </p>
         </motion.div>
 
-        <motion.div style={{ x }} className="flex gap-8 pl-12 pt-48">
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+          variants={sectionVariants}
+        >
           {services.map((service, index) => (
-            <div key={index} className="w-[350px] flex-shrink-0">
+            <motion.div
+              key={index}
+              variants={itemVariants}
+              className="w-full"
+            >
               <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl transition-shadow duration-300 text-center flex flex-col p-6">
                 <motion.div
-                    className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 mx-auto"
-                    transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-                    whileHover={{ scale: 1.1 }}
+                  className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 mx-auto"
+                  transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                  whileHover={{ scale: 1.1 }}
                 >
-                    <service.icon className="h-10 w-10 text-primary" />
+                  <service.icon className="h-10 w-10 text-primary" />
                 </motion.div>
                 <CardContent className="flex flex-col flex-grow p-0 pt-6">
-                    <CardTitle className="font-headline text-xl">
+                  <CardTitle className="font-headline text-xl">
                     {service.title}
-                    </CardTitle>
-                    <CardDescription className="mt-2 flex-grow">
+                  </CardTitle>
+                  <CardDescription className="mt-2 flex-grow">
                     {service.description}
-                    </CardDescription>
-                    <Button className="mt-6 w-full" asChild>
+                  </CardDescription>
+                  <Button className="mt-6 w-full" asChild>
                     <Link href="/schedule-pickup">Book Now</Link>
-                    </Button>
+                  </Button>
                 </CardContent>
               </Card>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
 
-        <motion.div 
-            className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20"
-            style={{ opacity: useTransform(scrollYProgress, [0.85, 1], [0, 1]) }}
-        >
-             <div
-                className="flex flex-col sm:flex-row items-center justify-center gap-4"
+        <motion.div className="mt-16" variants={itemVariants}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button size="lg" className="w-full sm:w-auto" asChild>
+              <Link href="/schedule-pickup">
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                Schedule Free Pickup
+              </Link>
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto !bg-green-500 hover:!bg-green-600 !text-white"
+              asChild
             >
-                <Button size="lg" className="w-full sm:w-auto" asChild>
-                    <Link href="/schedule-pickup">
-                    <ShoppingCart className="mr-2 h-5 w-5" />
-                    Schedule Free Pickup
-                    </Link>
-                </Button>
-                <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full sm:w-auto !bg-green-500 hover:!bg-green-600 !text-white"
-                    asChild
-                >
-                    <Link href="https://wa.me/919738045714" target="_blank">
-                    <WhatsAppIcon className="mr-2 h-5 w-5" />
-                    Chat on WhatsApp
-                    </Link>
-                </Button>
-            </div>
+              <Link href="https://wa.me/919738045714" target="_blank">
+                <WhatsAppIcon className="mr-2 h-5 w-5" />
+                Chat on WhatsApp
+              </Link>
+            </Button>
+          </div>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

@@ -31,7 +31,7 @@ const itemVariants = {
 export default function WhyChooseUs() {
   return (
     <motion.section 
-      className="py-20 md:py-28 bg-card"
+      className="py-16 md:py-20 bg-card"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.1 }}

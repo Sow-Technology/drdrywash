@@ -57,7 +57,7 @@ const itemVariants = {
 export default function WeAlsoServe() {
     return (
         <motion.section 
-            className="py-20 md:py-28 bg-background"
+            className="py-16 md:py-20 bg-background"
             variants={sectionVariants}
             initial="hidden"
             whileInView="visible"
