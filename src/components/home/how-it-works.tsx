@@ -12,6 +12,7 @@ import { howItWorksOnline } from '@/lib/data';
 import { motion } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
+import { Badge } from '../ui/badge';
 
 const sectionVariants = {
   hidden: { opacity: 0 },
@@ -68,54 +69,27 @@ export default function HowItWorks() {
         </div>
 
         <motion.div
-          className="relative mt-20 max-w-5xl mx-auto"
+          className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
           variants={sectionVariants}
         >
-          {/* Desktop Timeline */}
-          <div className="hidden md:block">
-            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -translate-y-1/2"></div>
-            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-primary -translate-y-1/2" style={{clipPath: 'polygon(0 0, 95% 0, 95% 100%, 0% 100%)'}}></div>
-            <div className="relative grid grid-cols-4 gap-8">
-              {howItWorksOnline.map((step, index) => (
-                <motion.div key={index} variants={itemVariants} className="relative flex flex-col items-center text-center">
-                  <div className="relative z-10">
-                     <div className="flex h-20 w-20 items-center justify-center rounded-full bg-background border-2 border-primary shadow-lg">
-                        <step.icon className="h-10 w-10 text-primary" />
-                     </div>
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="text-lg font-semibold text-primary">{step.title}</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">{step.description}</p>
-                    <div className="mt-4 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-sm">
-                      {index + 1}
+          {howItWorksOnline.map((step, index) => (
+            <motion.div key={index} variants={itemVariants}>
+              <Card className="h-full text-center hover:shadow-xl transition-shadow duration-300">
+                <CardHeader>
+                  <div className="relative inline-block">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 mx-auto mb-4">
+                      <step.icon className="h-10 w-10 text-primary" />
                     </div>
+                    <Badge className="absolute -top-2 -right-2">{index + 1}</Badge>
                   </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-          {/* Mobile Timeline */}
-           <div className="md:hidden space-y-12">
-              {howItWorksOnline.map((step, index) => (
-                <motion.div key={index} variants={itemVariants} className="relative flex items-start gap-6">
-                   <div className="absolute left-9 top-9 -bottom-4 w-0.5 bg-border"></div>
-                    <div className="relative z-10 flex flex-col items-center">
-                        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-card border-2 border-primary shadow-lg">
-                            <step.icon className="h-10 w-10 text-primary" />
-                        </div>
-                    </div>
-                     <div>
-                        <div className="flex items-center gap-2">
-                           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-xs">
-                             {index + 1}
-                           </div>
-                           <h3 className="text-lg font-semibold text-primary">{step.title}</h3>
-                        </div>
-                        <p className="mt-1 text-sm text-muted-foreground">{step.description}</p>
-                     </div>
-                </motion.div>
-              ))}
-           </div>
+                  <CardTitle className="font-headline">{step.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{step.description}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </motion.div>
 
         <motion.div
