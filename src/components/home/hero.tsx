@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
 
 const sectionVariants = {
     hidden: { opacity: 0 },
@@ -31,10 +32,18 @@ const itemVariants = {
 
 export default function Hero() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-image');
+  const targetRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   
   return (
     <motion.section 
-        className="relative w-full py-20 md:py-32 lg:py-40 bg-background overflow-hidden"
+        ref={targetRef}
+        className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden"
         variants={sectionVariants}
         initial="hidden"
         animate="visible"
@@ -81,17 +90,19 @@ export default function Hero() {
             </div>
         </div>
         {heroImage && (
-            <Image
-                src={heroImage.imageUrl}
-                alt={heroImage.description}
-                data-ai-hint={heroImage.imageHint}
-                fill
-                className="object-cover"
-                style={{ opacity: 0.1, zIndex: 0 }}
-                priority
-            />
+            <motion.div className="absolute inset-0 z-0" style={{ y }}>
+                <Image
+                    src={heroImage.imageUrl}
+                    alt={heroImage.description}
+                    data-ai-hint={heroImage.imageHint}
+                    fill
+                    className="object-cover"
+                    style={{ opacity: 0.1 }}
+                    priority
+                />
+            </motion.div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent z-5"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent z-5"></div>
     </motion.section>
   );
 }

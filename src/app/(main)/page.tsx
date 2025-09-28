@@ -10,7 +10,7 @@ import MobileAppPromo from "@/components/home/mobile-app-promo";
 
 export default function Home() {
   return (
-    <div>
+    <div className="bg-background">
       <Hero />
       <HowItWorks />
       <ServiceList />

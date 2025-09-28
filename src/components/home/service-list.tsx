@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef } from 'react';
 import {
   Shirt,
   Sparkles,
@@ -17,7 +18,7 @@ import {
   CardTitle,
   CardDescription,
 } from '../ui/card';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 
@@ -65,17 +66,6 @@ const services = [
   },
 ];
 
-const sectionVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      duration: 0.5,
-      staggerChildren: 0.1,
-    },
-  },
-};
-
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { 
@@ -102,87 +92,97 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export default function ServiceList() {
+  const targetRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ['start end', 'end start'],
+  });
+
+  const x = useTransform(scrollYProgress, [0, 0.7], ['50%', '-95%']);
+
   return (
-    <motion.section
-      id="services"
-      className="py-20 md:py-28 bg-background"
-      variants={sectionVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.1 }}
-    >
-      <div className="container">
-        <div className="text-center max-w-3xl mx-auto">
-          <motion.h2
-            className="text-3xl font-bold tracking-tight font-headline sm:text-4xl"
-            variants={itemVariants}
-          >
-            Say Goodbye to Odours & Dirty Clothes!
-          </motion.h2>
-          <motion.p
-            className="mt-4 text-lg text-muted-foreground"
-            variants={itemVariants}
-          >
-            No more traditional dhobi ghats or manual labour—just Hi-Tech,
-            state-of-the-art smart machines ensuring your garments are cleaned
-            with the utmost precision and care. We utilise advanced technology
-            to provide a delicate yet thorough cleaning process, treating each
-            fabric with the expertise it deserves.
-          </motion.p>
+    <section ref={targetRef} id="services" className="relative h-[300vh] bg-background">
+      <div className="sticky top-0 h-screen flex items-center overflow-hidden">
+        <div className="container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+                <motion.h2
+                    className="text-3xl font-bold tracking-tight font-headline sm:text-4xl"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    Say Goodbye to Odours & Dirty Clothes!
+                </motion.h2>
+                <motion.p
+                    className="mt-4 text-lg text-muted-foreground"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                >
+                    No more traditional dhobi ghats or manual labour—just Hi-Tech,
+                    state-of-the-art smart machines ensuring your garments are cleaned
+                    with the utmost precision and care.
+                </motion.p>
+            </div>
         </div>
-        <motion.div
-          className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-          variants={sectionVariants}
-        >
-          {services.map((service) => (
-            <motion.div key={service.title} variants={itemVariants}>
+
+        <motion.div style={{ x }} className="flex gap-8 pl-12">
+          {services.map((service, index) => (
+            <div key={index} className="w-[350px] flex-shrink-0">
               <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl transition-shadow duration-300 text-center flex flex-col p-6">
-                  <motion.div
+                <motion.div
                     className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 mx-auto"
                     transition={{ type: 'spring', stiffness: 400, damping: 10 }}
                     whileHover={{ scale: 1.1 }}
-                  >
+                >
                     <service.icon className="h-10 w-10 text-primary" />
-                  </motion.div>
+                </motion.div>
                 <CardContent className="flex flex-col flex-grow p-0 pt-6">
-                  <CardTitle className="font-headline text-xl">
+                    <CardTitle className="font-headline text-xl">
                     {service.title}
-                  </CardTitle>
-                  <CardDescription className="mt-2 flex-grow">
+                    </CardTitle>
+                    <CardDescription className="mt-2 flex-grow">
                     {service.description}
-                  </CardDescription>
-                  <Button className="mt-6 w-full" asChild>
+                    </CardDescription>
+                    <Button className="mt-6 w-full" asChild>
                     <Link href="/schedule-pickup">Book Now</Link>
-                  </Button>
+                    </Button>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           ))}
         </motion.div>
 
-        <motion.div
-          className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-4"
-          variants={itemVariants}
-        >
-          <Button size="lg" className="w-full sm:w-auto" asChild>
-            <Link href="/schedule-pickup">
-              <ShoppingCart className="mr-2 h-5 w-5" />
-              Schedule Free Pickup
-            </Link>
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="w-full sm:w-auto !bg-green-500 hover:!bg-green-600 !text-white"
-            asChild
-          >
-            <Link href="https://wa.me/919738045714" target="_blank">
-              <WhatsAppIcon className="mr-2 h-5 w-5" />
-              Chat on WhatsApp
-            </Link>
-          </Button>
-        </motion.div>
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20">
+             <motion.div
+                className="flex flex-col sm:flex-row items-center justify-center gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.8 }}
+                transition={{ duration: 0.5 }}
+            >
+                <Button size="lg" className="w-full sm:w-auto" asChild>
+                    <Link href="/schedule-pickup">
+                    <ShoppingCart className="mr-2 h-5 w-5" />
+                    Schedule Free Pickup
+                    </Link>
+                </Button>
+                <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto !bg-green-500 hover:!bg-green-600 !text-white"
+                    asChild
+                >
+                    <Link href="https://wa.me/919738045714" target="_blank">
+                    <WhatsAppIcon className="mr-2 h-5 w-5" />
+                    Chat on WhatsApp
+                    </Link>
+                </Button>
+            </motion.div>
+        </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
