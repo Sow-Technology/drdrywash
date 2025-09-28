@@ -110,7 +110,7 @@ export default function ServiceList() {
   const x = useTransform(scrollYProgress, [0.1, 0.85], ['50%', '-95%']);
 
   return (
-    <section ref={targetRef} id="services" className="relative h-[300vh] bg-background">
+    <section ref={targetRef} id="services" className="relative h-[300vh] bg-background py-20 md:py-28">
       <div className="sticky top-0 h-screen flex items-center overflow-hidden">
         
         <motion.div 
