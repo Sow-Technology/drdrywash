@@ -95,40 +95,34 @@ export default function ServiceList() {
   const targetRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
-    offset: ['start end', 'end start'],
+    offset: ['start start', 'end end'],
   });
 
-  const x = useTransform(scrollYProgress, [0, 0.7], ['50%', '-95%']);
+  const x = useTransform(scrollYProgress, [0.1, 0.85], ['50%', '-95%']);
+  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
 
   return (
     <section ref={targetRef} id="services" className="relative h-[300vh] bg-background">
       <div className="sticky top-0 h-screen flex items-center overflow-hidden">
-        <div className="container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-                <motion.h2
+        
+        <motion.div style={{ opacity }} className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full px-4">
+            <div className="text-center max-w-3xl mx-auto">
+                <h2
                     className="text-3xl font-bold tracking-tight font-headline sm:text-4xl"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.5 }}
-                    transition={{ duration: 0.5 }}
                 >
                     Say Goodbye to Odours & Dirty Clothes!
-                </motion.h2>
-                <motion.p
+                </h2>
+                <p
                     className="mt-4 text-lg text-muted-foreground"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.5 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
                 >
                     No more traditional dhobi ghats or manual labour—just Hi-Tech,
                     state-of-the-art smart machines ensuring your garments are cleaned
                     with the utmost precision and care.
-                </motion.p>
+                </p>
             </div>
-        </div>
+        </motion.div>
 
-        <motion.div style={{ x }} className="flex gap-8 pl-12">
+        <motion.div style={{ x }} className="flex gap-8 pl-12 pt-48">
           {services.map((service, index) => (
             <div key={index} className="w-[350px] flex-shrink-0">
               <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl transition-shadow duration-300 text-center flex flex-col p-6">
@@ -155,13 +149,12 @@ export default function ServiceList() {
           ))}
         </motion.div>
 
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20">
-             <motion.div
+        <motion.div 
+            className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20"
+            style={{ opacity: useTransform(scrollYProgress, [0.85, 1], [0, 1]) }}
+        >
+             <div
                 className="flex flex-col sm:flex-row items-center justify-center gap-4"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.8 }}
-                transition={{ duration: 0.5 }}
             >
                 <Button size="lg" className="w-full sm:w-auto" asChild>
                     <Link href="/schedule-pickup">
@@ -180,8 +173,8 @@ export default function ServiceList() {
                     Chat on WhatsApp
                     </Link>
                 </Button>
-            </motion.div>
-        </div>
+            </div>
+        </motion.div>
       </div>
     </section>
   );
