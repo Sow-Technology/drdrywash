@@ -1,6 +1,7 @@
+
 export const accessoriesPricing = [
-    { product: "Bag", price: "200-600" },
-    { product: "Carseat Covers", price: "95" },
-    { product: "Suitcase", price: "500" },
-    { product: "Toy Medium", price: "300" },
+    { product: "Bag", subCategories: [{ name: "Bag", prices: { "Standard": "200-600" } }] },
+    { product: "Carseat Covers", subCategories: [{ name: "Carseat Covers", prices: { "Standard": "95" } }] },
+    { product: "Suitcase", subCategories: [{ name: "Suitcase", prices: { "Standard": "500" } }] },
+    { product: "Toy Medium", subCategories: [{ name: "Toy Medium", prices: { "Standard": "300" } }] },
 ];

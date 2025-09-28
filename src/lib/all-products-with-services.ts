@@ -1,3 +1,4 @@
+
 import { mensPricing } from './mens-pricing';
 import { womensPricing } from './womens-pricing';
 import { sareePricing } from './saree-pricing';
@@ -28,23 +29,22 @@ const parsePrice = (priceString: string | undefined): number => {
 };
 
 const transformPricingData = (pricingData: any[]): ProductWithServices[] => {
-    return pricingData.map(item => {
-        const services: Service[] = [];
-        if (item.prices) {
-            for (const [key, value] of Object.entries(item.prices)) {
-                if (value !== '-') {
-                    const serviceName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                    services.push({ name: serviceName, price: parsePrice(value as string) });
+    return pricingData.flatMap(item => 
+        item.subCategories.map((sc: any) => {
+            const services: Service[] = [];
+            if (sc.prices) {
+                for (const [key, value] of Object.entries(sc.prices)) {
+                    if (value !== '-') {
+                        services.push({ name: key, price: parsePrice(value as string) });
+                    }
                 }
             }
-        } else if (item.price) {
-             services.push({ name: 'Standard', price: parsePrice(item.price) });
-        }
-        return {
-            name: item.product,
-            services: services,
-        };
-    });
+            return {
+                name: `${item.product} - ${sc.name}`,
+                services: services,
+            };
+        })
+    );
 };
 
 export const allProductCategoriesWithServices: ProductCategoryWithServices[] = [

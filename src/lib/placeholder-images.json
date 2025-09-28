@@ -27,7 +27,7 @@
     {
       "id": "bedding",
       "description": "Clean and fresh bed sheets and pillows on a well-made bed.",
-      "imageUrl": "https://images.unsplash.com/photo-1628255438300-5eecc61f19a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjbGVhbiUyMGJlZHxlbnwwfHx8fDE3NTg2NTQzNDN8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1628255438300-5eecc61f19a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjbGVhbiUyMGJlZHxlbnwwfHx8fDE3NTg2NTQzNDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "clean bed"
     },
     {
@@ -63,7 +63,7 @@
     {
       "id": "product-shirt",
       "description": "A folded blue collared shirt.",
-      "imageUrl": "https://images.unsplash.com/photo-1716951988375-37d5793385d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxmb2xkZWQlMjBzaGlydHxlbnwwfHx8fDE3NTkwNDk5ODF8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1716951988375-37d5793385d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxmb2xkZWQlMjBzaGlydHxlbnwwfHx8fDE3NTkwNDk5ODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "folded shirt"
     },
     {
