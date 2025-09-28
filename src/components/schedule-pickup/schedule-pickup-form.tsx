@@ -5,7 +5,7 @@ import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { CalendarIcon, Loader2, MapPin, LocateFixed } from 'lucide-react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
@@ -21,6 +21,8 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
 import Link from 'next/link';
+import { addMockOrder } from '@/lib/data';
+import type { Order } from '@/lib/types';
 
 const scheduleSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -126,6 +128,28 @@ export default function SchedulePickupForm() {
   
   async function onSubmit(data: ScheduleFormValues) {
     setIsLoading(true);
+
+    const pickupDateTime = new Date(data.pickupDate);
+    const [hours, minutes] = data.pickupTime.split(':');
+    pickupDateTime.setHours(parseInt(hours), parseInt(minutes));
+    
+    const newOrder: Order = {
+        id: `DDW${Date.now().toString().slice(-4)}`,
+        customerName: data.name,
+        phoneNumber: data.phoneNumber,
+        address: data.address,
+        status: 'Pick up Booked',
+        paymentMethod: 'Cash', // Default
+        paymentStatus: 'Pending', // Default
+        pickupTime: pickupDateTime,
+        deliveryTime: addDays(pickupDateTime, 3), // Estimate 3 days for delivery
+        totalAmount: 0, // Will be calculated later
+        items: [], // Initially empty
+        history: [{ status: 'Pick up Booked', date: new Date() }],
+    };
+
+    addMockOrder(newOrder);
+
     // Simulate API call
     setTimeout(() => {
         setIsLoading(false);
@@ -136,7 +160,7 @@ export default function SchedulePickupForm() {
         form.reset();
         setMarkerPosition(defaultCenter);
         setMapCenter(defaultCenter);
-    }, 1500);
+    }, 500);
   }
   
   const timeSlots = Array.from({ length: 7 }, (_, i) => {
