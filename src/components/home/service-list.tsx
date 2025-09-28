@@ -108,21 +108,20 @@ export default function ServiceList() {
   });
 
   const x = useTransform(scrollYProgress, [0.1, 0.85], ['50%', '-95%']);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
 
   return (
     <section ref={targetRef} id="services" className="relative h-[300vh] bg-background">
       <div className="sticky top-0 h-screen flex items-center overflow-hidden">
         
         <motion.div 
-            style={{ opacity: textOpacity }} 
             className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full px-4 z-10"
         >
             <motion.div 
                 className="text-center max-w-3xl mx-auto"
                 variants={textContainerVariants}
                 initial="hidden"
-                animate="visible"
+                whileInView="visible"
+                viewport={{ once: true }}
             >
                 <div className="overflow-hidden">
                     <motion.h2
