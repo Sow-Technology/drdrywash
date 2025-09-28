@@ -6,6 +6,7 @@ import ServiceList from "@/components/home/service-list";
 import WhyChooseUs from "@/components/home/why-choose-us";
 import WeAlsoServe from "@/components/home/we-also-serve";
 import Faq from "@/components/home/faq";
+import MobileAppPromo from "@/components/home/mobile-app-promo";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       <ServiceList />
       <WhyChooseUs />
       <WeAlsoServe />
+      <MobileAppPromo />
       <Faq />
     </div>
   );

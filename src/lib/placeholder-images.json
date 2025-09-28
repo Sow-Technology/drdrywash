@@ -33,13 +33,13 @@
     {
       "id": "contact-us",
       "description": "A friendly customer service representative on the phone.",
-      "imageUrl": "https://images.unsplash.com/photo-1626863905121-3b0c0ed7b94c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjdXN0b21lciUyMHNlcnZpY2V8ZW58MHx8fHwxNzU4NjAyOTA2fDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1626863905121-3b0c0ed7b94c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjdXN0b21lciUyMHNlcnZpY2V8ZW58MHx8fHwxNzU4NjAyOTA2fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "customer service"
     },
     {
       "id": "why-choose-us",
       "description": "A young girl playing with two puppies on a clean carpet.",
-      "imageUrl": "https://images.unsplash.com/photo-1522254795997-60bd803817b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxnaXJsJTIwcHVwcGllc3xlbnwwfHx8fDE3NTg2NTQzNDN8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1522254795997-60bd803817b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxnaXJsJTIwcHVwcGllc3xlbnwwfHx8fDE3NTg2NTQzNDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "girl puppies"
     },
     {
@@ -63,8 +63,32 @@
     {
       "id": "product-shirt",
       "description": "A folded blue collared shirt.",
-      "imageUrl": "https://images.unsplash.com/photo-1716951988375-37d5793385d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxmb2xkZWQlMjBzaGlydHxlbnwwfHx8fDE3NTkwNDk5ODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1716951988375-37d5793385d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxmb2xkZWQlMjBzaGlydHxlbnwwfHx8fDE3NTkwNDk5ODF8MA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "folded shirt"
+    },
+    {
+      "id": "app-promo-hand",
+      "description": "A hand holding a smartphone with a laundry app on screen.",
+      "imageUrl": "https://images.unsplash.com/photo-1553011433-17f9aa3d95b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8aGFuZCUyMGhvbGRpbmclMjBwaG9uZXxlbnwwfHx8fDE3NTkwNTIzNDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hand holding phone"
+    },
+    {
+      "id": "qr-code",
+      "description": "A sample QR code.",
+      "imageUrl": "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com",
+      "imageHint": "qr code"
+    },
+    {
+      "id": "app-store-badge",
+      "description": "Available on the App Store badge.",
+      "imageUrl": "https://images.unsplash.com/photo-1597075095386-87bdd1ee195c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxhcHAlMjBzdG9yZXxlbnwwfHx8fDE3NTg5NzYyNjh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "app store"
+    },
+    {
+      "id": "google-play-badge",
+      "description": "Get it on Google Play badge.",
+      "imageUrl": "https://images.unsplash.com/photo-1662057168153-c0d62a4025f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxnb29nbGUlMjBwbGF5fGVufDB8fHx8MTc1OTA1MjM0M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "google play"
     }
   ]
 }
