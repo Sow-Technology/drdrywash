@@ -1,4 +1,4 @@
-import { Leaf, BadgePercent, Headset, ShoppingBag, CheckCircle, Flower, MonitorSmartphone, Bike, Store, Truck } from 'lucide-react';
+import { Leaf, BadgePercent, Headset, ShoppingBag, CheckCircle, Flower, MonitorSmartphone, Bike, Store, Truck, WashingMachine } from 'lucide-react';
 import type { Order, OrderStatus } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import { mensPricing } from './mens-pricing';
@@ -22,15 +22,23 @@ const getImage = (id: string) => {
 export const howItWorksOnline = [
     {
         icon: MonitorSmartphone,
-        title: "Schedule a Pickup",
+        title: "Order Online",
+        description: "Schedule order using website or our App.",
     },
     {
         icon: Bike,
-        title: "Pickup",
+        title: "Pick Up",
+        description: "We pickup your laundry as per your scheduled time.",
+    },
+    {
+        icon: WashingMachine,
+        title: "Cleaning",
+        description: "We'll expertly launder/dry clean your order with top-quality service.",
     },
     {
         icon: Truck,
-        title: "Delivery",
+        title: "Drop Off",
+        description: "Delivered at your doorstep at a time comfortable to you.",
     }
 ];
 
