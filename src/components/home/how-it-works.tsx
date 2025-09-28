@@ -52,8 +52,13 @@ const iconAnimation = (step: number) => {
             };
         case 3: // Drop Off
             return {
-                y: [0, -3, 0],
-                transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                x: ["0%", "0%", "110%", "-110%", "0%"],
+                transition: {
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    times: [0, 0.25, 0.5, 0.75, 1]
+                },
             };
         default:
             return {};
