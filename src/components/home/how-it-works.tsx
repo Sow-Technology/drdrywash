@@ -36,12 +36,12 @@ const iconAnimation = (step: number) => {
             };
         case 1: // Pick Up
             return {
-                x: [0, 25, 0, -25, 0],
-                rotate: [0, 5, 0, -5, 0],
+                x: [0, 50, -50, 0],
                 transition: { 
-                    duration: 5,
+                    duration: 4,
                     repeat: Infinity, 
-                    ease: "easeInOut" 
+                    ease: "easeInOut",
+                    times: [0, 0.4, 0.6, 1],
                 }
             };
         case 2: // Cleaning
