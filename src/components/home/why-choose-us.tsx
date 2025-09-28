@@ -59,16 +59,10 @@ export default function WhyChooseUs() {
                     key={index}
                     className={cn(
                         "p-6 rounded-lg shadow-sm flex flex-col items-center text-center",
-                        item.highlighted 
-                            ? "bg-background lg:col-span-1 md:col-span-2" 
-                            : "bg-primary/10 lg:col-span-1",
-                        // Spanning logic for a 5 item grid (2-1-2)
-                        (whyChooseUsItems.length === 5) && {
-                            'md:col-span-1': index < 2 || index > 2,
-                            'md:col-span-2 lg:col-span-1': index === 2,
-                            'lg:col-start-2': index === 2,
-                            'lg:col-span-1': index !== 2,
-                        }
+                        "bg-primary/5",
+                        // This logic creates the 2 -> 1 -> 2 layout on medium screens
+                        index === 2 && "md:col-span-2 lg:col-span-1",
+                        item.highlighted && "bg-background"
                     )}
                     variants={itemVariants}
                     whileHover={{ 
@@ -86,7 +80,7 @@ export default function WhyChooseUs() {
                     </motion.div>
                     <h3 className={cn(
                         "text-lg font-bold font-headline mb-2",
-                        item.highlighted ? "text-foreground" : "text-primary"
+                        "text-primary"
                     )}>{item.title}</h3>
                     <p className="text-muted-foreground text-sm">{item.description}</p>
                 </motion.div>
