@@ -96,7 +96,7 @@ export default function HowItWorks() {
                 <CardHeader>
                   <div className="flex justify-center">
                     <div 
-                        className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10"
+                        className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 overflow-hidden"
                     >
                       <motion.div animate={iconAnimation(index)}>
                         <step.icon className="h-10 w-10 text-primary" />
