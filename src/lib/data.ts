@@ -1,3 +1,4 @@
+
 import { Leaf, BadgePercent, Headset, ShoppingBag, CheckCircle, Flower, MonitorSmartphone, Bike, Store, Truck, WashingMachine, User, Tag, Car, Asterisk, CreditCard } from 'lucide-react';
 import type { Order, OrderStatus } from './types';
 import { PlaceHolderImages } from './placeholder-images';
@@ -157,7 +158,7 @@ export const whyChooseUsItems = [
     {
         icon: User,
         title: "PROFESSIONALLY TRAINED GARMENTS CARE",
-        description: "All Experts at fabric practice professional world-class processes to take care of your garments.",
+        description: "All Experts at Dr. Dry Wash practice professional world-class processes to take care of your garments.",
         highlighted: false,
     },
     {
@@ -169,7 +170,7 @@ export const whyChooseUsItems = [
      {
         icon: Asterisk,
         title: "NO GARMENTS DAMAGE",
-        description: "No colour bleeding, no colour fading, no tearing or other damage risks under fabrico approved process.",
+        description: "No colour bleeding, no colour fading, no tearing or other damage risks under Dr. Dry Wash approved process.",
         highlighted: true,
     },
     {
@@ -181,7 +182,7 @@ export const whyChooseUsItems = [
     {
         icon: Car,
         title: "CONVENIENT AND FREE PICK UP & DROP",
-        description: "Now schedule and manage your pickup & Drop conveniently on the Fabrico app.",
+        description: "Now schedule and manage your pickup & Drop conveniently on the Dr. Dry Wash app.",
         highlighted: false,
     },
 ];
