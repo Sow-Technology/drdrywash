@@ -1,3 +1,4 @@
+
 'use client';
 
 import { motion, useInView, useScroll, useSpring } from 'framer-motion';
@@ -45,15 +46,15 @@ const StepContent = ({ step, index, setActiveIndex }: { step: (typeof steps)[0],
     return (
         <motion.div
             ref={ref}
-            className="h-96"
-            initial={{ opacity: 0.5 }}
-            animate={{ opacity: isInView ? 1 : 0.5 }}
-            transition={{ duration: 0.3 }}
+            className="h-96 flex flex-col justify-center" // Centering text
+            initial={{ opacity: 0.3 }}
+            animate={{ opacity: isInView ? 1 : 0.3 }}
+            transition={{ duration: 0.5 }}
         >
             <h3 className="text-3xl font-bold font-headline text-foreground">
               {step.title}
             </h3>
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-4 text-lg text-muted-foreground max-w-sm">
               {step.description}
             </p>
         </motion.div>
@@ -62,7 +63,18 @@ const StepContent = ({ step, index, setActiveIndex }: { step: (typeof steps)[0],
 
 export default function HowItWorks() {
     const [activeIndex, setActiveIndex] = useState(0);
-    const ActiveIcon = steps[activeIndex].icon;
+    const targetRef = useRef<HTMLDivElement>(null);
+
+    const { scrollYProgress } = useScroll({
+        target: targetRef,
+        offset: ['start center', 'end end']
+    });
+
+    const scaleX = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    });
 
   return (
     <motion.section
@@ -87,13 +99,11 @@ export default function HowItWorks() {
       </div>
       
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-        <div className="md:sticky md:top-24">
-            <div className="relative h-96">
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-80 h-80 rounded-full bg-primary/10 shadow-inner" />
-                </div>
+        <div className="md:sticky md:top-24 h-96 flex items-center justify-center">
+            <div className="relative h-96 w-full flex items-center justify-center">
+                <div className="w-80 h-80 rounded-full bg-primary/10 shadow-inner" />
                 {steps.map((step, index) => (
-                    <div key={index} className={cn("absolute inset-0 flex items-center justify-center transition-opacity duration-300",
+                    <div key={index} className={cn("absolute inset-0 flex items-center justify-center transition-opacity duration-500",
                         activeIndex === index ? "opacity-100" : "opacity-0"
                     )}>
                         <div className="relative w-64 h-64 flex items-center justify-center">
@@ -110,10 +120,18 @@ export default function HowItWorks() {
                 ))}
             </div>
         </div>
-        <div className="relative">
-            {steps.map((step, index) => (
-                <StepContent key={index} step={step} index={index} setActiveIndex={setActiveIndex} />
-            ))}
+        <div className="relative" ref={targetRef}>
+             <div className='absolute top-0 left-0 w-1 h-full bg-muted rounded-full'>
+                <motion.div 
+                    className="w-1 h-full bg-primary rounded-full origin-top" 
+                    style={{ scaleY: scaleX }}
+                />
+            </div>
+            <div className='pl-8'>
+                {steps.map((step, index) => (
+                    <StepContent key={index} step={step} index={index} setActiveIndex={setActiveIndex} />
+                ))}
+            </div>
         </div>
       </div>
 
@@ -171,3 +189,5 @@ export default function HowItWorks() {
     </motion.section>
   );
 }
+
+    
