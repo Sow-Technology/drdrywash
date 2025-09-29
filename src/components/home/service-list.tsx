@@ -136,7 +136,7 @@ export default function ServiceList() {
               key={index}
               variants={itemVariants}
               className="w-full"
-              whileHover={{ y: -5 }}
+              whileHover={{ y: -5, scale: 1.03 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
               <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl transition-shadow duration-300 text-center flex flex-col p-6">
