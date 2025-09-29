@@ -4,6 +4,7 @@
 import { motion } from 'framer-motion';
 import { howItWorksOnline } from '@/lib/data';
 import { AnimatedWashingMachine } from './animated-washing-machine';
+import { cn } from '@/lib/utils';
 
 const sectionVariants = {
   hidden: { opacity: 0 },
@@ -28,12 +29,17 @@ const itemVariants = {
   },
 };
 
-const timelineColors = [
-  'bg-timeline-green',
-  'bg-timeline-orange',
-  'bg-timeline-blue',
-  'bg-timeline-red',
-];
+const lineVariants = {
+  hidden: { height: 0 },
+  visible: {
+    height: '100%',
+    transition: {
+      duration: 1.5,
+      ease: 'easeOut',
+      delay: 0.5,
+    },
+  },
+};
 
 export default function HowItWorks() {
   return (
@@ -61,66 +67,78 @@ export default function HowItWorks() {
             doorstep.
           </motion.p>
         </div>
-        
-        <div className="relative max-w-2xl mx-auto">
-          {/* Vertical timeline connector */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-10 bottom-10 w-0.5 bg-border -z-1"></div>
 
-          <div className="flex flex-col gap-12">
+        <div className="relative max-w-4xl mx-auto">
+          <motion.div
+            className="absolute left-1/2 -translate-x-1/2 top-0 w-0.5 bg-border"
+            variants={lineVariants}
+          ></motion.div>
+
+          <div className="space-y-16">
             {howItWorksOnline.map((step, index) => {
               const IconComponent =
                 index === 2 ? AnimatedWashingMachine : step.icon;
               const isReversed = index % 2 !== 0;
 
+              const cardVariants = {
+                hidden: { opacity: 0, x: isReversed ? 50 : -50 },
+                visible: {
+                  opacity: 1,
+                  x: 0,
+                  transition: { duration: 0.6, ease: 'easeOut' },
+                },
+              };
+
               return (
                 <motion.div
                   key={index}
-                  className="relative flex items-center justify-center w-full"
-                  variants={itemVariants}
+                  className="relative flex items-center"
+                  variants={sectionVariants}
                 >
                   <div
-                    className={`flex items-stretch w-full ${isReversed ? 'flex-row-reverse' : 'flex-row'}`}
+                    className={cn(
+                      'w-1/2',
+                      isReversed ? 'ml-auto pr-8' : 'mr-auto pl-8'
+                    )}
                   >
-                    {/* Banner */}
-                    <div className="w-1/2 flex justify-center items-center">
-                      <div className="w-40 h-40 flex flex-col justify-center items-center text-white p-4 relative shadow-lg"
-                           style={{
-                                clipPath: isReversed
-                                    ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 20% 50%)'
-                                    : 'polygon(0 0, 80% 0, 100% 50%, 80% 100%, 0 100%)',
-                           }}
+                    <motion.div
+                      className="bg-background p-6 rounded-lg shadow-lg border relative"
+                      variants={cardVariants}
+                    >
+                      <div
+                        className={cn(
+                          'absolute top-1/2 -translate-y-1/2',
+                          isReversed
+                            ? 'left-0 -translate-x-1/2'
+                            : 'right-0 translate-x-1/2'
+                        )}
                       >
-                         <div className={`absolute inset-0 ${timelineColors[index]} -z-1`}
-                              style={{
-                                clipPath: isReversed
-                                    ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 20% 50%)'
-                                    : 'polygon(0 0, 80% 0, 100% 50%, 80% 100%, 0 100%)',
-                              }}
-                         ></div>
-                        <span className="text-5xl font-bold font-headline">{`0${index + 1}`}</span>
-                        <span className="font-semibold">STEP</span>
-                      </div>
-                    </div>
-
-                    {/* Card */}
-                    <div className="w-1/2 flex items-center">
-                       <div className="bg-background p-6 rounded-lg shadow-lg border w-full">
-                          <div className="flex items-center gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 flex-shrink-0">
-                                <IconComponent className="h-6 w-6 text-primary" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-bold font-headline">{step.title}</h3>
-                            </div>
-                          </div>
-                          <p className="mt-2 text-sm text-muted-foreground">
-                            {step.description}
-                          </p>
+                        <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 border-4 border-background shadow-md">
+                          <IconComponent className="h-8 w-8 text-primary" />
                         </div>
-                    </div>
+                      </div>
+                      <div
+                        className={cn(
+                          'flex flex-col',
+                          isReversed ? 'items-start' : 'items-end'
+                        )}
+                      >
+                        <p className="text-sm text-primary font-bold">{`STEP 0${index + 1}`}</p>
+                        <h3 className="text-xl font-bold font-headline mt-1">
+                          {step.title}
+                        </h3>
+                        <p
+                          className={cn(
+                            'mt-2 text-sm text-muted-foreground',
+                            isReversed ? 'text-left' : 'text-right'
+                          )}
+                        >
+                          {step.description}
+                        </p>
+                      </div>
+                    </motion.div>
                   </div>
-                   {/* Center Dot on timeline */}
-                  <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-primary border-4 border-card"></div>
+                   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-4 w-4 rounded-full bg-primary border-4 border-card ring-4 ring-primary/20"></div>
                 </motion.div>
               );
             })}
