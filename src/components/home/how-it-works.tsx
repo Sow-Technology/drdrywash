@@ -1,7 +1,7 @@
 
 'use client';
 
-import { motion, useInView, useScroll, useSpring } from 'framer-motion';
+import { motion, useInView, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { MonitorSmartphone, Bike, ShoppingBag, Store } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { AnimatedWashingMachine } from './animated-washing-machine';
@@ -33,7 +33,7 @@ const steps = [
   },
 ];
 
-const StepContent = ({ step, index, setActiveIndex }: { step: (typeof steps)[0], index: number, setActiveIndex: (index: number) => void }) => {
+const StepContent = ({ step, index, setActiveIndex, isActive }: { step: (typeof steps)[0], index: number, setActiveIndex: (index: number) => void, isActive: boolean }) => {
     const ref = useRef<HTMLDivElement>(null);
     const isInView = useInView(ref, { margin: "-50% 0px -50% 0px" });
 
@@ -46,15 +46,14 @@ const StepContent = ({ step, index, setActiveIndex }: { step: (typeof steps)[0],
     return (
         <motion.div
             ref={ref}
-            className="h-96 flex flex-col justify-center" // Centering text
-            initial={{ opacity: 0.3 }}
-            animate={{ opacity: isInView ? 1 : 0.3 }}
-            transition={{ duration: 0.5 }}
+            className="h-96 flex flex-col justify-center relative"
+            animate={{ scale: isActive ? 1.05 : 1 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
         >
-            <h3 className="text-3xl font-bold font-headline text-foreground">
+            <h3 className={cn("text-3xl font-bold font-headline transition-colors", isActive ? "text-primary" : "text-foreground")}>
               {step.title}
             </h3>
-            <p className="mt-4 text-lg text-muted-foreground max-w-sm">
+            <p className={cn("mt-4 text-lg transition-colors", isActive ? "text-foreground" : "text-muted-foreground")}>
               {step.description}
             </p>
         </motion.div>
@@ -62,19 +61,19 @@ const StepContent = ({ step, index, setActiveIndex }: { step: (typeof steps)[0],
 }
 
 export default function HowItWorks() {
-    const [activeIndex, setActiveIndex] = useState(0);
-    const targetRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const targetRef = useRef<HTMLDivElement>(null);
 
-    const { scrollYProgress } = useScroll({
-        target: targetRef,
-        offset: ['start center', 'end end']
-    });
+  const { scrollYProgress } = useScroll({
+      target: targetRef,
+      offset: ['start center', 'end end']
+  });
 
-    const scaleX = useSpring(scrollYProgress, {
-        stiffness: 100,
-        damping: 30,
-        restDelta: 0.001
-    });
+  const scaleY = useSpring(scrollYProgress, {
+      stiffness: 100,
+      damping: 30,
+      restDelta: 0.001
+  });
 
   return (
     <motion.section
@@ -101,35 +100,47 @@ export default function HowItWorks() {
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
         <div className="md:sticky md:top-24 h-96 flex items-center justify-center">
             <div className="relative h-96 w-full flex items-center justify-center">
-                <div className="w-80 h-80 rounded-full bg-primary/10 shadow-inner" />
-                {steps.map((step, index) => (
-                    <div key={index} className={cn("absolute inset-0 flex items-center justify-center transition-opacity duration-500",
-                        activeIndex === index ? "opacity-100" : "opacity-0"
-                    )}>
-                        <div className="relative w-64 h-64 flex items-center justify-center">
-                           <motion.div
-                             key={index}
-                             initial={{ scale: 0.5, opacity: 0 }}
-                             animate={{ scale: activeIndex === index ? 1 : 0.5, opacity: activeIndex === index ? 1 : 0 }}
-                             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                           >
-                            <step.icon className={`h-32 w-32 text-primary`} />
-                           </motion.div>
-                        </div>
-                    </div>
-                ))}
+                <motion.div
+                    className="absolute inset-0 flex items-center justify-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1, delay: 0.5 }}
+                >
+                    <div className="absolute w-80 h-80 rounded-full bg-primary/5 shadow-inner" />
+                    <div className="absolute w-72 h-72 rounded-full bg-primary/10 shadow-inner blur-xl animate-pulse"></div>
+                </motion.div>
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={activeIndex}
+                        initial={{ opacity: 0, scale: 0.7 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.7 }}
+                        transition={{ duration: 0.4, ease: 'backOut' }}
+                        className="absolute inset-0 flex items-center justify-center"
+                    >
+                        {steps[activeIndex] && (
+                            <steps[activeIndex].icon className="h-32 w-32 text-primary drop-shadow-lg" />
+                        )}
+                    </motion.div>
+                </AnimatePresence>
             </div>
         </div>
         <div className="relative" ref={targetRef}>
-             <div className='absolute top-0 left-0 w-1 h-full bg-muted rounded-full'>
+             <div className='absolute top-0 left-[15px] w-1 h-full bg-muted rounded-full'>
                 <motion.div 
                     className="w-1 h-full bg-primary rounded-full origin-top" 
-                    style={{ scaleY: scaleX }}
+                    style={{ scaleY }}
                 />
             </div>
             <div className='pl-8'>
                 {steps.map((step, index) => (
-                    <StepContent key={index} step={step} index={index} setActiveIndex={setActiveIndex} />
+                    <StepContent 
+                        key={index} 
+                        step={step} 
+                        index={index} 
+                        setActiveIndex={setActiveIndex} 
+                        isActive={activeIndex === index}
+                    />
                 ))}
             </div>
         </div>
@@ -185,9 +196,6 @@ export default function HowItWorks() {
           </div>
         </motion.div>
       </div>
-
     </motion.section>
   );
 }
-
-    
