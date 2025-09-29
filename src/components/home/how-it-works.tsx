@@ -3,7 +3,6 @@
 
 import { motion } from 'framer-motion';
 import { howItWorksOnline } from '@/lib/data';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatedWashingMachine } from './animated-washing-machine';
 
 const sectionVariants = {
@@ -12,48 +11,29 @@ const sectionVariants = {
     opacity: 1,
     transition: {
       duration: 0.5,
-      staggerChildren: 0.1,
+      staggerChildren: 0.2,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: 'easeOut',
-      }
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+    },
   },
 };
 
-const iconAnimation = (step: number) => {
-    switch (step) {
-        case 0: // Order Online
-            return {
-                scale: [1, 1.05, 1],
-                transition: { duration: 2.5, repeat: Infinity, ease: "easeInOut" }
-            };
-        case 1: // Pick Up
-        case 3: // Drop Off
-             return {
-                x: ["-110%", "110%"],
-                transition: {
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "linear",
-                    repeatType: 'loop',
-                    repeatDelay: 2
-                },
-            };
-        case 2: // Cleaning - The component now handles its own animation
-            return {};
-        default:
-            return {};
-    }
-}
+const timelineColors = [
+  'bg-timeline-green',
+  'bg-timeline-orange',
+  'bg-timeline-blue',
+  'bg-timeline-red',
+];
 
 export default function HowItWorks() {
   return (
@@ -81,42 +61,71 @@ export default function HowItWorks() {
             doorstep.
           </motion.p>
         </div>
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-          variants={sectionVariants}
-        >
-          {howItWorksOnline.map((step, index) => {
-            const IconComponent = index === 2 ? AnimatedWashingMachine : step.icon;
-            return (
-              <motion.div key={index} variants={itemVariants} className="h-full">
-                <Card className="text-center h-full shadow-sm hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="flex justify-center">
-                      <div 
-                          className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 overflow-hidden"
+        
+        <div className="relative max-w-2xl mx-auto">
+          {/* Vertical timeline connector */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-10 bottom-10 w-0.5 bg-border -z-1"></div>
+
+          <div className="flex flex-col gap-12">
+            {howItWorksOnline.map((step, index) => {
+              const IconComponent =
+                index === 2 ? AnimatedWashingMachine : step.icon;
+              const isReversed = index % 2 !== 0;
+
+              return (
+                <motion.div
+                  key={index}
+                  className="relative flex items-center justify-center w-full"
+                  variants={itemVariants}
+                >
+                  <div
+                    className={`flex items-stretch w-full ${isReversed ? 'flex-row-reverse' : 'flex-row'}`}
+                  >
+                    {/* Banner */}
+                    <div className="w-1/2 flex justify-center items-center">
+                      <div className="w-40 h-40 flex flex-col justify-center items-center text-white p-4 relative shadow-lg"
+                           style={{
+                                clipPath: isReversed
+                                    ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 20% 50%)'
+                                    : 'polygon(0 0, 80% 0, 100% 50%, 80% 100%, 0 100%)',
+                           }}
                       >
-                        <motion.div animate={iconAnimation(index)}>
-                          <IconComponent className="h-10 w-10 text-primary" />
-                        </motion.div>
+                         <div className={`absolute inset-0 ${timelineColors[index]} -z-1`}
+                              style={{
+                                clipPath: isReversed
+                                    ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 20% 50%)'
+                                    : 'polygon(0 0, 80% 0, 100% 50%, 80% 100%, 0 100%)',
+                              }}
+                         ></div>
+                        <span className="text-5xl font-bold font-headline">{`0${index + 1}`}</span>
+                        <span className="font-semibold">STEP</span>
                       </div>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="font-semibold text-primary mb-2">
-                      Step {index + 1}
-                    </p>
-                    <CardTitle className="font-headline text-xl">
-                      {step.title}
-                    </CardTitle>
-                    <p className="mt-2 text-muted-foreground">
-                      {step.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )
-          })}
-        </motion.div>
+
+                    {/* Card */}
+                    <div className="w-1/2 flex items-center">
+                       <div className="bg-background p-6 rounded-lg shadow-lg border w-full">
+                          <div className="flex items-center gap-4">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 flex-shrink-0">
+                                <IconComponent className="h-6 w-6 text-primary" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold font-headline">{step.title}</h3>
+                            </div>
+                          </div>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            {step.description}
+                          </p>
+                        </div>
+                    </div>
+                  </div>
+                   {/* Center Dot on timeline */}
+                  <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-primary border-4 border-card"></div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </motion.section>
   );

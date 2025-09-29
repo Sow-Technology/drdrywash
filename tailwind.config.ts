@@ -1,3 +1,4 @@
+
 import type { Config } from 'tailwindcss';
 
 export default {
@@ -62,6 +63,10 @@ export default {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+        'timeline-green': '#27ae60',
+        'timeline-orange': '#f39c12',
+        'timeline-blue': '#2980b9',
+        'timeline-red': '#c0392b',
       },
       borderRadius: {
         lg: 'var(--radius)',
