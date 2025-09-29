@@ -1,9 +1,12 @@
-
 'use client';
 
 import { motion } from 'framer-motion';
-import { howItWorksOnline } from '@/lib/data';
-import { AnimatedWashingMachine } from './animated-washing-machine';
+import {
+  MonitorSmartphone,
+  Bike,
+  ShoppingBag,
+  Store,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 
@@ -13,143 +16,115 @@ const sectionVariants = {
     opacity: 1,
     transition: {
       duration: 0.5,
-      staggerChildren: 0.3,
+      staggerChildren: 0.1,
     },
   },
 };
 
-const stepVariants = {
-  hidden: { opacity: 0, y: 50 },
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.6,
+      duration: 0.5,
       ease: 'easeOut',
     },
   },
 };
 
-interface Step {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-}
-
-const StepCard = ({ step, index }: { step: Step; index: number }) => {
-  const isEven = index % 2 === 0;
-  const IconComponent = index === 2 ? AnimatedWashingMachine : step.icon;
-
-  return (
-    <div
-      className={cn(
-        'relative flex w-full items-center',
-        isEven ? 'justify-start' : 'justify-end'
-      )}
-    >
-      {/* Content Card */}
-      <div
-        className={cn(
-          'relative z-10 w-[calc(50%-2rem)] space-y-2 rounded-lg border bg-card p-6 shadow-lg',
-          isEven ? 'order-2 ml-auto' : 'order-1 mr-auto'
-        )}
-      >
-        <p className="font-bold text-primary">{`Step ${index + 1}`}</p>
-        <h3 className="text-xl font-bold font-headline">{step.title}</h3>
-        <p className="text-sm text-muted-foreground">{step.description}</p>
-      </div>
-
-      {/* Icon */}
-      <div className="absolute left-1/2 top-1/2 z-20 h-20 w-20 -translate-x-1/2 -translate-y-1/2">
-        <div className="relative flex h-full w-full items-center justify-center rounded-full bg-background shadow-lg ring-4 ring-background">
-          <IconComponent className="h-10 w-10 text-primary" />
-        </div>
-      </div>
-    </div>
-  );
+const iconHoverVariant = {
+  hover: {
+    scale: 1.1,
+    transition: { type: 'spring', stiffness: 300 },
+  },
 };
 
-const RibbonPath = ({
-  isEven,
-}: {
-  isEven: boolean;
-}) => (
-  <div className="relative h-48 w-full">
-    <svg
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-      className="absolute left-0 top-0 h-full w-full"
-    >
-      <path
-        d={
-          isEven
-            ? 'M 50 0 C 80 10, 80 90, 50 100'
-            : 'M 50 0 C 20 10, 20 90, 50 100'
-        }
-        stroke="hsl(var(--border))"
-        strokeWidth="2"
-        fill="none"
-        className="stroke-cap-round"
-      />
-    </svg>
-  </div>
+const howItWorksOnline: { icon: LucideIcon; title: string }[] = [
+  {
+    icon: MonitorSmartphone,
+    title: 'Place Order',
+  },
+  {
+    icon: Bike,
+    title: 'Pickup',
+  },
+  {
+    icon: ShoppingBag,
+    title: 'Delivery',
+  },
+];
+
+const howItWorksStore = {
+  icon: Store,
+  title: 'Visit Store',
+};
+
+const Step = ({ icon: Icon, title }: { icon: LucideIcon; title: string }) => (
+  <motion.div
+    className="flex flex-col items-center gap-2"
+    variants={iconHoverVariant}
+    whileHover="hover"
+  >
+    <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-2 border-primary bg-background shadow-sm">
+      <Icon className="h-12 w-12 text-primary" />
+    </div>
+    <p className="font-semibold text-muted-foreground">{title}</p>
+  </motion.div>
 );
 
 export default function HowItWorks() {
   return (
     <motion.section
-      className="overflow-hidden py-16 md:py-20 bg-background"
+      className="overflow-hidden py-16 md:py-20 bg-card"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={sectionVariants}
     >
       <div className="container">
-        <div className="text-center mb-16">
-          <motion.h2
-            className="text-3xl font-bold tracking-tight font-headline sm:text-4xl"
-            variants={stepVariants}
-          >
-            A Seamless Laundry Experience
-          </motion.h2>
-          <motion.p
-            className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto"
-            variants={stepVariants}
-          >
-            At Dr. Dry Wash, quality meets convenience. We pick up, treat each
-            item with expert care, and deliver everything back to your
-            doorstep.
-          </motion.p>
+        <div className="flex items-center mb-8">
+            <motion.div 
+                className="bg-primary text-primary-foreground py-2 px-6 rounded-md shadow-md"
+                variants={itemVariants}
+            >
+                <h4 className="font-bold tracking-widest">HOW IT WORKS</h4>
+            </motion.div>
+            <motion.div 
+                className="flex-grow h-0.5 bg-primary/50 ml-4"
+                variants={itemVariants}
+            ></motion.div>
         </div>
 
-        <div className="relative max-w-2xl mx-auto">
-            {/* START TAG */}
-            <motion.div className="flex justify-center" variants={stepVariants}>
-                <div className="bg-primary text-primary-foreground py-2 px-6 rounded-full shadow-md">
-                    <h4 className="font-bold tracking-widest">START</h4>
-                </div>
-            </motion.div>
-             <div className="absolute top-[48px] left-1/2 -translate-x-1/2 w-0.5 h-8 bg-border"></div>
+        <motion.div 
+            className="border-4 border-primary rounded-3xl p-8"
+            variants={itemVariants}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-8">
+            {/* Book Online Section */}
+            <div className="flex flex-col items-center gap-4">
+              <h3 className="text-2xl font-bold font-headline text-foreground">BOOK ONLINE</h3>
+              <div className="flex flex-col sm:flex-row items-center justify-around gap-8 w-full mt-4">
+                {howItWorksOnline.map((step, index) => (
+                  <Step key={index} icon={step.icon} title={step.title} />
+                ))}
+              </div>
+            </div>
 
+            {/* OR Divider */}
+            <div className="flex items-center justify-center">
+              <span className="text-4xl font-extrabold text-muted-foreground">OR</span>
+            </div>
 
-          <div className="relative mt-8">
-            {howItWorksOnline.map((step, index) => (
-              <motion.div key={index} variants={stepVariants}>
-                <StepCard step={step} index={index} />
-                {!howItWorksOnline[index + 1] ? null : (
-                  <RibbonPath isEven={index % 2 === 0} />
-                )}
-              </motion.div>
-            ))}
+            {/* Visit Store Section */}
+            <div className="flex flex-col items-center gap-4">
+               <h3 className="text-2xl font-bold font-headline text-foreground">VISIT STORE</h3>
+               <div className="mt-4">
+                <Step icon={howItWorksStore.icon} title={howItWorksStore.title} />
+               </div>
+            </div>
           </div>
-
-           {/* STOP TAG */}
-            <motion.div className="flex justify-center mt-[-1rem]" variants={stepVariants}>
-                <div className="bg-primary text-primary-foreground py-2 px-6 rounded-full shadow-md">
-                    <h4 className="font-bold tracking-widest">FINISH</h4>
-                </div>
-            </motion.div>
-        </div>
+        </motion.div>
       </div>
     </motion.section>
   );
