@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Loader2, Mic, MicOff, Send, X, Languages } from 'lucide-react';
+import { Loader2, Mic, MicOff, Send, X, Languages, Volume2, VolumeX } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -28,6 +28,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
+import { textToSpeech } from '@/ai/flows/text-to-speech';
 
 type Message = {
   id: string;
@@ -64,8 +65,10 @@ export default function BillingVoiceAssistant() {
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [isListening, setIsListening] = React.useState(false);
+  const [isMuted, setIsMuted] = React.useState(false);
   const [selectedLang, setSelectedLang] = React.useState(supportedLanguages[0].code);
   const recognitionRef = React.useRef<SpeechRecognition | null>(null);
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
@@ -73,6 +76,24 @@ export default function BillingVoiceAssistant() {
     resolver: zodResolver(formSchema),
     defaultValues: { prompt: '' },
   });
+
+  const playAudio = async (text: string) => {
+    if (isMuted) return;
+    try {
+        const { audio } = await textToSpeech({ text });
+        if (audioRef.current) {
+            audioRef.current.src = audio;
+            audioRef.current.play();
+        }
+    } catch (error) {
+        console.error("Failed to play audio:", error);
+        toast({
+            variant: "destructive",
+            title: "Audio Error",
+            description: "Could not play the assistant's voice.",
+        });
+    }
+  };
 
   const setupRecognition = React.useCallback((lang: string) => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -112,7 +133,7 @@ export default function BillingVoiceAssistant() {
         if (isOpen && finalTranscript) {
            form.setValue('prompt', finalTranscript);
            // Automatically submit when final transcript is ready
-           // onSubmit({ prompt: finalTranscript });
+           onSubmit({ prompt: finalTranscript });
         }
       };
 
@@ -139,6 +160,9 @@ export default function BillingVoiceAssistant() {
 
   const addMessage = (sender: 'user' | 'bot', text: string) => {
     setMessages((prev) => [...prev, { id: Date.now().toString(), sender, text }]);
+    if (sender === 'bot') {
+        playAudio(text);
+    }
   };
 
   const handleOpen = (fromVoice = false) => {
@@ -154,11 +178,16 @@ export default function BillingVoiceAssistant() {
         text: `${greeting}`,
       },
     ]);
+     playAudio(greeting);
   };
 
   const handleClose = () => {
     setIsOpen(false);
     setMessages([]);
+    if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+    }
   };
 
   const processCommand = (command: string) => {
@@ -207,6 +236,7 @@ export default function BillingVoiceAssistant() {
 
   return (
     <>
+      <audio ref={audioRef} hidden />
       <div className="fixed bottom-8 right-8 z-50">
         <AnimatePresence>
           {!isOpen && (
@@ -254,6 +284,9 @@ export default function BillingVoiceAssistant() {
                   </div>
                 </div>
                 <div className='flex items-center'>
+                    <Button variant="ghost" size="icon" onClick={() => setIsMuted(!isMuted)} className="h-8 w-8">
+                        {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                    </Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-8">
