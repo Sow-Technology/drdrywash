@@ -6,6 +6,7 @@ import {
   X,
   Send,
   Loader2,
+  Mic
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +27,7 @@ import { useRouter } from 'next/navigation';
 type ChatbotProps = {
     isOpen: boolean;
     onClose: () => void;
+    startListening?: () => void;
 };
 
 const chatbotVariants = {
@@ -42,7 +44,7 @@ const chatbotVariants = {
   },
 };
 
-export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
+export default function Chatbot({ isOpen, onClose, startListening }: ChatbotProps) {
   const router = useRouter();
   const [messages, setMessages] = useState<Conversation>([]);
   const [inputValue, setInputValue] = useState('');
@@ -96,6 +98,11 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
               router.push(input.path);
               onClose(); // Close chatbot on navigation
             }
+             if (name === 'calculateBill') {
+                const { subtotal, gst, total } = response.toolRequest.output;
+                const toolResponseText = `The total amount is ₹${total}, which includes a subtotal of ₹${subtotal} and GST of ₹${gst}. Anything else I can help with?`;
+                responseText += toolResponseText;
+             }
           }
         }
       } else if (response.text) {
@@ -116,7 +123,7 @@ export default function Chatbot({ isOpen, onClose }: ChatbotProps) {
     <>
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed bottom-8 right-8 z-50">
+          <div className="fixed bottom-24 right-8 z-50">
             <motion.div
               variants={chatbotVariants}
               initial="closed"

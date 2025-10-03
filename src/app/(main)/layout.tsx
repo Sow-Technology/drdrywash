@@ -2,6 +2,7 @@
 
 import { Header, Footer, MobileNav } from '@/components/layout';
 import ChatbotFAB from '@/components/layout/chatbot-fab';
+import BillingVoiceAssistant from '@/components/billing/voice-assistant';
 
 export default function MainLayout({
   children,

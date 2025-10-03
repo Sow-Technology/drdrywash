@@ -96,6 +96,7 @@ export default function BillingLayout({
             </SheetContent>
           </Sheet>
            <div className="ml-auto flex items-center gap-2">
+             <BillingVoiceAssistant />
              <Button size="sm" className="h-8 gap-1" asChild>
                 <Link href="/billing/add-bill">
                     <PlusCircle className="h-3.5 w-3.5" />
@@ -109,7 +110,6 @@ export default function BillingLayout({
         <main className="flex-1 p-4 sm:px-6 sm:py-0">
           {children}
         </main>
-        <BillingVoiceAssistant />
       </div>
     </div>
   );

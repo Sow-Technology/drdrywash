@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -58,12 +57,11 @@ export default function BillingVoiceAssistant() {
   
   const recognitionRef = React.useRef<SpeechRecognition | null>(null);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
-  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const messagesEndRef = React.useRef<HTMLDivElement | null>(null);
 
   const { register, handleSubmit, watch, setValue, reset } = useForm<{ prompt: string }>({
     defaultValues: { prompt: '' },
   });
-  const promptValue = watch('prompt');
 
   const playAudio = async (text: string) => {
     if (isMuted || !text) return;
@@ -86,16 +84,18 @@ export default function BillingVoiceAssistant() {
   const setupRecognition = React.useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      toast({
-        variant: 'destructive',
-        title: 'Browser Not Supported',
-        description: 'Speech recognition is not supported by your browser.',
-      });
+      if(isOpen) { // Only show toast if user is trying to use it
+        toast({
+          variant: 'destructive',
+          title: 'Browser Not Supported',
+          description: 'Speech recognition is not supported by your browser.',
+        });
+      }
       return;
     }
 
     const recognition = new SpeechRecognition();
-    recognition.continuous = false; // Process single commands
+    recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = selectedLang;
 
@@ -112,8 +112,8 @@ export default function BillingVoiceAssistant() {
       }
     };
 
-    let finalTranscript = '';
     recognition.onresult = (event) => {
+      let finalTranscript = '';
       let interimTranscript = '';
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
@@ -125,22 +125,65 @@ export default function BillingVoiceAssistant() {
       
       const transcript = finalTranscript || interimTranscript;
       setValue('prompt', transcript);
-       if (transcript.toLowerCase().includes('hey doctor')) {
-        handleOpen();
-      }
-
+      
       if (finalTranscript) {
-         handleSubmit(onSubmit)(); // Automatically submit
+         handleSubmit(onSubmit)();
       }
     };
 
     recognitionRef.current = recognition;
-  }, [selectedLang, setValue, handleSubmit, toast]);
+  }, [selectedLang, setValue, handleSubmit, toast, isOpen]);
 
 
   React.useEffect(() => {
     setupRecognition();
   }, [setupRecognition]);
+  
+  // Setup wake word listener
+  const wakeWordRecognitionRef = React.useRef<SpeechRecognition | null>(null);
+
+  const setupWakeWordRecognition = React.useCallback(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true; // Listen continuously for wake word
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            const transcript = event.results[i][0].transcript.trim().toLowerCase();
+            if (transcript.includes('hey doctor')) {
+                handleOpen();
+            }
+        }
+    };
+    
+    recognition.onerror = (event) => {
+        if (event.error === 'not-allowed') {
+            // This is handled by requiring a user click first
+        } else if (event.error !== 'no-speech') {
+            console.error('Wake word recognition error:', event.error);
+        }
+    };
+    
+    wakeWordRecognitionRef.current = recognition;
+  }, []);
+
+  React.useEffect(() => {
+    setupWakeWordRecognition();
+  }, [setupWakeWordRecognition]);
+
+  const startWakeWordListening = () => {
+     if (wakeWordRecognitionRef.current && !isListening) {
+        try {
+            wakeWordRecognitionRef.current.start();
+        } catch(e) {
+            // Already started
+        }
+    }
+  };
 
 
   const scrollToBottom = () => {
@@ -153,6 +196,7 @@ export default function BillingVoiceAssistant() {
   };
   
   const handleOpen = () => {
+    if (isOpen) return;
     setIsOpen(true);
     const initialPrompt = "Hello! I'm your billing assistant. How can I help you?";
     setHistory([{ role: 'model', content: [{ text: initialPrompt }] }]);
@@ -165,6 +209,9 @@ export default function BillingVoiceAssistant() {
     if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
+    }
+     if (recognitionRef.current && isListening) {
+      recognitionRef.current.stop();
     }
   };
   
@@ -215,6 +262,9 @@ export default function BillingVoiceAssistant() {
   };
 
   const toggleListening = () => {
+    if (!recognitionRef.current) {
+      setupRecognition();
+    }
     if (isListening) {
       recognitionRef.current?.stop();
     } else {
@@ -238,7 +288,10 @@ export default function BillingVoiceAssistant() {
               <Button
                 size="icon"
                 className="rounded-full w-16 h-16 shadow-lg"
-                onClick={() => toggleListening()}
+                onClick={() => {
+                  handleOpen();
+                  startWakeWordListening();
+                }}
                 aria-label="Open Voice Assistant"
               >
                 <Mic className="h-7 w-7" />
@@ -307,7 +360,7 @@ export default function BillingVoiceAssistant() {
                         'bg-primary text-primary-foreground': msg.role === 'user',
                         'bg-muted': msg.role === 'model',
                       })}>
-                      <p>{msg.content[0].text}</p>
+                      {msg.content.map((c, i) => <p key={i}>{c.text}</p>)}
                     </div>
                   </div>
                 ))}
@@ -329,7 +382,7 @@ export default function BillingVoiceAssistant() {
                   <form onSubmit={handleSubmit(onSubmit)} className="w-full flex items-center gap-2">
                       <div className="relative flex-1">
                           <Input
-                              placeholder="e.g., Go to orders"
+                              placeholder="Type or speak a command..."
                               autoComplete='off'
                               {...register('prompt')}
                               disabled={isProcessing}
@@ -345,7 +398,7 @@ export default function BillingVoiceAssistant() {
                               {isListening ? <Mic className="h-4 w-4 text-primary" /> : <MicOff className="h-4 w-4 text-muted-foreground" />}
                           </Button>
                       </div>
-                      <Button type="submit" size="icon" aria-label="Send Command" disabled={isProcessing}>
+                      <Button type="submit" size="icon" aria-label="Send Command" disabled={!watch('prompt') || isProcessing}>
                           <Send className="h-4 w-4" />
                       </Button>
                   </form>
