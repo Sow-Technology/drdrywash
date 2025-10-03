@@ -60,49 +60,31 @@ const StepContent = ({
 }) => {
   const isActive = index === activeIndex;
 
-  const cardVariants = {
-      inactive: {
-          scale: 0.95,
-          opacity: 0.7,
-      },
-      active: {
-          scale: 1,
-          opacity: 1,
-      },
-  }
-
-  const textVariants = {
-    inactive: { opacity: 0, y: 10 },
-    active: { opacity: 1, y: 0 },
-  };
-
   return (
     <motion.div 
         className='h-screen flex items-center justify-center'
+        aria-hidden={!isActive}
     >
         <motion.div 
             className={cn(
                 "p-8 rounded-2xl border transition-all duration-300 w-full max-w-sm bg-card/80 backdrop-blur-sm shadow-md",
                 isActive ? "border-primary shadow-xl" : "border-border"
             )}
-            variants={cardVariants}
-            animate={isActive ? 'active' : 'inactive'}
+            initial={{ scale: 0.95, opacity: 0.7 }}
+            animate={isActive ? { scale: 1, opacity: 1 } : { scale: 0.95, opacity: 0.7 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
+            layout
         >
             <motion.h3
                 className={cn(
                     "font-bold text-3xl font-headline transition-colors duration-300",
                     isActive ? 'text-primary' : 'text-foreground'
                 )}
-                variants={textVariants}
-                transition={{ delay: 0.1, duration: 0.3 }}
             >
                 {step.title}
             </motion.h3>
             <motion.p 
                 className="text-muted-foreground mt-3 text-lg"
-                variants={textVariants}
-                transition={{ delay: 0.2, duration: 0.3 }}
             >
                 {step.description}
             </motion.p>
@@ -128,18 +110,6 @@ export default function HowItWorks() {
     });
   }, [scrollYProgress]);
 
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '-50%']);
-
-  const handFloat = {
-    y: ["-6px", "6px"],
-    transition: {
-      duration: 4,
-      repeat: Infinity,
-      repeatType: "reverse",
-      ease: "easeInOut",
-    },
-  };
-
   return (
     <motion.section
       id="how-it-works"
@@ -162,11 +132,9 @@ export default function HowItWorks() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24 relative h-[400vh]">
             <motion.div 
                 className="md:sticky md:top-0 h-screen flex items-center justify-center"
-                style={{ y }}
             >
-                <motion.div 
+                <div 
                     className="relative w-64 h-[32rem] bg-slate-800 dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border-4 border-slate-700"
-                    animate={handFloat}
                 >
                     <div className="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-900 dark:bg-black rounded-full"></div>
                     <div className="absolute inset-4 bg-background rounded-[2rem] overflow-hidden">
@@ -190,7 +158,7 @@ export default function HowItWorks() {
                             })}
                         </div>
                     </div>
-                </motion.div>
+                </div>
             </motion.div>
 
             <div className="relative flex flex-col">
