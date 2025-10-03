@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -124,6 +125,9 @@ export default function BillingVoiceAssistant() {
       
       const transcript = finalTranscript || interimTranscript;
       setValue('prompt', transcript);
+       if (transcript.toLowerCase().includes('hey doctor')) {
+        handleOpen();
+      }
 
       if (finalTranscript) {
          handleSubmit(onSubmit)(); // Automatically submit
@@ -189,6 +193,11 @@ export default function BillingVoiceAssistant() {
             const toolResponseText = `Navigating you to ${input.path.replace('/', ' ')}.`;
             responseText += toolResponseText;
           }
+           if (name === 'calculateBill') {
+            const { subtotal, gst, total } = input;
+             const toolResponseText = `The total amount is ₹${total}, which includes a subtotal of ₹${subtotal} and GST of ₹${gst}. Anything else I can help with?`;
+             responseText += toolResponseText;
+          }
         }
       }
       
@@ -229,7 +238,7 @@ export default function BillingVoiceAssistant() {
               <Button
                 size="icon"
                 className="rounded-full w-16 h-16 shadow-lg"
-                onClick={() => handleOpen()}
+                onClick={() => toggleListening()}
                 aria-label="Open Voice Assistant"
               >
                 <Mic className="h-7 w-7" />
