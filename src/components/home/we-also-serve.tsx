@@ -55,6 +55,19 @@ const itemVariants = {
     },
 };
 
+const iconContainerVariants = {
+  float: (i: number) => ({
+    y: ["-5px", "5px"],
+    transition: {
+      duration: 2.5,
+      delay: i * 0.3,
+      repeat: Infinity,
+      repeatType: "reverse",
+      ease: "easeInOut",
+    },
+  }),
+};
+
 export default function WeAlsoServe() {
     return (
         <motion.section 
@@ -82,12 +95,13 @@ export default function WeAlsoServe() {
                     className="mt-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 max-w-6xl mx-auto"
                     variants={sectionVariants}
                 >
-                    {services.map((service) => (
+                    {services.map((service, index) => (
                         <motion.div key={service.name} className="flex flex-col items-center" variants={itemVariants}>
                             <motion.div 
                               className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-primary/50 bg-primary/10 mb-4"
-                              whileHover={{ scale: 1.1 }}
-                              transition={{ type: 'spring', stiffness: 300 }}
+                              variants={iconContainerVariants}
+                              animate="float"
+                              custom={index}
                             >
                                 <service.icon className="h-10 w-10 text-primary" />
                             </motion.div>
