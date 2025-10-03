@@ -88,7 +88,7 @@ export default function BillingVoiceAssistant() {
           .map((result) => result.transcript)
           .join('');
 
-        if (transcript.toLowerCase().includes('hey lax') && !isOpen) {
+        if (transcript.toLowerCase().includes('hey hello') && !isOpen) {
           handleOpen(true);
         }
 
@@ -121,13 +121,13 @@ export default function BillingVoiceAssistant() {
     setIsOpen(true);
      let greeting = "Hello! I'm your billing assistant. How can I help you?";
     if (fromVoice) {
-      greeting = "Hey there! I'm Lax. How can I help you?";
+      greeting = "Hi, how can I help?";
     }
     setMessages([
       {
         id: 'init',
         sender: 'bot',
-        text: `${greeting} Try 'Add a new bill' or 'Go to dashboard'.`,
+        text: `${greeting}`,
       },
     ]);
   };
