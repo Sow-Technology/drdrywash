@@ -1,7 +1,6 @@
 'use client';
 
 import { Header, Footer, MobileNav } from '@/components/layout';
-import BillingVoiceAssistant from '@/components/billing/voice-assistant';
 
 export default function MainLayout({
   children,
@@ -14,7 +13,6 @@ export default function MainLayout({
       <main className="flex-1 pb-28 md:pb-0">{children}</main>
       <Footer />
       <MobileNav />
-      <BillingVoiceAssistant />
     </div>
   );
 }

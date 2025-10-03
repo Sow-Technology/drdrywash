@@ -57,8 +57,7 @@
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.2",
     "@react-google-maps/api": "^2.19.3",
-    "xlsx": "^0.18.5",
-    "wav": "^1.0.2"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^20",

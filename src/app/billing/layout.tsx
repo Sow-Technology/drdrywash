@@ -25,7 +25,6 @@ import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/shared/logo';
-import BillingVoiceAssistant from '@/components/billing/voice-assistant';
 
 const navLinks = [
   { href: '/billing/dashboard', label: 'Dashboard', icon: Home },
@@ -96,7 +95,6 @@ export default function BillingLayout({
             </SheetContent>
           </Sheet>
            <div className="ml-auto flex items-center gap-2">
-             <BillingVoiceAssistant />
              <Button size="sm" className="h-8 gap-1" asChild>
                 <Link href="/billing/add-bill">
                     <PlusCircle className="h-3.5 w-3.5" />

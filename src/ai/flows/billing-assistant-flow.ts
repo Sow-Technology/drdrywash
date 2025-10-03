@@ -1,132 +1,114 @@
-'use server';
-/**
- * @fileOverview A conversational AI flow for the Dr. Dry Wash billing assistant.
- *
- * billingAssistant - The main entry point for the conversational agent.
- */
-import { ai } from '@/ai/genkit';
-import { z } from 'zod';
-import { Conversation, ConversationSchema } from './billing-assistant-types';
-import { allProductCategoriesWithServices } from '@/lib/all-products-with-services';
+'use client';
 
-// Tool: Navigate to a specific page
-const navigateTo = ai.defineTool(
-  {
-    name: 'navigateTo',
-    description: 'Navigates the user to a specific page within the application.',
-    inputSchema: z.object({
-      path: z.string().describe("The path to navigate to (e.g., '/billing/add-bill')."),
-    }),
-    outputSchema: z.void(),
-  },
-  async () => {
-    // This function is a placeholder for the client-side implementation.
-    // The client will intercept this tool call and perform the navigation.
-  }
-);
+import Link from 'next/link';
+import {
+  Bell,
+  Home,
+  LineChart,
+  Package,
+  Package2,
+  ShoppingCart,
+  Users,
+  PanelLeft,
+  PlusCircle,
+  User,
+  Building,
+} from 'lucide-react';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
-// Tool: Calculate the bill total
-const calculateBill = ai.defineTool(
-    {
-        name: 'calculateBill',
-        description: 'Calculates the subtotal, GST, and grand total for a list of laundry items.',
-        inputSchema: z.object({
-            items: z.array(z.object({
-                service: z.string().describe("The service requested (e.g., 'Dry Clean', 'Premium Laundry')."),
-                item: z.string().describe("The clothing item (e.g., 'Shirt', 'Saree - Silk')."),
-                quantity: z.number().describe("The number of items."),
-            })),
-        }),
-        outputSchema: z.object({
-            subtotal: z.number(),
-            gst: z.number(),
-            total: z.number(),
-        }),
-    },
-    async ({ items }) => {
-        let subtotal = 0;
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { Logo } from '@/components/shared/logo';
 
-        for (const orderItem of items) {
-            let itemFound = false;
-            for (const category of allProductCategoriesWithServices) {
-                const product = category.products.find(p => p.name.toLowerCase().includes(orderItem.item.toLowerCase()));
-                if (product) {
-                    const service = product.services.find(s => s.name.toLowerCase() === orderItem.service.toLowerCase());
-                    if (service) {
-                        subtotal += service.price * orderItem.quantity;
-                        itemFound = true;
-                        break;
-                    }
-                }
-            }
-            if (!itemFound) {
-                // If a specific item isn't found, you could add default pricing or handle it as an error
-                // For now, we'll add a default price as a fallback
-                subtotal += 50 * orderItem.quantity; 
-            }
-        }
+const navLinks = [
+  { href: '/billing/dashboard', label: 'Dashboard', icon: Home },
+  { href: '/billing/orders', label: 'Orders', icon: ShoppingCart, badge: '6' },
+  { href: '/billing/user', label: 'User', icon: User },
+  { href: '/billing/branch', label: 'Branch', icon: Building },
+];
 
-        const gst = subtotal * 0.18;
-        const total = subtotal + gst;
-
-        return {
-            subtotal: parseFloat(subtotal.toFixed(2)),
-            gst: parseFloat(gst.toFixed(2)),
-            total: parseFloat(total.toFixed(2)),
-        };
-    }
-);
-
-// Define the main prompt for the billing assistant
-const billingAssistantPrompt = ai.definePrompt({
-  name: 'billingAssistantPrompt',
-  system: `You are Lax, a friendly and expert AI assistant for Dr. Dry Wash, a laundry and dry cleaning service.
-Your primary role is to assist with the in-store billing process and answer questions about the company's services.
-
-## Core Capabilities:
-1.  **Conversational Billing**: When a user says "do billing" or "go to billing", you MUST use the \`navigateTo\` tool with the path '/billing/add-bill'. Once navigation is confirmed, you must guide them step-by-step to create a new bill.
-2.  **Q&A**: Answer general questions about Dr. Dry Wash services, pricing, and policies based on your knowledge of the website.
-3.  **Bill Calculation**: Use the \`calculateBill\` tool to calculate the final price after collecting all items.
-
-## Conversational Billing - Step-by-Step Guide:
-When the user wants to create a bill, follow this exact sequence. Ask one question at a time and wait for the user's response before proceeding.
-
-1.  **Customer Name**: "What is the customer's name?"
-2.  **Phone Number**: "What is their phone number?"
-3.  **Customer Address**: "And what is the customer's address?"
-4.  **Service & Clothes**: "Great. Now, let's add the items. What is the first service and item? (e.g., 'Dry Clean for 2 silk sarees' or 'Wash and Iron for 5 shirts'). You can tell me all the items at once if you like."
-5.  **Confirmation**: After the user lists all items, repeat them back for confirmation. For example: "Okay, let me confirm: I have [Item 1], [Item 2], and [Item 3]. Is that correct?"
-6.  **Pricing & Finalizing**: Once the user confirms the items, you MUST use the \`calculateBill\` tool to get the total. Then, state the final price clearly to the user: "Got it. The total amount is ₹[Total], which includes a subtotal of ₹[Subtotal] and GST of ₹[GST]. Anything else I can help with?"
-
-- Be polite, conversational, and clear in your instructions.
-- Acknowledge user responses with phrases like "Got it," "Okay," or "Great."
-- When calling the \`calculateBill\` tool, be diligent in extracting the service, item, and quantity from the user's input. For example, 'Wash and Iron for 5 shirts' should be parsed into: { service: 'Wash and Iron', item: 'Shirt', quantity: 5 }. The item name should be as specific as possible to match the pricing data.
-`,
-  tools: [navigateTo, calculateBill],
-});
-
-const billingAssistantFlow = ai.defineFlow(
-  {
-    name: 'billingAssistantFlow',
-    inputSchema: ConversationSchema,
-    outputSchema: z.string(),
-  },
-  async (history) => {
-    const result = await ai.generate({
-      model: 'googleai/gemini-pro',
-      prompt: { history },
-      tools: [navigateTo, calculateBill],
-      system: billingAssistantPrompt.system,
-      config: {
-        temperature: 0.3,
-      },
-    });
-
-    return JSON.stringify(result.output());
-  }
-);
-
-
-export async function billingAssistant(history: Conversation): Promise<string> {
-    return billingAssistantFlow(history);
+export default function BillingLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  return (
+      <div className="flex min-h-screen w-full flex-col bg-muted/40">
+      <aside className="fixed inset-y-0 left-0 z-10 hidden w-60 flex-col border-r bg-background sm:flex">
+        <nav className="flex flex-col items-center gap-4 px-2 sm:py-4">
+           <div className="p-2 flex justify-center">
+            <Logo />
+          </div>
+           {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className={cn("flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary", {
+                    "text-primary bg-muted": pathname.startsWith(link.href)
+                })}
+              >
+                <link.icon className="h-4 w-4" />
+                {link.label}
+                {link.badge && (
+                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                    {link.badge}
+                  </Badge>
+                )}
+              </Link>
+            ))}
+        </nav>
+      </aside>
+      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-64">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button size="icon" variant="outline" className="sm:hidden">
+                <PanelLeft className="h-5 w-5" />
+                <span className="sr-only">Toggle Menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="sm:max-w-xs">
+              <nav className="grid gap-6 text-lg font-medium">
+                <div className="p-2 flex justify-center">
+                    <Logo />
+                </div>
+                {navLinks.map((link) => (
+                    <Link
+                        key={link.label}
+                        href={link.href}
+                        className={cn("flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground", {
+                            "text-foreground": pathname.startsWith(link.href)
+                        })}
+                    >
+                        <link.icon className="h-5 w-5" />
+                        {link.label}
+                    </Link>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+           <div className="ml-auto flex items-center gap-2">
+             <Button size="sm" className="h-8 gap-1" asChild>
+                <Link href="/billing/add-bill">
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                        Add Bill
+                    </span>
+                </Link>
+            </Button>
+          </div>
+        </header>
+        <main className="flex-1 p-4 sm:px-6 sm:py-0">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
 }
