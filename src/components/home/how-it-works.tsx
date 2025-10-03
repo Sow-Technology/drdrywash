@@ -51,7 +51,7 @@ const Step = ({
   activeIndex,
 }: {
   step: {
-    icon: LucideIcon;
+    icon: LucideIcon | typeof AnimatedWashingMachine;
     title: string;
     description: string;
   };
@@ -62,17 +62,16 @@ const Step = ({
 
   return (
     <motion.div
-      className="relative text-center md:text-left"
-      initial={{ opacity: 0.5, scale: 0.95 }}
-      animate={{ 
-        opacity: isActive ? 1 : 0.6,
-        scale: isActive ? 1.05 : 1,
-       }}
-      transition={{ duration: 0.3 }}
+      className={cn(
+        "p-6 rounded-lg border transition-all duration-300",
+        isActive ? "border-primary bg-primary/5 shadow-lg" : "bg-card border-transparent"
+      )}
+      animate={{ scale: isActive ? 1.05 : 1 }}
+      transition={{ duration: 0.5, ease: 'backOut' }}
     >
       <h3
         className={cn(
-            "font-bold text-2xl font-headline transition-colors",
+            "font-bold text-2xl font-headline transition-colors duration-300",
             isActive ? 'text-primary' : 'text-foreground'
         )}
       >
@@ -86,26 +85,19 @@ const Step = ({
 export default function HowItWorks() {
   const [activeIndex, setActiveIndex] = useState(0);
   const targetRef = useRef<HTMLDivElement>(null);
+
   const { scrollYProgress } = useScroll({
     target: targetRef,
     offset: ['start center', 'end center'],
   });
-
-  const springScroll = useSpring(scrollYProgress, {
-    stiffness: 200,
-    damping: 40,
-    restDelta: 0.001,
-  });
-
+  
   useEffect(() => {
-    return springScroll.on("change", (latest) => {
+    return scrollYProgress.on("change", (latest) => {
       const numSteps = steps.length;
       const newActiveIndex = Math.min(numSteps - 1, Math.floor(latest * numSteps));
       setActiveIndex(newActiveIndex);
     });
-  }, [springScroll]);
-
-  const progressBarY = useTransform(springScroll, [0, 1], ['0%', '100%']);
+  }, [scrollYProgress]);
 
   return (
     <motion.section
@@ -125,43 +117,35 @@ export default function HowItWorks() {
         </p>
       </div>
 
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-16" ref={targetRef}>
-        <div className="md:sticky md:top-24 h-[50vh] flex items-center justify-center">
-            <div className="relative w-full h-full">
-                 <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.div
-                      className="w-72 h-72 rounded-full bg-primary/5 shadow-inner blur-2xl"
-                      animate={{ 
-                        scale: [1, 1.1, 1],
-                        opacity: [0.8, 1, 0.8]
-                      }}
-                      transition={{ duration: 5, repeat: Infinity, repeatType: "reverse", ease: 'easeInOut' }}
-                    />
-                 </div>
-                {steps.map((step, index) => {
-                    const isActive = index === activeIndex;
-                    return (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, scale: 0.5 }}
-                            animate={{ 
-                                opacity: isActive ? 1 : 0, 
-                                scale: isActive ? 1 : 0.5 
-                            }}
-                            transition={{ duration: 0.4, ease: 'backOut' }}
-                            className="absolute inset-0 flex items-center justify-center"
-                        >
-                            <step.icon className="h-32 w-32 text-primary drop-shadow-lg" />
-                        </motion.div>
-                    )
-                })}
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24" ref={targetRef}>
+        <div className="md:sticky md:top-24 h-[50vh] md:h-auto flex items-center justify-center">
+            <div className="relative w-64 h-[32rem] bg-slate-800 dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border-4 border-slate-700">
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-900 dark:bg-black rounded-full"></div>
+                 <div className="absolute inset-4 bg-background rounded-[2rem] overflow-hidden">
+                    <div className="relative w-full h-full">
+                        {steps.map((step, index) => {
+                            const isActive = index === activeIndex;
+                            return (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, scale: 0.5 }}
+                                    animate={{ 
+                                        opacity: isActive ? 1 : 0, 
+                                        scale: isActive ? 1 : 0.5 
+                                    }}
+                                    transition={{ duration: 0.4, ease: 'backOut' }}
+                                    className="absolute inset-0 flex items-center justify-center"
+                                >
+                                    <step.icon className="h-32 w-32 text-primary drop-shadow-lg" />
+                                </motion.div>
+                            )
+                        })}
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div className="relative space-y-36">
-            <div className="absolute left-1/2 md:left-4 top-0 w-0.5 h-full bg-muted -translate-x-1/2 md:translate-x-0">
-                <motion.div className="w-full bg-primary" style={{ height: progressBarY }} />
-            </div>
+        <div className="relative flex flex-col justify-between space-y-24">
             {steps.map((step, index) => (
               <Step key={index} step={step} index={index} activeIndex={activeIndex} />
             ))}
@@ -195,7 +179,7 @@ export default function HowItWorks() {
         viewport={{ once: true, amount: 0.5 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 p-8 rounded-2xl shadow-xl bg-card border border-border/50 transform hover:scale-[1.02] transition-transform duration-300">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 p-8 rounded-2xl shadow-xl bg-card border transform hover:scale-[1.02] transition-transform duration-300">
           <div className="flex-shrink-0">
             <div className="relative flex h-32 w-32 items-center justify-center rounded-full bg-background shadow-lg border-2 border-primary">
               <Store className="h-16 w-16 text-primary" />
