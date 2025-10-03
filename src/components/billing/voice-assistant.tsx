@@ -94,22 +94,12 @@ export default function BillingVoiceAssistant() {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.continuous = true;
+    recognition.continuous = false; // Process single commands
     recognition.interimResults = true;
     recognition.lang = selectedLang;
 
     recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => {
-        setIsListening(false);
-        // Restart listening if the assistant is open
-        if (isOpen) {
-          try {
-            recognition.start();
-          } catch (e) {
-            // May fail if already started
-          }
-        }
-    };
+    recognition.onend = () => setIsListening(false);
     recognition.onerror = (event) => {
       if (event.error !== 'no-speech' && event.error !== 'aborted') {
           console.error('Speech recognition error:', event.error);
@@ -133,29 +123,19 @@ export default function BillingVoiceAssistant() {
       }
       
       const transcript = finalTranscript || interimTranscript;
+      setValue('prompt', transcript);
 
-      if (!isOpen && transcript.toLowerCase().includes('hey hello')) {
-        handleOpen(true);
-        finalTranscript = ''; // Reset after activation
-      }
-
-      if (isOpen && finalTranscript) {
-         setValue('prompt', finalTranscript);
+      if (finalTranscript) {
          handleSubmit(onSubmit)(); // Automatically submit
-         finalTranscript = ''; // Reset for next command
       }
     };
 
     recognitionRef.current = recognition;
-    recognition.start();
-  }, [selectedLang, isOpen, setValue, handleSubmit, toast]);
+  }, [selectedLang, setValue, handleSubmit, toast]);
 
 
   React.useEffect(() => {
     setupRecognition();
-    return () => {
-      recognitionRef.current?.stop();
-    };
   }, [setupRecognition]);
 
 
@@ -168,9 +148,9 @@ export default function BillingVoiceAssistant() {
     setHistory((prev) => [...prev, { role, content: [{ text }] }]);
   };
   
-  const handleOpen = (fromVoice = false) => {
+  const handleOpen = () => {
     setIsOpen(true);
-    const initialPrompt = fromVoice ? "Hi, how can I help?" : "Hello! I'm your billing assistant. How can I help you?";
+    const initialPrompt = "Hello! I'm your billing assistant. How can I help you?";
     setHistory([{ role: 'model', content: [{ text: initialPrompt }] }]);
     playAudio(initialPrompt);
   };
@@ -197,14 +177,12 @@ export default function BillingVoiceAssistant() {
       const response = JSON.parse(rawResponse);
 
       let responseText = '';
-      let toolCalled = false;
-
+      
       for (const part of response.content) {
         if (part.text) {
           responseText += part.text;
         }
         if (part.toolRequest) {
-          toolCalled = true;
           const { name, input } = part.toolRequest;
           if (name === 'navigateTo') {
             router.push(input.path);
@@ -215,13 +193,13 @@ export default function BillingVoiceAssistant() {
       }
       
       addMessage('model', responseText);
-      playAudio(responseText);
+      await playAudio(responseText);
 
     } catch (error) {
       console.error("AI flow error:", error);
       const errorMsg = "Sorry, I encountered an error. Please try again.";
       addMessage('model', errorMsg);
-      playAudio(errorMsg);
+      await playAudio(errorMsg);
     } finally {
       setIsProcessing(false);
     }

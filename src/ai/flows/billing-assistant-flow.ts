@@ -60,7 +60,7 @@ const billingAssistantFlow = ai.defineFlow(
   },
   async (history) => {
     const result = await ai.generate({
-      model: 'googleai/gemini-2.5-flash',
+      model: 'googleai/gemini-pro',
       prompt: { history },
       tools: [navigateTo],
       system: billingAssistantPrompt.system,
