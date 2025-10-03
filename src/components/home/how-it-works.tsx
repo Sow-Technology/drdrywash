@@ -45,63 +45,16 @@ const steps = [
   },
 ];
 
-const StepContent = ({
-  step,
-  index,
-  activeIndex,
-}: {
-  step: {
-    icon: LucideIcon | typeof AnimatedWashingMachine;
-    title: string;
-    description: string;
-  };
-  index: number;
-  activeIndex: number;
-}) => {
-  const isActive = index === activeIndex;
-
-  return (
-    <motion.div 
-        className='h-screen flex items-center justify-center'
-        aria-hidden={!isActive}
-    >
-        <motion.div 
-            className={cn(
-                "p-8 rounded-2xl border transition-all duration-300 w-full max-w-sm bg-card/80 backdrop-blur-sm shadow-md",
-                isActive ? "border-primary shadow-xl" : "border-border"
-            )}
-            initial={{ scale: 0.95, opacity: 0.7 }}
-            animate={isActive ? { scale: 1, opacity: 1 } : { scale: 0.95, opacity: 0.7 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            layout
-        >
-            <motion.h3
-                className={cn(
-                    "font-bold text-3xl font-headline transition-colors duration-300",
-                    isActive ? 'text-primary' : 'text-foreground'
-                )}
-            >
-                {step.title}
-            </motion.h3>
-            <motion.p 
-                className="text-muted-foreground mt-3 text-lg"
-            >
-                {step.description}
-            </motion.p>
-        </motion.div>
-    </motion.div>
-  );
-};
 
 export default function HowItWorks() {
   const [activeIndex, setActiveIndex] = useState(0);
   const targetRef = useRef<HTMLDivElement>(null);
-
+  
   const { scrollYProgress } = useScroll({
     target: targetRef,
     offset: ['start start', 'end end'],
   });
-  
+
   useEffect(() => {
     return scrollYProgress.on("change", (latest) => {
       const numSteps = steps.length;
@@ -129,65 +82,80 @@ export default function HowItWorks() {
       </div>
 
       <div className="container mx-auto" ref={targetRef}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24 relative h-[400vh]">
-            <motion.div 
-                className="md:sticky md:top-0 h-screen flex items-center justify-center"
-            >
-                <div 
-                    className="relative w-64 h-[32rem] bg-slate-800 dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border-4 border-slate-700"
-                >
-                    <div className="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-900 dark:bg-black rounded-full"></div>
-                    <div className="absolute inset-4 bg-background rounded-[2rem] overflow-hidden">
-                        <div className="relative w-full h-full">
-                            {steps.map((step, index) => {
-                                const isActive = index === activeIndex;
-                                return (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        animate={{ 
-                                            opacity: isActive ? 1 : 0, 
-                                            scale: isActive ? 1 : 0.8
-                                        }}
-                                        transition={{ duration: 0.4, ease: 'backOut' }}
-                                        className="absolute inset-0 flex items-center justify-center"
-                                    >
-                                        <step.icon className="h-32 w-32 text-primary drop-shadow-lg" />
-                                    </motion.div>
-                                )
-                            })}
-                        </div>
-                    </div>
+        <div className="relative h-[400vh]">
+          {/* Sticky Phone Mockup */}
+          <div className="sticky top-0 h-screen flex items-center justify-center">
+            <div className="relative w-72 h-[36rem] bg-slate-800 dark:bg-slate-900 rounded-[3rem] shadow-2xl border-4 border-slate-700">
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-900 dark:bg-black rounded-full z-10"></div>
+              <div className="absolute -inset-px bg-background rounded-[2.8rem] overflow-hidden">
+                <div className="relative w-full h-full flex items-center justify-center">
+                  {steps.map((step, index) => {
+                    const isActive = index === activeIndex;
+                    return (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{
+                          opacity: isActive ? 1 : 0,
+                          scale: isActive ? 1 : 0.8
+                        }}
+                        transition={{ duration: 0.4, ease: 'backOut' }}
+                        className="absolute inset-0 flex items-center justify-center"
+                      >
+                        <step.icon className="h-40 w-40 text-primary drop-shadow-lg" />
+                      </motion.div>
+                    )
+                  })}
                 </div>
-            </motion.div>
-
-            <div className="relative flex flex-col">
-                {steps.map((step, index) => (
-                <StepContent key={index} step={step} index={index} activeIndex={activeIndex} />
-                ))}
+              </div>
             </div>
+          </div>
+
+          {/* Scrolling Content */}
+          <div className="absolute inset-0">
+            {steps.map((step, index) => (
+              <div key={index} className="h-screen flex items-center justify-center">
+                <motion.div
+                  className={cn(
+                    "p-8 rounded-2xl border transition-all duration-300 w-full max-w-sm bg-card/80 backdrop-blur-sm shadow-md",
+                    index === activeIndex ? "border-primary shadow-2xl" : "border-border"
+                  )}
+                  initial={{ scale: 0.9, opacity: 0.5 }}
+                  animate={index === activeIndex ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.5 }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                >
+                  <h3 className={cn(
+                    "font-bold text-3xl font-headline transition-colors duration-300",
+                    index === activeIndex ? 'text-primary' : 'text-foreground'
+                  )}>
+                    {step.title}
+                  </h3>
+                  <p className="text-muted-foreground mt-3 text-lg">
+                    {step.description}
+                  </p>
+                </motion.div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       <motion.div
-          className="relative text-center my-16"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div
-            className="absolute inset-0 flex items-center"
-            aria-hidden="true"
-          >
-            <div className="w-full border-t border-dashed border-border" />
-          </div>
-          <div className="relative flex justify-center">
-            <span className="bg-background px-4 text-2xl font-semibold text-muted-foreground">
-              OR
-            </span>
-          </div>
-        </motion.div>
+        className="relative text-center my-16"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+          <div className="w-full border-t border-dashed border-border" />
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-background px-4 text-2xl font-semibold text-muted-foreground">
+            OR
+          </span>
+        </div>
+      </motion.div>
 
       <motion.div
         className="container mx-auto"
