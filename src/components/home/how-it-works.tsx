@@ -5,7 +5,6 @@ import {
   useScroll,
   useSpring,
   useTransform,
-  AnimatePresence,
 } from 'framer-motion';
 import {
   MonitorSmartphone,
@@ -63,34 +62,23 @@ const Step = ({
 
   return (
     <motion.div
-      className="relative"
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        delay: 0.1 + index * 0.1,
-        duration: 0.5,
-        ease: 'easeOut',
-      }}
+      className="relative text-center md:text-left"
+      initial={{ opacity: 0.5, scale: 0.95 }}
+      animate={{ 
+        opacity: isActive ? 1 : 0.6,
+        scale: isActive ? 1.05 : 1,
+       }}
+      transition={{ duration: 0.3 }}
     >
-      <motion.div
-        animate={{
-          scale: isActive ? 1.05 : 1,
-          color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--foreground))',
-        }}
-        transition={{ duration: 0.3 }}
-        className="text-center md:text-left font-bold text-2xl font-headline"
+      <h3
+        className={cn(
+            "font-bold text-2xl font-headline transition-colors",
+            isActive ? 'text-primary' : 'text-foreground'
+        )}
       >
         {step.title}
-      </motion.div>
-      <motion.p
-        animate={{
-          opacity: isActive ? 1 : 0.6,
-        }}
-        transition={{ duration: 0.3 }}
-        className="text-center md:text-left text-muted-foreground mt-2"
-      >
-        {step.description}
-      </motion.p>
+      </h3>
+      <p className="text-muted-foreground mt-2">{step.description}</p>
     </motion.div>
   );
 };
@@ -117,7 +105,7 @@ export default function HowItWorks() {
     });
   }, [springScroll]);
 
-  const progressBarY = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
+  const progressBarY = useTransform(springScroll, [0, 1], ['0%', '100%']);
 
   return (
     <motion.section
@@ -142,30 +130,36 @@ export default function HowItWorks() {
             <div className="relative w-full h-full">
                  <div className="absolute inset-0 flex items-center justify-center">
                     <motion.div
-                      className="w-72 h-72 rounded-full bg-primary/10 shadow-inner blur-2xl"
-                      animate={{ scale: [1, 1.1, 1] }}
+                      className="w-72 h-72 rounded-full bg-primary/5 shadow-inner blur-2xl"
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        opacity: [0.8, 1, 0.8]
+                      }}
                       transition={{ duration: 5, repeat: Infinity, repeatType: "reverse", ease: 'easeInOut' }}
                     />
                  </div>
-                 <AnimatePresence mode="wait">
-                    <motion.div
-                        key={activeIndex}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        transition={{ duration: 0.4, ease: 'backOut' }}
-                        className="absolute inset-0 flex items-center justify-center"
-                    >
-                        {steps[activeIndex] && (
-                        <steps[activeIndex].icon className="h-32 w-32 text-primary drop-shadow-lg" />
-                        )}
-                    </motion.div>
-                </AnimatePresence>
+                {steps.map((step, index) => {
+                    const isActive = index === activeIndex;
+                    return (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ 
+                                opacity: isActive ? 1 : 0, 
+                                scale: isActive ? 1 : 0.5 
+                            }}
+                            transition={{ duration: 0.4, ease: 'backOut' }}
+                            className="absolute inset-0 flex items-center justify-center"
+                        >
+                            <step.icon className="h-32 w-32 text-primary drop-shadow-lg" />
+                        </motion.div>
+                    )
+                })}
             </div>
         </div>
 
-        <div className="relative space-y-24">
-            <div className="absolute left-1/2 md:left-4 top-0 w-0.5 h-full bg-muted -z-10">
+        <div className="relative space-y-36">
+            <div className="absolute left-1/2 md:left-4 top-0 w-0.5 h-full bg-muted -translate-x-1/2 md:translate-x-0">
                 <motion.div className="w-full bg-primary" style={{ height: progressBarY }} />
             </div>
             {steps.map((step, index) => (
