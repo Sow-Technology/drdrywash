@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -136,7 +137,7 @@ export default function AddBillPage() {
   }, [lineItems]);
 
   const taxes = subtotal * 0.18; // 18% GST
-  const total = subtotal + taxes + (shippingCharge || 0);
+  const total = subtotal + taxes + (Number(shippingCharge) || 0);
 
   const getProductsForCategory = (categoryId: string) => {
     return allProductCategoriesWithServices.find(cat => cat.id === categoryId)?.products || [];
@@ -555,7 +556,7 @@ export default function AddBillPage() {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormControl>
-                                            <Input type="number" step="0.01" {...field} className="w-24 h-8 text-right" />
+                                            <Input type="number" step="0.01" {...field} onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)} className="w-24 h-8 text-right" />
                                         </FormControl>
                                     </FormItem>
                                 )}
