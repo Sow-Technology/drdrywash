@@ -147,7 +147,7 @@ export default function ServiceList() {
                     whileHover={{ scale: 1.1, rotate: 6 }}
                     transition={{ type: 'spring', stiffness: 300 }}
                   >
-                    <service.icon className="h-10 w-10 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" />
+                    <service.icon className="h-10 w-10 text-primary transition-transform duration-300" />
                   </motion.div>
                 </div>
                 <CardContent className="flex flex-col flex-grow p-0 pt-6">
