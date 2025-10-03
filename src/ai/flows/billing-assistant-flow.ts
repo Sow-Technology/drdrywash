@@ -6,7 +6,7 @@
  * Conversation - The type defining a message in the conversation history.
  */
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 
 // Define the schema for conversation history
 export const ConversationSchema = z.array(
@@ -64,7 +64,7 @@ When the user wants to create a bill, follow this exact sequence. Ask one questi
   tools: [navigateTo],
 });
 
-export const billingAssistant = ai.defineFlow(
+const billingAssistantFlow = ai.defineFlow(
   {
     name: 'billingAssistantFlow',
     inputSchema: ConversationSchema,
@@ -84,3 +84,8 @@ export const billingAssistant = ai.defineFlow(
     return JSON.stringify(result.output());
   }
 );
+
+
+export async function billingAssistant(history: Conversation): Promise<string> {
+    return billingAssistantFlow(history);
+}
