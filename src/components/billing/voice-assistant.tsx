@@ -54,6 +54,7 @@ export default function BillingVoiceAssistant() {
   const [isListening, setIsListening] = React.useState(false);
   const [isMuted, setIsMuted] = React.useState(false);
   const [selectedLang, setSelectedLang] = React.useState(supportedLanguages[0].code);
+  const [hasStartedListening, setHasStartedListening] = React.useState(false);
   
   const recognitionRef = React.useRef<SpeechRecognition | null>(null);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
@@ -81,26 +82,36 @@ export default function BillingVoiceAssistant() {
     }
   };
 
-  const setupRecognition = React.useCallback(() => {
+  const setupRecognition = React.useCallback((continuous: boolean) => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      if(isOpen) { // Only show toast if user is trying to use it
+      if(isOpen) { 
         toast({
           variant: 'destructive',
           title: 'Browser Not Supported',
           description: 'Speech recognition is not supported by your browser.',
         });
       }
-      return;
+      return null;
     }
 
     const recognition = new SpeechRecognition();
-    recognition.continuous = false;
+    recognition.continuous = continuous;
     recognition.interimResults = true;
     recognition.lang = selectedLang;
 
     recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
+    recognition.onend = () => {
+      setIsListening(false);
+      // Restart wake word listening if it was continuous
+      if (continuous && hasStartedListening && !isOpen) {
+        try {
+          recognition.start();
+        } catch (e) {
+          // might already be started
+        }
+      }
+    };
     recognition.onerror = (event) => {
       if (event.error !== 'no-speech' && event.error !== 'aborted') {
           console.error('Speech recognition error:', event.error);
@@ -110,77 +121,57 @@ export default function BillingVoiceAssistant() {
             description: `Speech recognition error: ${event.error}`,
           });
       }
+       if (event.error === 'network' && continuous) {
+         setTimeout(() => {
+           if(hasStartedListening && !isOpen) recognition.start();
+         }, 1000);
+      }
     };
 
     recognition.onresult = (event) => {
       let finalTranscript = '';
-      let interimTranscript = '';
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
           finalTranscript += event.results[i][0].transcript;
         } else {
-          interimTranscript += event.results[i][0].transcript;
+          if (!continuous) { // Show interim results only for active listening
+             setValue('prompt', event.results[i][0].transcript);
+          }
         }
       }
       
-      const transcript = finalTranscript || interimTranscript;
-      setValue('prompt', transcript);
+      const transcript = finalTranscript.trim().toLowerCase();
       
-      if (finalTranscript) {
+      if(continuous && transcript.includes('hey doctor')) {
+          handleOpen();
+      } else if (!continuous && finalTranscript) {
+         setValue('prompt', finalTranscript);
          handleSubmit(onSubmit)();
       }
     };
 
-    recognitionRef.current = recognition;
-  }, [selectedLang, setValue, handleSubmit, toast, isOpen]);
+    return recognition;
+  }, [selectedLang, setValue, handleSubmit, toast, isOpen, hasStartedListening]);
 
 
   React.useEffect(() => {
-    setupRecognition();
-  }, [setupRecognition]);
-  
-  // Setup wake word listener
-  const wakeWordRecognitionRef = React.useRef<SpeechRecognition | null>(null);
+    recognitionRef.current = setupRecognition(true); // Setup for wake word initially
+  }, [selectedLang, hasStartedListening]);
 
-  const setupWakeWordRecognition = React.useCallback(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
-
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true; // Listen continuously for wake word
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = (event) => {
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-            const transcript = event.results[i][0].transcript.trim().toLowerCase();
-            if (transcript.includes('hey doctor')) {
-                handleOpen();
-            }
-        }
-    };
-    
-    recognition.onerror = (event) => {
-        if (event.error === 'not-allowed') {
-            // This is handled by requiring a user click first
-        } else if (event.error !== 'no-speech') {
-            console.error('Wake word recognition error:', event.error);
-        }
-    };
-    
-    wakeWordRecognitionRef.current = recognition;
-  }, []);
-
-  React.useEffect(() => {
-    setupWakeWordRecognition();
-  }, [setupWakeWordRecognition]);
 
   const startWakeWordListening = () => {
-     if (wakeWordRecognitionRef.current && !isListening) {
+     if (!hasStartedListening) {
+        setHasStartedListening(true); // This ensures we only ask for permission once
+        toast({
+          title: "Voice Activated",
+          description: "Say 'Hey Doctor!' to open the assistant."
+        });
+     }
+     if (recognitionRef.current && !isListening) {
         try {
-            wakeWordRecognitionRef.current.start();
+            recognitionRef.current.start();
         } catch(e) {
-            // Already started
+            console.error("Could not start wake word listener:", e);
         }
     }
   };
@@ -190,17 +181,18 @@ export default function BillingVoiceAssistant() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
   React.useEffect(scrollToBottom, [history]);
-
-  const addMessage = (role: 'user' | 'model', text: string) => {
-    setHistory((prev) => [...prev, { role, content: [{ text }] }]);
-  };
   
   const handleOpen = () => {
     if (isOpen) return;
+    if (recognitionRef.current?.continuous) {
+      recognitionRef.current.stop(); // Stop wake word listening
+    }
     setIsOpen(true);
     const initialPrompt = "Hello! I'm your billing assistant. How can I help you?";
     setHistory([{ role: 'model', content: [{ text: initialPrompt }] }]);
     playAudio(initialPrompt);
+    // Re-setup for non-continuous listening
+    recognitionRef.current = setupRecognition(false);
   };
 
   const handleClose = () => {
@@ -210,9 +202,12 @@ export default function BillingVoiceAssistant() {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
     }
-     if (recognitionRef.current && isListening) {
+    if (recognitionRef.current && isListening) {
       recognitionRef.current.stop();
     }
+    // Re-setup for continuous wake word listening
+    recognitionRef.current = setupRecognition(true);
+    startWakeWordListening();
   };
   
   const onSubmit = async (data: { prompt: string }) => {
@@ -229,23 +224,25 @@ export default function BillingVoiceAssistant() {
 
       let responseText = '';
       
-      for (const part of response.content) {
-        if (part.text) {
-          responseText += part.text;
-        }
-        if (part.toolRequest) {
-          const { name, input } = part.toolRequest;
-          if (name === 'navigateTo') {
-            router.push(input.path);
-            const toolResponseText = `Navigating you to ${input.path.replace('/', ' ')}.`;
-            responseText += toolResponseText;
+      if (response.content) {
+          for (const part of response.content) {
+            if (part.text) {
+              responseText += part.text;
+            }
+            if (part.toolRequest) {
+              const { name, input } = part.toolRequest;
+              if (name === 'navigateTo') {
+                router.push(input.path);
+                handleClose();
+                return; // Stop processing after navigation
+              }
+               if (name === 'calculateBill') {
+                 // Assuming the tool's output is directly in the response for simplicity
+                 const { subtotal, gst, total } = input; 
+                 responseText += `The total amount is ₹${total}, which includes a subtotal of ₹${subtotal} and GST of ₹${gst}. Anything else I can help with?`;
+              }
+            }
           }
-           if (name === 'calculateBill') {
-            const { subtotal, gst, total } = input;
-             const toolResponseText = `The total amount is ₹${total}, which includes a subtotal of ₹${subtotal} and GST of ₹${gst}. Anything else I can help with?`;
-             responseText += toolResponseText;
-          }
-        }
       }
       
       addMessage('model', responseText);
@@ -261,14 +258,20 @@ export default function BillingVoiceAssistant() {
     }
   };
 
+  const addMessage = (role: 'user' | 'model', text: string) => {
+    setHistory((prev) => [...prev, { role, content: [{ text }] }]);
+  };
+
   const toggleListening = () => {
-    if (!recognitionRef.current) {
-      setupRecognition();
-    }
+    if (!recognitionRef.current) return;
     if (isListening) {
-      recognitionRef.current?.stop();
+      recognitionRef.current.stop();
     } else {
-      recognitionRef.current?.start();
+      try {
+        recognitionRef.current.start();
+      } catch (e) {
+        console.error("Could not start listening:", e);
+      }
     }
   };
 
@@ -289,10 +292,9 @@ export default function BillingVoiceAssistant() {
                 size="icon"
                 className="rounded-full w-16 h-16 shadow-lg"
                 onClick={() => {
-                  handleOpen();
                   startWakeWordListening();
                 }}
-                aria-label="Open Voice Assistant"
+                aria-label="Activate Voice Assistant"
               >
                 <Mic className="h-7 w-7" />
               </Button>
