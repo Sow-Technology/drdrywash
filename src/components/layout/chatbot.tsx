@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageSquare,
@@ -27,6 +28,7 @@ import { format } from 'date-fns';
 import Link from 'next/link';
 import { billingAssistant } from '@/ai/flows/billing-assistant-flow';
 import type { Conversation } from '@/ai/flows/billing-assistant-types';
+import { useToast } from '@/hooks/use-toast';
 
 type Message = {
   id: string;
@@ -80,6 +82,80 @@ export default function Chatbot() {
   const [inputValue, setInputValue] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  const startChat = useCallback(() => {
+    if (isOpen) return;
+    setIsOpen(true);
+    setIsFabOpen(false);
+    setMessages([]);
+    setInputValue('');
+    const initialMessage: Message = { id: Date.now().toString(), role: 'model', text: "Hello! I'm Lax, your personal AI assistant. How can I help you today?" };
+    setMessages([initialMessage]);
+  }, [isOpen]);
+
+  const setupWakeWordRecognition = useCallback(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      console.warn("Speech recognition not supported by this browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+      if (transcript.includes('hey hello')) {
+        startChat();
+      }
+    };
+    
+    recognition.onerror = (event) => {
+        if (event.error !== 'no-speech' && event.error !== 'aborted') {
+            console.error('Wake word recognition error:', event.error);
+        }
+    };
+    
+    recognition.onend = () => {
+        // The service may stop listening after a while, so we restart it.
+        if (!isOpen) {
+            try {
+                recognition.start();
+            } catch (e) {
+                 console.error('Could not restart wake word recognition:', e);
+            }
+        }
+    };
+
+    recognitionRef.current = recognition;
+     try {
+        recognition.start();
+    } catch (e) {
+        console.error('Could not start wake word recognition:', e);
+    }
+  }, [startChat, isOpen]);
+
+  useEffect(() => {
+    setupWakeWordRecognition();
+    
+    return () => {
+        recognitionRef.current?.abort();
+    }
+  }, [setupWakeWordRecognition]);
+
+  useEffect(() => {
+    // Stop listening for wake word if chat is open
+    if(isOpen) {
+        recognitionRef.current?.stop();
+    } else {
+        // It will be restarted by the 'onend' handler
+    }
+  }, [isOpen])
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -88,36 +164,23 @@ export default function Chatbot() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  const addMessage = (role: 'user' | 'model', text: string, options?: Message['options'], order?: Message['order']) => {
-    const newMessage: Message = { id: Date.now().toString(), role, text, options, order };
-    setMessages(prev => [...prev, newMessage]);
-  };
   
-  const startChat = () => {
-     setIsOpen(true);
-     setIsFabOpen(false);
-     setMessages([]);
-     setInputValue('');
-     const initialMessage: Message = { id: Date.now().toString(), role: 'model', text: "Hello! I'm Lax, your personal AI assistant for Dr. Dry Wash. How can I help you today?" };
-     setMessages([initialMessage]);
-  };
-
   const handleUserInput = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isProcessing) return;
 
     const userInput = inputValue;
+    const currentMessages = [...messages, { id: 'temp-user', role: 'user' as const, text: userInput }];
+    setMessages(currentMessages);
     setInputValue('');
     setIsProcessing(true);
 
-    const currentHistory: Message[] = [...messages, { id: 'temp', role: 'user', text: userInput }];
-    setMessages(currentHistory);
-
-    const conversation: Conversation = currentHistory.map(msg => ({
-      role: msg.role,
-      content: [{ text: msg.text || '' }],
-    }));
+    const conversation: Conversation = currentMessages
+      .filter(msg => msg.text) // Ensure only messages with text are included
+      .map(msg => ({
+        role: msg.role,
+        content: [{ text: msg.text! }],
+      }));
     
     try {
       const rawResponse = await billingAssistant(conversation);
@@ -134,11 +197,11 @@ export default function Chatbot() {
         responseText = response.text;
       }
       
-      addMessage('model', responseText);
+      setMessages(prev => [...prev, { id: Date.now().toString(), role: 'model', text: responseText }]);
 
     } catch (error) {
         console.error("AI flow error:", error);
-        addMessage('model', "Sorry, I encountered an error. Please try again.");
+        setMessages(prev => [...prev, { id: Date.now().toString(), role: 'model', text: "Sorry, I encountered an error. Please try again." }]);
     } finally {
         setIsProcessing(false);
     }
