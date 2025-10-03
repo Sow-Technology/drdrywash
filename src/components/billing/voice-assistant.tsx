@@ -3,10 +3,8 @@
 import * as React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, Mic, MicOff, Send, X, Languages, Volume2, VolumeX } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -26,15 +24,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { textToSpeech } from '@/ai/flows/text-to-speech';
-
-type Message = {
-  id: string;
-  sender: 'bot' | 'user';
-  text: string;
-};
+import { billingAssistant, type Conversation } from '@/ai/flows/billing-assistant-flow';
 
 const fabVariants = {
   hidden: { opacity: 0, scale: 0.5 },
@@ -46,12 +38,6 @@ const assistantVariants = {
   open: { opacity: 1, y: 0, scale: 1 },
 };
 
-const formSchema = z.object({
-  prompt: z.string().min(1, 'Please enter a command.'),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 const supportedLanguages = [
     { code: 'en-US', name: 'English' },
     { code: 'hi-IN', name: 'हिंदी (Hindi)' },
@@ -62,23 +48,23 @@ export default function BillingVoiceAssistant() {
   const router = useRouter();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = React.useState(false);
-  const [messages, setMessages] = React.useState<Message[]>([]);
+  const [history, setHistory] = React.useState<Conversation>([]);
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [isListening, setIsListening] = React.useState(false);
   const [isMuted, setIsMuted] = React.useState(false);
   const [selectedLang, setSelectedLang] = React.useState(supportedLanguages[0].code);
+  
   const recognitionRef = React.useRef<SpeechRecognition | null>(null);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
-
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const { register, handleSubmit, watch, setValue, reset } = useForm<{ prompt: string }>({
     defaultValues: { prompt: '' },
   });
+  const promptValue = watch('prompt');
 
   const playAudio = async (text: string) => {
-    if (isMuted) return;
+    if (isMuted || !text) return;
     try {
         const { audio } = await textToSpeech({ text });
         if (audioRef.current) {
@@ -95,135 +81,150 @@ export default function BillingVoiceAssistant() {
     }
   };
 
-  const setupRecognition = React.useCallback((lang: string) => {
+  const setupRecognition = React.useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = lang;
-
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
-      recognition.onerror = (event) => {
-        if (event.error !== 'no-speech' && event.error !== 'aborted') {
-            console.error('Speech recognition error:', event.error);
-            toast({
-              variant: 'destructive',
-              title: 'Voice Error',
-              description: `Speech recognition error: ${event.error}`,
-            });
-        }
-      };
-
-      recognition.onresult = (event) => {
-        let finalTranscript = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-                finalTranscript += event.results[i][0].transcript;
-            }
-        }
-        
-        const transcript = Array.from(event.results).map(r => r[0].transcript).join('');
-
-        if (transcript.toLowerCase().includes('hey hello') && !isOpen) {
-          handleOpen(true);
-        }
-
-        if (isOpen && finalTranscript) {
-           form.setValue('prompt', finalTranscript);
-           // Automatically submit when final transcript is ready
-           onSubmit({ prompt: finalTranscript });
-        }
-      };
-
-      recognitionRef.current = recognition;
-      recognition.start();
+    if (!SpeechRecognition) {
+      toast({
+        variant: 'destructive',
+        title: 'Browser Not Supported',
+        description: 'Speech recognition is not supported by your browser.',
+      });
+      return;
     }
-  }, [isOpen, form, toast]);
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = selectedLang;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => {
+        setIsListening(false);
+        // Restart listening if the assistant is open
+        if (isOpen) {
+          try {
+            recognition.start();
+          } catch (e) {
+            // May fail if already started
+          }
+        }
+    };
+    recognition.onerror = (event) => {
+      if (event.error !== 'no-speech' && event.error !== 'aborted') {
+          console.error('Speech recognition error:', event.error);
+          toast({
+            variant: 'destructive',
+            title: 'Voice Error',
+            description: `Speech recognition error: ${event.error}`,
+          });
+      }
+    };
+
+    let finalTranscript = '';
+    recognition.onresult = (event) => {
+      let interimTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          interimTranscript += event.results[i][0].transcript;
+        }
+      }
+      
+      const transcript = finalTranscript || interimTranscript;
+
+      if (!isOpen && transcript.toLowerCase().includes('hey hello')) {
+        handleOpen(true);
+        finalTranscript = ''; // Reset after activation
+      }
+
+      if (isOpen && finalTranscript) {
+         setValue('prompt', finalTranscript);
+         handleSubmit(onSubmit)(); // Automatically submit
+         finalTranscript = ''; // Reset for next command
+      }
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+  }, [selectedLang, isOpen, setValue, handleSubmit, toast]);
 
 
   React.useEffect(() => {
-    recognitionRef.current?.stop();
-    setupRecognition(selectedLang);
+    setupRecognition();
     return () => {
       recognitionRef.current?.stop();
     };
-  }, [selectedLang, setupRecognition]);
+  }, [setupRecognition]);
 
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+  React.useEffect(scrollToBottom, [history]);
 
-  React.useEffect(scrollToBottom, [messages]);
-
-  const addMessage = (sender: 'user' | 'bot', text: string) => {
-    setMessages((prev) => [...prev, { id: Date.now().toString(), sender, text }]);
-    if (sender === 'bot') {
-        playAudio(text);
-    }
+  const addMessage = (role: 'user' | 'model', text: string) => {
+    setHistory((prev) => [...prev, { role, content: [{ text }] }]);
   };
-
+  
   const handleOpen = (fromVoice = false) => {
     setIsOpen(true);
-     let greeting = "Hello! I'm your billing assistant. How can I help you?";
-    if (fromVoice) {
-      greeting = "Hi, how can I help?";
-    }
-    setMessages([
-      {
-        id: 'init',
-        sender: 'bot',
-        text: `${greeting}`,
-      },
-    ]);
-     playAudio(greeting);
+    const initialPrompt = fromVoice ? "Hi, how can I help?" : "Hello! I'm your billing assistant. How can I help you?";
+    setHistory([{ role: 'model', content: [{ text: initialPrompt }] }]);
+    playAudio(initialPrompt);
   };
 
   const handleClose = () => {
     setIsOpen(false);
-    setMessages([]);
+    setHistory([]);
     if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
     }
   };
-
-  const processCommand = (command: string) => {
-    setIsProcessing(true);
-    addMessage('user', command);
-
-    setTimeout(() => {
-      let response = "Sorry, I didn't understand that command.";
-      const lowerCaseCommand = command.toLowerCase();
-
-      if (lowerCaseCommand.includes('add') && (lowerCaseCommand.includes('bill') || lowerCaseCommand.includes('invoice'))) {
-        response = "Okay, taking you to the 'Add Bill' page now.";
-        router.push('/billing/add-bill');
-      } else if (lowerCaseCommand.includes('dashboard')) {
-        response = 'Navigating to the dashboard.';
-        router.push('/billing/dashboard');
-      } else if (lowerCaseCommand.includes('order')) {
-        response = 'Heading to the orders page.';
-        router.push('/billing/orders');
-      } else if (lowerCaseCommand.includes('user')) {
-        response = 'Opening user management.';
-        router.push('/billing/user');
-      } else if (lowerCaseCommand.includes('branch')) {
-        response = 'Opening branch management.';
-        router.push('/billing/branch');
-      }
-
-      addMessage('bot', response);
-      setIsProcessing(false);
-      form.reset();
-    }, 1000);
-  };
   
-  const onSubmit = (data: FormValues) => {
-    processCommand(data.prompt);
-  }
+  const onSubmit = async (data: { prompt: string }) => {
+    if (isProcessing || !data.prompt.trim()) return;
+
+    setIsProcessing(true);
+    const newUserHistory: Conversation = [...history, { role: 'user', content: [{ text: data.prompt }] }];
+    setHistory(newUserHistory);
+    reset();
+
+    try {
+      const rawResponse = await billingAssistant(newUserHistory);
+      const response = JSON.parse(rawResponse);
+
+      let responseText = '';
+      let toolCalled = false;
+
+      for (const part of response.content) {
+        if (part.text) {
+          responseText += part.text;
+        }
+        if (part.toolRequest) {
+          toolCalled = true;
+          const { name, input } = part.toolRequest;
+          if (name === 'navigateTo') {
+            router.push(input.path);
+            const toolResponseText = `Navigating you to ${input.path.replace('/', ' ')}.`;
+            responseText += toolResponseText;
+          }
+        }
+      }
+      
+      addMessage('model', responseText);
+      playAudio(responseText);
+
+    } catch (error) {
+      console.error("AI flow error:", error);
+      const errorMsg = "Sorry, I encountered an error. Please try again.";
+      addMessage('model', errorMsg);
+      playAudio(errorMsg);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const toggleListening = () => {
     if (isListening) {
@@ -232,7 +233,6 @@ export default function BillingVoiceAssistant() {
       recognitionRef.current?.start();
     }
   };
-
 
   return (
     <>
@@ -307,19 +307,19 @@ export default function BillingVoiceAssistant() {
                 </div>
               </CardHeader>
               <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((msg) => (
-                  <div key={msg.id} className={cn('flex items-end gap-2', { 'justify-end': msg.sender === 'user' })}>
-                    {msg.sender === 'bot' && (
+                {history.map((msg, index) => (
+                  <div key={index} className={cn('flex items-end gap-2', { 'justify-end': msg.role === 'user' })}>
+                    {msg.role === 'model' && (
                       <Avatar className="h-8 w-8">
                         <AvatarImage src="https://picsum.photos/seed/billing-ai/100/100" />
                         <AvatarFallback>BA</AvatarFallback>
                       </Avatar>
                     )}
                     <div className={cn('max-w-[85%] rounded-lg px-3 py-2 text-sm', {
-                        'bg-primary text-primary-foreground': msg.sender === 'user',
-                        'bg-muted': msg.sender === 'bot',
+                        'bg-primary text-primary-foreground': msg.role === 'user',
+                        'bg-muted': msg.role === 'model',
                       })}>
-                      <p>{msg.text}</p>
+                      <p>{msg.content[0].text}</p>
                     </div>
                   </div>
                 ))}
@@ -338,41 +338,29 @@ export default function BillingVoiceAssistant() {
                 <div ref={messagesEndRef} />
               </CardContent>
               <CardFooter className="p-2 border-t">
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex items-center gap-2">
-                        <div className="relative flex-1">
-                            <FormField
-                                control={form.control}
-                                name="prompt"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="e.g., Go to orders"
-                                                autoComplete='off'
-                                                {...field}
-                                                disabled={isProcessing}
-                                                className="pr-10"
-                                            />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                            <Button 
-                                type='button' 
-                                variant="ghost" 
-                                size="icon" 
-                                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-                                onClick={toggleListening}
-                            >
-                                {isListening ? <Mic className="h-4 w-4 text-primary" /> : <MicOff className="h-4 w-4 text-muted-foreground" />}
-                            </Button>
-                        </div>
-                        <Button type="submit" size="icon" aria-label="Send Command" disabled={isProcessing}>
-                            <Send className="h-4 w-4" />
-                        </Button>
-                    </form>
-                </Form>
+                  <form onSubmit={handleSubmit(onSubmit)} className="w-full flex items-center gap-2">
+                      <div className="relative flex-1">
+                          <Input
+                              placeholder="e.g., Go to orders"
+                              autoComplete='off'
+                              {...register('prompt')}
+                              disabled={isProcessing}
+                              className="pr-10"
+                          />
+                          <Button 
+                              type='button' 
+                              variant="ghost" 
+                              size="icon" 
+                              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                              onClick={toggleListening}
+                          >
+                              {isListening ? <Mic className="h-4 w-4 text-primary" /> : <MicOff className="h-4 w-4 text-muted-foreground" />}
+                          </Button>
+                      </div>
+                      <Button type="submit" size="icon" aria-label="Send Command" disabled={isProcessing}>
+                          <Send className="h-4 w-4" />
+                      </Button>
+                  </form>
               </CardFooter>
             </Card>
           </motion.div>
