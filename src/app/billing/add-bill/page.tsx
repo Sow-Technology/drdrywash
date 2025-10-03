@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -99,7 +100,7 @@ export default function AddBillPage() {
       branchId: mockBranches.length > 0 ? mockBranches[0].id : '',
       invoiceDate: new Date(),
       dueDate: defaultDueDate,
-      invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
+      invoiceNumber: '',
       customerName: '',
       customerPhone: '',
       customerAddress: '',
@@ -109,6 +110,10 @@ export default function AddBillPage() {
       shippingCharge: 0,
     },
   });
+
+  React.useEffect(() => {
+    form.setValue('invoiceNumber', `INV-${Date.now().toString().slice(-6)}`);
+  }, [form]);
 
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
@@ -625,3 +630,5 @@ export default function AddBillPage() {
     </Form>
   );
 }
+
+    
