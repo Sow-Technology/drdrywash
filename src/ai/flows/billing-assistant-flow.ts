@@ -3,23 +3,11 @@
  * @fileOverview A conversational AI flow for the Dr. Dry Wash billing assistant.
  *
  * billingAssistant - The main entry point for the conversational agent.
- * Conversation - The type defining a message in the conversation history.
  */
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
+import { Conversation, ConversationSchema } from './billing-assistant-types';
 
-// Define the schema for conversation history
-export const ConversationSchema = z.array(
-  z.object({
-    role: z.enum(['user', 'model']),
-    content: z.array(
-      z.object({
-        text: z.string(),
-      })
-    ),
-  })
-);
-export type Conversation = z.infer<typeof ConversationSchema>;
 
 // Tool: Navigate to a specific page
 const navigateTo = ai.defineTool(

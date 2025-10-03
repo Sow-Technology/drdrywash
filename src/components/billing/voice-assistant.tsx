@@ -26,7 +26,8 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { textToSpeech } from '@/ai/flows/text-to-speech';
-import { billingAssistant, type Conversation } from '@/ai/flows/billing-assistant-flow';
+import { billingAssistant } from '@/ai/flows/billing-assistant-flow';
+import type { Conversation } from '@/ai/flows/billing-assistant-types';
 
 const fabVariants = {
   hidden: { opacity: 0, scale: 0.5 },
