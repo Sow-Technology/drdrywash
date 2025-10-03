@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/shared/logo';
+import BillingVoiceAssistant from '@/components/billing/voice-assistant';
 
 const navLinks = [
   { href: '/billing/dashboard', label: 'Dashboard', icon: Home },
@@ -108,6 +109,7 @@ export default function BillingLayout({
         <main className="flex-1 p-4 sm:px-6 sm:py-0">
           {children}
         </main>
+        <BillingVoiceAssistant />
       </div>
     </div>
   );
