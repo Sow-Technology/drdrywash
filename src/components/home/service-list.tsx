@@ -140,11 +140,16 @@ export default function ServiceList() {
               transition={{ type: 'spring', stiffness: 300 }}
             >
               <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl transition-shadow duration-300 text-center flex flex-col p-6">
-                <motion.div
+                <div
                   className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 mx-auto"
                 >
-                  <service.icon className="h-10 w-10 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" />
-                </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 6 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                  >
+                    <service.icon className="h-10 w-10 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" />
+                  </motion.div>
+                </div>
                 <CardContent className="flex flex-col flex-grow p-0 pt-6">
                   <CardTitle className="font-headline text-xl">
                     {service.title}
