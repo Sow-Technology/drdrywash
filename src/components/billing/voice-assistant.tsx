@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Loader2, Mic, MicOff, Send, X } from 'lucide-react';
+import { Loader2, Mic, MicOff, Send, X, Languages } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -18,6 +18,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
@@ -45,6 +51,12 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+const supportedLanguages = [
+    { code: 'en-US', name: 'English' },
+    { code: 'hi-IN', name: 'हिंदी (Hindi)' },
+    { code: 'ta-IN', name: 'தமிழ் (Tamil)' },
+]
+
 export default function BillingVoiceAssistant() {
   const router = useRouter();
   const { toast } = useToast();
@@ -52,6 +64,7 @@ export default function BillingVoiceAssistant() {
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [isListening, setIsListening] = React.useState(false);
+  const [selectedLang, setSelectedLang] = React.useState(supportedLanguages[0].code);
   const recognitionRef = React.useRef<SpeechRecognition | null>(null);
 
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
@@ -61,18 +74,18 @@ export default function BillingVoiceAssistant() {
     defaultValues: { prompt: '' },
   });
 
-  React.useEffect(() => {
+  const setupRecognition = React.useCallback((lang: string) => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = 'en-US';
+      recognition.lang = lang;
 
       recognition.onstart = () => setIsListening(true);
       recognition.onend = () => setIsListening(false);
       recognition.onerror = (event) => {
-        if (event.error !== 'no-speech') {
+        if (event.error !== 'no-speech' && event.error !== 'aborted') {
             console.error('Speech recognition error:', event.error);
             toast({
               variant: 'destructive',
@@ -83,28 +96,39 @@ export default function BillingVoiceAssistant() {
       };
 
       recognition.onresult = (event) => {
-        const transcript = Array.from(event.results)
-          .map((result) => result[0])
-          .map((result) => result.transcript)
-          .join('');
+        let finalTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript;
+            }
+        }
+        
+        const transcript = Array.from(event.results).map(r => r[0].transcript).join('');
 
         if (transcript.toLowerCase().includes('hey hello') && !isOpen) {
           handleOpen(true);
         }
 
-        if (isOpen && event.results[event.results.length - 1].isFinal) {
-           form.setValue('prompt', transcript);
+        if (isOpen && finalTranscript) {
+           form.setValue('prompt', finalTranscript);
+           // Automatically submit when final transcript is ready
+           // onSubmit({ prompt: finalTranscript });
         }
       };
 
       recognitionRef.current = recognition;
       recognition.start();
     }
+  }, [isOpen, form, toast]);
 
+
+  React.useEffect(() => {
+    recognitionRef.current?.stop();
+    setupRecognition(selectedLang);
     return () => {
       recognitionRef.current?.stop();
     };
-  }, [isOpen, form, toast]);
+  }, [selectedLang, setupRecognition]);
 
 
   const scrollToBottom = () => {
@@ -229,9 +253,25 @@ export default function BillingVoiceAssistant() {
                     </CardDescription>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={handleClose} className="h-8 w-8">
-                  <X className="h-4 w-4" />
-                </Button>
+                <div className='flex items-center'>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Languages className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {supportedLanguages.map(lang => (
+                                <DropdownMenuItem key={lang.code} onSelect={() => setSelectedLang(lang.code)}>
+                                    {lang.name}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button variant="ghost" size="icon" onClick={handleClose} className="h-8 w-8">
+                        <X className="h-4 w-4" />
+                    </Button>
+                </div>
               </CardHeader>
               <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.map((msg) => (
