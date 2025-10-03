@@ -21,6 +21,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { useToast } from '@/hooks/use-toast';
 
 type Message = {
   id: string;
@@ -46,15 +47,65 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function BillingVoiceAssistant() {
   const router = useRouter();
+  const { toast } = useToast();
   const [isOpen, setIsOpen] = React.useState(false);
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = React.useState(false);
+  const [isListening, setIsListening] = React.useState(false);
+  const recognitionRef = React.useRef<SpeechRecognition | null>(null);
+
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { prompt: '' },
   });
+
+  React.useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = (event) => {
+        if (event.error !== 'no-speech') {
+            console.error('Speech recognition error:', event.error);
+            toast({
+              variant: 'destructive',
+              title: 'Voice Error',
+              description: `Speech recognition error: ${event.error}`,
+            });
+        }
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = Array.from(event.results)
+          .map((result) => result[0])
+          .map((result) => result.transcript)
+          .join('');
+
+        if (transcript.toLowerCase().includes('hey lax') && !isOpen) {
+          handleOpen(true);
+        }
+
+        if (isOpen && event.results[event.results.length - 1].isFinal) {
+           form.setValue('prompt', transcript);
+        }
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    }
+
+    return () => {
+      recognitionRef.current?.stop();
+    };
+  }, [isOpen, form, toast]);
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -66,13 +117,17 @@ export default function BillingVoiceAssistant() {
     setMessages((prev) => [...prev, { id: Date.now().toString(), sender, text }]);
   };
 
-  const handleOpen = () => {
+  const handleOpen = (fromVoice = false) => {
     setIsOpen(true);
+     let greeting = "Hello! I'm your billing assistant. How can I help you?";
+    if (fromVoice) {
+      greeting = "Hey there! I'm Lax. How can I help you?";
+    }
     setMessages([
       {
         id: 'init',
         sender: 'bot',
-        text: "Hello! I'm your billing assistant. How can I help you? Try 'Add a new bill' or 'Go to dashboard'.",
+        text: `${greeting} Try 'Add a new bill' or 'Go to dashboard'.`,
       },
     ]);
   };
@@ -117,6 +172,15 @@ export default function BillingVoiceAssistant() {
     processCommand(data.prompt);
   }
 
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+    } else {
+      recognitionRef.current?.start();
+    }
+  };
+
+
   return (
     <>
       <div className="fixed bottom-8 right-8 z-50">
@@ -132,7 +196,7 @@ export default function BillingVoiceAssistant() {
               <Button
                 size="icon"
                 className="rounded-full w-16 h-16 shadow-lg"
-                onClick={handleOpen}
+                onClick={() => handleOpen()}
                 aria-label="Open Voice Assistant"
               >
                 <Mic className="h-7 w-7" />
@@ -160,7 +224,9 @@ export default function BillingVoiceAssistant() {
                   </Avatar>
                   <div>
                     <CardTitle>Billing Assistant</CardTitle>
-                    <CardDescription>Ready for your command</CardDescription>
+                    <CardDescription>
+                      {isListening ? "Listening..." : "Ready for your command"}
+                    </CardDescription>
                   </div>
                 </div>
                 <Button variant="ghost" size="icon" onClick={handleClose} className="h-8 w-8">
@@ -201,22 +267,34 @@ export default function BillingVoiceAssistant() {
               <CardFooter className="p-2 border-t">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex items-center gap-2">
-                        <FormField
-                            control={form.control}
-                            name="prompt"
-                            render={({ field }) => (
-                                <FormItem className="flex-1">
-                                    <FormControl>
-                                        <Input
-                                            placeholder="e.g., Go to orders"
-                                            autoComplete='off'
-                                            {...field}
-                                            disabled={isProcessing}
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
+                        <div className="relative flex-1">
+                            <FormField
+                                control={form.control}
+                                name="prompt"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="e.g., Go to orders"
+                                                autoComplete='off'
+                                                {...field}
+                                                disabled={isProcessing}
+                                                className="pr-10"
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <Button 
+                                type='button' 
+                                variant="ghost" 
+                                size="icon" 
+                                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                                onClick={toggleListening}
+                            >
+                                {isListening ? <Mic className="h-4 w-4 text-primary" /> : <MicOff className="h-4 w-4 text-muted-foreground" />}
+                            </Button>
+                        </div>
                         <Button type="submit" size="icon" aria-label="Send Command" disabled={isProcessing}>
                             <Send className="h-4 w-4" />
                         </Button>
