@@ -4,12 +4,10 @@
 import {
   Shirt,
   Sparkles,
-  SprayCan,
-  Star,
   Wind,
-  CheckSquare,
-  ShoppingCart,
+  Star,
   Gem,
+  ShoppingCart,
 } from 'lucide-react';
 import {
   Card,
@@ -18,51 +16,51 @@ import {
   CardTitle,
   CardDescription,
 } from '../ui/card';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import { useRef, useState, useEffect } from 'react';
+import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { cn } from '@/lib/utils';
 
 const services = [
   {
     icon: Shirt,
     title: 'Wash & Fold',
     description: 'Affordable laundry service. Delivery Time: 72 Hours',
+    imageId: 'wash-fold',
   },
   {
     icon: Sparkles,
     title: 'Wash & Iron',
     description: 'Preferred for regular and formals. Delivery Time: 72 Hours',
+    imageId: 'ironing',
   },
   {
     icon: Gem,
     title: 'Premium Laundry',
     description: 'Tailored specifically for formals & premium wear.',
-  },
-  {
-    icon: SprayCan,
-    title: 'Dry Clean',
-    description:
-      'Wedding Dresses, Lehengas, Sarees, Jackets, Blazers & more.',
+    imageId: 'product-blanket',
   },
   {
     icon: Wind,
-    title: 'Steam Press',
-    description: 'Removes wrinkles completely.',
+    title: 'Dry Clean',
+    description:
+      'Wedding Dresses, Lehengas, Sarees, Jackets, Blazers & more.',
+    imageId: 'dry-cleaning',
   },
   {
     icon: Star,
-    title: 'Starching',
-    description: 'Adds crispness and structure to your clothes.',
-  },
-  {
-    icon: CheckSquare,
-    title: 'Prem. Steam Press',
-    description: 'Premium packing and crease-free garments on hanger.',
+    title: 'Steam Press',
+    description: 'Removes wrinkles completely.',
+    imageId: 'product-shirt',
   },
   {
     icon: Gem,
     title: 'Premium Dry clean',
     description: 'Exclusive care for premium garments.',
+    imageId: 'bedding',
   },
 ];
 
@@ -103,6 +101,39 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export default function ServiceList() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const serviceRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      let currentActiveIndex = -1;
+      let smallestDistance = Infinity;
+
+      serviceRefs.current.forEach((ref, index) => {
+        if (ref) {
+          const rect = ref.getBoundingClientRect();
+          const distance = Math.abs(rect.top - window.innerHeight / 2);
+
+          if (distance < smallestDistance) {
+            smallestDistance = distance;
+            currentActiveIndex = index;
+          }
+        }
+      });
+
+      if (currentActiveIndex !== -1) {
+        setActiveIndex(currentActiveIndex);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Set initial active index
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const activeImage = PlaceHolderImages.find(img => img.id === services[activeIndex]?.imageId);
+
   return (
     <motion.section
       id="services"
@@ -110,7 +141,7 @@ export default function ServiceList() {
       variants={sectionVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: true, amount: 0.1 }}
     >
       <div className="container">
         <motion.div
@@ -127,50 +158,73 @@ export default function ServiceList() {
           </p>
         </motion.div>
 
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
-          variants={sectionVariants}
-        >
-          {services.map((service, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              className="w-full"
-              whileHover={{ y: -5 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-            >
-              <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl transition-shadow duration-300 text-center flex flex-col p-6">
-                <div
-                  className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 mx-auto"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-start">
+          <div className="space-y-8">
+            {services.map((service, index) => {
+              const isActive = index === activeIndex;
+              return (
+                <motion.div
+                  key={service.title}
+                  ref={el => serviceRefs.current[index] = el}
+                  animate={isActive ? { scale: 1.05 } : { scale: 1 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                 >
-                  <motion.div
-                    animate={{ y: ["-3px", "3px"] }}
-                    transition={{
-                        duration: 1.5,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                        ease: "easeInOut",
-                        delay: index * 0.1,
-                    }}
+                  <Card 
+                    className={cn(
+                        "overflow-hidden group h-full bg-card shadow-sm transition-all duration-300 text-left flex flex-col p-6 border-2",
+                        isActive ? "border-primary shadow-2xl" : "border-transparent"
+                    )}
                   >
-                    <service.icon className="h-10 w-10 text-primary" />
-                  </motion.div>
-                </div>
-                <CardContent className="flex flex-col flex-grow p-0 pt-6">
-                  <CardTitle className="font-headline text-xl">
-                    {service.title}
-                  </CardTitle>
-                  <CardDescription className="mt-2 flex-grow">
-                    {service.description}
-                  </CardDescription>
-                  <Button className="mt-6 w-full" asChild>
-                    <Link href="/schedule-pickup">Book Now</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+                    <div className="flex items-start gap-6">
+                      <div
+                        className={cn(
+                          "flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 transition-colors",
+                           isActive && "bg-primary text-primary-foreground"
+                        )}
+                      >
+                          <service.icon className={cn("h-8 w-8 text-primary transition-colors", isActive && "text-primary-foreground")} />
+                      </div>
+                      <CardContent className="flex flex-col flex-grow p-0">
+                        <CardTitle className="font-headline text-2xl">
+                          {service.title}
+                        </CardTitle>
+                        <CardDescription className="mt-2 flex-grow text-base">
+                          {service.description}
+                        </CardDescription>
+                      </CardContent>
+                    </div>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <div className="sticky top-24 hidden md:block">
+            <div className="relative w-full aspect-square rounded-2xl shadow-2xl overflow-hidden border-4 border-primary/20">
+                <AnimatePresence>
+                    {activeImage && (
+                        <motion.div
+                            key={activeImage.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5, ease: 'easeOut' }}
+                            className="absolute inset-0"
+                        >
+                            <Image
+                                src={activeImage.imageUrl}
+                                alt={activeImage.description}
+                                data-ai-hint={activeImage.imageHint}
+                                fill
+                                className="object-cover"
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            </div>
+          </div>
+        </div>
 
         <motion.div className="mt-16" variants={itemVariants}>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
