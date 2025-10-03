@@ -136,7 +136,7 @@ export default function ServiceList() {
               key={index}
               variants={itemVariants}
               className="w-full"
-              whileHover={{ y: -5, scale: 1.03 }}
+              whileHover={{ y: -5 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
               <Card className="overflow-hidden group h-full bg-card shadow-sm hover:shadow-xl transition-shadow duration-300 text-center flex flex-col p-6">
@@ -144,10 +144,16 @@ export default function ServiceList() {
                   className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 flex-shrink-0 mx-auto"
                 >
                   <motion.div
-                    whileHover={{ scale: 1.1, rotate: 6 }}
-                    transition={{ type: 'spring', stiffness: 300 }}
+                    animate={{ y: ["-3px", "3px"] }}
+                    transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        ease: "easeInOut",
+                        delay: index * 0.1,
+                    }}
                   >
-                    <service.icon className="h-10 w-10 text-primary transition-transform duration-300" />
+                    <service.icon className="h-10 w-10 text-primary" />
                   </motion.div>
                 </div>
                 <CardContent className="flex flex-col flex-grow p-0 pt-6">
